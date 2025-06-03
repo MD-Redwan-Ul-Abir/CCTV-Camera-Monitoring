@@ -1,0 +1,1 @@
+export 'package:skt_sikring/infrastructure/navigation/bindings/controllers/home.controller.binding.dart'; 
