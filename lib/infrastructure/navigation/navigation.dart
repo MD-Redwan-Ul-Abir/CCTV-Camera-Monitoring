@@ -31,5 +31,45 @@ class Nav {
       page: () => const HomeScreen(),
       binding: HomeControllerBinding(),
     ),
+    GetPage(
+      name: Routes.SPLASH_LANGUAGE,
+      page: () => const SplashLanguageScreen(),
+      binding: SplashLanguageControllerBinding(),
+    ),
+    GetPage(
+      name: Routes.SPLASH_SCREEN,
+      page: () => const SplashScreenScreen(),
+      binding: SplashScreenControllerBinding(),
+    ),
+    GetPage(
+      name: Routes.LOG_IN,
+      page: () => const LogInScreen(),
+      binding: LogInControllerBinding(),
+    ),
+    GetPage(
+      name: Routes.OTP_PAGE,
+      page: () => const OtpPageScreen(),
+      binding: OtpPageControllerBinding(),
+    ),
+    GetPage(
+      name: Routes.FORGET_PASSWORD,
+      page: () => const ForgetPasswordScreen(),
+      binding: ForgetPasswordControllerBinding(),
+    ),
+    GetPage(
+      name: Routes.RESET_PASSWORD,
+      page: () => const ResetPasswordScreen(),
+      binding: ResetPasswordControllerBinding(),
+    ),
+    GetPage(
+      name: Routes.SIGN_UP_PAGE,
+      page: () => const SignUpPageScreen(),
+      binding: SignUpPageControllerBinding(),
+    ),
+    GetPage(
+      name: Routes.CUSTOM_SUCCESS_MASSEGE,
+      page: () => const CustomSuccessMassegeScreen(),
+      binding: CustomSuccessMassegeControllerBinding(),
+    ),
   ];
 }
