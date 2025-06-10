@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_svg/flutter_svg.dart';  // Import the Flutter SVG package
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import '../../../../infrastructure/theme/app_colors.dart';
 import '../../../../infrastructure/theme/text_styles.dart';
 import 'nav_bar_model.dart';
 
@@ -19,11 +21,11 @@ class CustomBottomNavBar extends StatelessWidget {
     required this.currentIndex,
     required this.onTap,
     required this.items,
-    this.backgroundColor = Colors.white,
+    this.backgroundColor =AppColors.secondaryDark,
     this.selectedItemColor = Colors.green,
-    this.unselectedItemColor = Colors.grey,
-    this.cornerRadius = 16.0,
-    this.elevation = 8.0,
+    this.unselectedItemColor = AppColors.grayDarker,
+    this.cornerRadius = 0.0,
+    this.elevation = 0.0,
     this.height = 60.0,
   });
 
@@ -31,9 +33,8 @@ class CustomBottomNavBar extends StatelessWidget {
   Widget build(BuildContext context) {
     return Material(
       elevation: elevation,
-      color: Colors.transparent,
+      color:AppColors.secondaryDark,
       shadowColor: Colors.black.withOpacity(0.1),
-      // Handle the 1px overflow by clipping to bounds
       clipBehavior: Clip.hardEdge,
       borderRadius: BorderRadius.only(
         topLeft: Radius.circular(cornerRadius),
@@ -60,56 +61,38 @@ class CustomBottomNavBar extends StatelessWidget {
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    // Icon with indicator
+                    // Icon with background indicator
                     Stack(
                       alignment: Alignment.center,
                       children: [
-                        // Animated container for background indicator
+                        // Animated background for selected state
                         AnimatedContainer(
                           duration: const Duration(milliseconds: 200),
-                          height: isSelected ? 40 : 0,
-                          width: isSelected ? 40 : 0,
+                          // height: isSelected ? 40 : 0,
+                          // width: isSelected ? 40 : 0,
                           decoration: BoxDecoration(
-                            // when active , background color
-                            color:
-                                isSelected
-                                    // ? selectedItemColor?.withOpacity(0.1)
-                                    ? Color(0xFFEEFEE6)
-                                    : Colors.transparent,
-                            borderRadius: BorderRadius.circular(12),
+                            color: isSelected ? Colors.transparent : Colors.transparent,
+                            borderRadius: BorderRadius.circular(0),
                           ),
                         ),
-                        // Icon
-                        Icon(
-                          item.icon,
-                          color:
-                              isSelected
-                                  ? selectedItemColor
-                                  : unselectedItemColor,
-                          size: 24,
+                        // SVG Icon
+                        SvgPicture.asset(
+                          item.svgAssetPath,  // Use the SVG asset path
+                          color: isSelected ? selectedItemColor : unselectedItemColor,
+                          width: 18.w,  // You can adjust the size as needed
+                          height: 18.h,
                         ),
                       ],
                     ),
-                    const SizedBox(height: 2),
+                     SizedBox(height: 4.h),
                     // Label
                     Text(
                       item.label,
-                      // style: TextStyle(
-                      //   color:
-                      //       isSelected
-                      //           ? selectedItemColor
-                      //           : unselectedItemColor,
-                      //   fontSize: 12,
-                      //   fontWeight:
-                      //       isSelected ? FontWeight.bold : FontWeight.normal,
-                      // ),
-                      style: AppTextStyles.textButton.copyWith(
-                        color:
-                            isSelected
-                                ? selectedItemColor
-                                : unselectedItemColor,
+                      style: AppTextStyles.caption1.copyWith(
+                        color: isSelected ? selectedItemColor : unselectedItemColor,
                         fontWeight: FontWeight.w500,
-                        fontSize: 14.sp,
+                        fontSize: 13.sp
+
                       ),
                     ),
                   ],
@@ -120,6 +103,5 @@ class CustomBottomNavBar extends StatelessWidget {
         ),
       ),
     );
-    // }
   }
 }

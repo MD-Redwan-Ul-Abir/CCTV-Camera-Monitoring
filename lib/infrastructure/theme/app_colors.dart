@@ -54,7 +54,7 @@ class AppColors {
   static const Color grayDarkActive = Color(0xFF525050);
 
   // Darker theme colors
-  static const Color grayDarker = Color(0xFF403e3e);
+  static const Color grayDarker = Color(0xFF403E3E);
 
 
   ///-------------------------------Green color-----------------------------------------

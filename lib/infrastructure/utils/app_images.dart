@@ -6,6 +6,8 @@ class AppImages {
 
   //Here All are images
   static String appLogo = "$baseUrlImage/logo.png";
+  static String appLogo2 = "$baseUrlImage/logo2.png";
+  static String profilePic = "$baseUrlImage/profilePic.png";
   static String placeHolderBMW = "$baseUrlImage/bmw.png";
   static String success = "$baseUrlImage/success.png";
   static String person = "$baseUrlImage/person.jpg";
@@ -15,8 +17,14 @@ class AppImages {
   static String profileImage = "$baseUrlImage/profileImage.png";
   static String rateOurApp = "$baseUrlImage/rateOurApp.png";
   static String agreementPaper = "$baseUrlImage/agreementPaper.png";
+  static String chatPerson = "$baseUrlImage/chatPerson.png";
 
   // Here All are SVG
+
+  static String home = "$baseUrlLogo/home.svg";
+  static String message = "$baseUrlLogo/message.svg";
+  static String profile2 = "$baseUrlLogo/profile2.svg";
+  static String report = "$baseUrlLogo/report.svg";
 
   static String passwordOn = "$baseUrlLogo/passwordVisibilityOn.svg";
   static String passwordOff = "$baseUrlLogo/passwordVisibilityOff.svg";

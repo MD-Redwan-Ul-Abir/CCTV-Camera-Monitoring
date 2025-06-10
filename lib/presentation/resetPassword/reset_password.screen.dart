@@ -82,7 +82,7 @@ class ResetPasswordScreen extends GetView<ResetPasswordController> {
                 onPressed:
                 controller.isButtonActive.value
                     ? () {
-                  Get.offAllNamed(Routes.CUSTOM_SUCCESS_MASSEGE);
+                  Get.offAllNamed(Routes.CUSTOM_SUCCESS_MASSEGE );
                 }
                     : null,
                 text: "Done",

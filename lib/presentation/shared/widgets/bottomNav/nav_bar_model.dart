@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 
 class CustomNavItem {
-  final IconData icon;
+  final String svgAssetPath;
   final String label;
   final VoidCallback? onPressed;
 
-  CustomNavItem({required this.icon, required this.label, this.onPressed});
+  CustomNavItem({required this.svgAssetPath, required this.label, this.onPressed});
 }

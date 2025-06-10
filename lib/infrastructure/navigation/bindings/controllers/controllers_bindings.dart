@@ -1,8 +1,13 @@
 export 'package:skt_sikring/infrastructure/navigation/bindings/controllers/custom_success_massege.controller.binding.dart'; 
+export 'package:skt_sikring/infrastructure/navigation/bindings/controllers/details_report.controller.binding.dart'; 
 export 'package:skt_sikring/infrastructure/navigation/bindings/controllers/forget_password.controller.binding.dart'; 
 export 'package:skt_sikring/infrastructure/navigation/bindings/controllers/home.controller.binding.dart'; 
 export 'package:skt_sikring/infrastructure/navigation/bindings/controllers/log_in.controller.binding.dart'; 
+export 'package:skt_sikring/infrastructure/navigation/bindings/controllers/main_navigation_screen.controller.binding.dart'; 
+export 'package:skt_sikring/infrastructure/navigation/bindings/controllers/message_screen.controller.binding.dart'; 
 export 'package:skt_sikring/infrastructure/navigation/bindings/controllers/otp_page.controller.binding.dart'; 
+export 'package:skt_sikring/infrastructure/navigation/bindings/controllers/profile.controller.binding.dart'; 
+export 'package:skt_sikring/infrastructure/navigation/bindings/controllers/report_screen.controller.binding.dart'; 
 export 'package:skt_sikring/infrastructure/navigation/bindings/controllers/reset_password.controller.binding.dart'; 
 export 'package:skt_sikring/infrastructure/navigation/bindings/controllers/sign_up_page.controller.binding.dart'; 
 export 'package:skt_sikring/infrastructure/navigation/bindings/controllers/splash_language.controller.binding.dart'; 

@@ -64,7 +64,7 @@ static TextStyle headLine1 = TextStyle(
     fontSize: 20.sp,
     fontWeight: FontWeight.w400, // Match Figma
     fontFamily: GoogleFonts.poppins().fontFamily,
-    color: Color(0xFFffffff),
+    color: AppColors.secondaryLight,
     height: 1.5,
     letterSpacing: 1.08,
   );
@@ -95,7 +95,7 @@ static TextStyle paragraph = TextStyle(
   );
 static TextStyle textButton = TextStyle(
   fontSize: 14.sp,
-  fontWeight: FontWeight.w600,
+  fontWeight: FontWeight.w500,
   fontFamily: GoogleFonts.spaceGrotesk().fontFamily,
   color: AppColors.secondaryLight,
   height: 1.2,
@@ -109,6 +109,15 @@ static TextStyle textCaption1 = TextStyle(
   height: 1.2,
   letterSpacing: 0,
 );
+
+  static TextStyle caption1 = TextStyle(
+    fontSize: 12.sp,
+    fontWeight: FontWeight.w400,
+    fontFamily: GoogleFonts.poppins().fontFamily,
+    color: AppColors.secondaryDark,
+    height: 1.35,
+    letterSpacing: 0,
+  );
 // static TextStyle calendarText = TextStyle(
 //   fontSize: 12.sp,
 //   fontWeight: FontWeight.w600,

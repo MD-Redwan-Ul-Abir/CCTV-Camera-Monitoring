@@ -128,7 +128,7 @@ class LogInScreen extends GetView<LogInController> {
                 PrimaryButton(
                   width: double.infinity,
                   onPressed: () {
-                    Get.toNamed(Routes.HOME);
+                    Get.toNamed(Routes.MAIN_NAVIGATION_SCREEN);
                   },
                   text: "Log in",
                   // isActive: true,

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 
+import '../../../../infrastructure/theme/app_colors.dart';
 import 'custom_nav_bar.dart';
 import 'nav_bar_model.dart';
 
@@ -44,7 +45,7 @@ class AppScaffoldWithNav extends StatelessWidget {
         currentIndex: currentIndex,
         onTap: onNavItemTap,
         items: navItems,
-        backgroundColor: navBarColor,
+        //backgroundColor:  AppColors.secondaryDark,
         selectedItemColor: selectedItemColor,
         unselectedItemColor: unselectedItemColor,
         cornerRadius: 16.0,

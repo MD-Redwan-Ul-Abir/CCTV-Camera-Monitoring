@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
 import '../../config.dart';
+import '../../presentation/message/message_screen.screen.dart';
 import '../../presentation/screens.dart';
 import 'bindings/controllers/controllers_bindings.dart';
 import 'routes.dart';
@@ -70,6 +71,31 @@ class Nav {
       name: Routes.CUSTOM_SUCCESS_MASSEGE,
       page: () => const CustomSuccessMassegeScreen(),
       binding: CustomSuccessMassegeControllerBinding(),
+    ),
+    GetPage(
+      name: Routes.DETAILS_REPORT,
+      page: () => const DetailsReportScreen(),
+      binding: DetailsReportControllerBinding(),
+    ),
+    GetPage(
+      name: Routes.MAIN_NAVIGATION_SCREEN,
+      page: () => const MainNavigationScreenScreen(),
+      binding: MainNavigationScreenControllerBinding(),
+    ),
+    GetPage(
+      name: Routes.MESSAGE_SCREEN,
+      page: () => const MessageScreen(),
+      binding: MessageScreenControllerBinding(),
+    ),
+    GetPage(
+      name: Routes.REPORT_SCREEN,
+      page: () => const ReportScreen(),
+      binding: ReportScreenControllerBinding(),
+    ),
+    GetPage(
+      name: Routes.PROFILE,
+      page: () => const ProfileScreen(),
+      binding: ProfileControllerBinding(),
     ),
   ];
 }
