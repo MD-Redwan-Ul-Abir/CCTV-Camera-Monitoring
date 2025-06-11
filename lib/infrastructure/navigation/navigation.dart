@@ -97,5 +97,10 @@ class Nav {
       page: () => const ProfileScreen(),
       binding: ProfileControllerBinding(),
     ),
+    GetPage(
+      name: Routes.CONVERSATION_PAGE,
+      page: () => const ConversationPageScreen(),
+      binding: ConversationPageControllerBinding(),
+    ),
   ];
 }

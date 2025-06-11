@@ -12,10 +12,11 @@ class Routes {
   static const MAIN_NAVIGATION_SCREEN = '/main-navigation-screen';
   static const MESSAGE_SCREEN = '/message-screen';
   static const OTP_PAGE = '/otp-page';
+  static const PROFILE = '/profile';
   static const REPORT_SCREEN = '/report-screen';
   static const RESET_PASSWORD = '/reset-password';
   static const SIGN_UP_PAGE = '/sign-up-page';
   static const SPLASH_LANGUAGE = '/splash-language';
   static const SPLASH_SCREEN = '/splash-screen';
-  static const PROFILE = '/profile';
+  static const CONVERSATION_PAGE = '/conversation-page';
 }

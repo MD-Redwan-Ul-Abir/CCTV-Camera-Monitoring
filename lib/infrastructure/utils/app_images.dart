@@ -26,6 +26,8 @@ class AppImages {
   static String profile2 = "$baseUrlLogo/profile2.svg";
   static String report = "$baseUrlLogo/report.svg";
 
+  static String imageFileIcon = "$baseUrlLogo/imageFile.svg";
+  static String sendIcon = "$baseUrlLogo/send.svg";
   static String passwordOn = "$baseUrlLogo/passwordVisibilityOn.svg";
   static String passwordOff = "$baseUrlLogo/passwordVisibilityOff.svg";
   static String sliderIcon = "$baseUrlLogo/slideIcon.svg";

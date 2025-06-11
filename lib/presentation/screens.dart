@@ -1,10 +1,11 @@
+
+export 'package:skt_sikring/presentation/conversationPage/conversation_page.screen.dart';
 export 'package:skt_sikring/presentation/customSuccessMassege/custom_success_massege.screen.dart';
 export 'package:skt_sikring/presentation/detailsReport/details_report.screen.dart';
 export 'package:skt_sikring/presentation/forgetPassword/forget_password.screen.dart';
 export 'package:skt_sikring/presentation/home/home.screen.dart';
 export 'package:skt_sikring/presentation/logIn/log_in.screen.dart';
 export 'package:skt_sikring/presentation/mainNavigationScreen/main_navigation_screen.screen.dart';
-
 export 'package:skt_sikring/presentation/otpPage/otp_page.screen.dart';
 export 'package:skt_sikring/presentation/profile/profile.screen.dart';
 export 'package:skt_sikring/presentation/reportScreen/report_screen.screen.dart';
