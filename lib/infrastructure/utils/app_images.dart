@@ -71,6 +71,8 @@ class AppImages {
   static String starIconFullFill = "$baseUrlLogo/starIconFullFill.svg";
   static String starIconHalfFill = "$baseUrlLogo/starIconHalfFill.svg";
   static String downloadIcon = "$baseUrlLogo/download.svg";
+  static String date = "$baseUrlLogo/date.svg";
+  static String location2 = "$baseUrlLogo/location2.svg";
 
   //
 }

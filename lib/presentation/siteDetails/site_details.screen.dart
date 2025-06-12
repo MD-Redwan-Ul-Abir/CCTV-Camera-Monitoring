@@ -5,9 +5,11 @@ import 'package:flutter_svg/svg.dart';
 import 'package:get/get.dart';
 import 'package:skt_sikring/presentation/shared/widgets/buttons/primary_buttons.dart';
 
+import '../../infrastructure/navigation/routes.dart';
 import '../../infrastructure/theme/app_colors.dart';
 import '../../infrastructure/theme/text_styles.dart';
 import '../../infrastructure/utils/app_images.dart';
+import '../shared/widgets/customCarocelSlider/customCaroselSlider.dart';
 import 'controllers/site_details.controller.dart';
 
 class SiteDetailsScreen extends GetView<SiteDetailsController> {
@@ -58,7 +60,23 @@ class SiteDetailsScreen extends GetView<SiteDetailsController> {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               // Auto Carousel Slider
-              AutoCarouselSlider(),
+              //AutoCarouselSlider(),
+              AutoCarouselSlider(
+                images: [
+                  AppImages.sitePic, // Replace with actual site images
+                  AppImages.chatPerson, // Replace with actual site images
+                  AppImages.sitePic, // Replace with actual site images
+                  AppImages.chatPerson,
+                ],
+                height: 230.h,
+                autoPlayInterval: Duration(seconds: 5),
+                activeIndicatorColor: AppColors.primaryDark,
+                inactiveIndicatorColor: AppColors.grayDarker,
+                borderRadius: BorderRadius.circular(4),
+                onPageChanged: (index) {
+                  //print('Page changed to $index');
+                },
+              ),
 
               SizedBox(height: 20.h),
 
@@ -67,7 +85,8 @@ class SiteDetailsScreen extends GetView<SiteDetailsController> {
                 "Site A, Bashundhara",
                 style: AppTextStyles.button.copyWith(
                   color: AppColors.primaryLight,
-                  fontWeight: FontWeight.w600,
+                  fontWeight: FontWeight.w400,
+                  fontSize: 14.sp,
                 ),
               ),
 
@@ -76,39 +95,42 @@ class SiteDetailsScreen extends GetView<SiteDetailsController> {
               Text(
                 "23 - 30 May (40 Hours)",
                 style: AppTextStyles.caption1.copyWith(
-                  color: AppColors.primaryLight.withOpacity(0.7),
+                  color: AppColors.secondaryLightActive,
                 ),
               ),
 
-              SizedBox(height: 24.h),
+              SizedBox(height: 38.h),
 
               // Assign Manager Section
               Text(
                 "Assign manager",
                 style: AppTextStyles.caption1.copyWith(
-                  color: AppColors.primaryLight.withOpacity(0.8),
+                  color: AppColors.secondaryLightActive,
+                  fontSize: 13.sp,
                 ),
               ),
 
               SizedBox(height: 12.h),
 
               Container(
-                padding: EdgeInsets.all(16.w),
+                padding: EdgeInsets.all(12.w),
                 decoration: BoxDecoration(
+                  border: Border.all(color: AppColors.grayDarker, width: 1.5),
                   color: AppColors.secondaryDark,
-                  borderRadius: BorderRadius.circular(8.r),
+                  borderRadius: BorderRadius.circular(4.r),
                 ),
                 child: Row(
                   children: [
                     CircleAvatar(
-                      radius: 20.r,
+                      radius: 16.r,
                       backgroundImage: AssetImage(AppImages.chatPerson),
                     ),
                     SizedBox(width: 12.w),
                     Text(
                       "Henrik",
                       style: AppTextStyles.caption1.copyWith(
-                        color: AppColors.primaryLight,
+                        color: AppColors.secondaryLightActive,
+                        fontSize: 13.sp,
                       ),
                     ),
                   ],
@@ -121,7 +143,8 @@ class SiteDetailsScreen extends GetView<SiteDetailsController> {
               Text(
                 "Type",
                 style: AppTextStyles.caption1.copyWith(
-                  color: AppColors.primaryLight.withOpacity(0.8),
+                  color: AppColors.secondaryLightActive,
+                  fontSize: 13.sp,
                 ),
               ),
 
@@ -131,152 +154,36 @@ class SiteDetailsScreen extends GetView<SiteDetailsController> {
                 width: double.infinity,
                 padding: EdgeInsets.all(16.w),
                 decoration: BoxDecoration(
+                  border: Border.all(color: AppColors.grayDarker, width: 1.5),
                   color: AppColors.secondaryDark,
-                  borderRadius: BorderRadius.circular(8.r),
+                  borderRadius: BorderRadius.circular(4.r),
                 ),
-                child: Text(
-                  "Construction Site",
-                  style: AppTextStyles.caption1.copyWith(
-                    color: AppColors.primaryLight,
+                child: Padding(
+                  padding: const EdgeInsets.symmetric(vertical: 5.0),
+                  child: Text(
+                    "Construction Site",
+                    style: AppTextStyles.caption1.copyWith(
+                      color: AppColors.secondaryLightActive,
+                      fontSize: 13.sp,
+                    ),
                   ),
                 ),
               ),
 
-              SizedBox(height: 40.h),
+              SizedBox(height: 50.h),
 
               // Live View Site Button
-              PrimaryButton(width: double.infinity,onPressed: (){}, text: 'Live View Site')
+              PrimaryButton(
+                width: double.infinity,
+                onPressed: () {
+                  Get.toNamed(Routes.LIVE_VIEW);
+                },
+                text: 'Live View Site',
+              ),
             ],
           ),
         ),
       ),
-    );
-  }
-}
-
-class AutoCarouselSlider extends StatefulWidget {
-  const AutoCarouselSlider({super.key});
-
-  @override
-  _AutoCarouselSliderState createState() => _AutoCarouselSliderState();
-}
-
-class _AutoCarouselSliderState extends State<AutoCarouselSlider> {
-  final PageController _pageController = PageController();
-  int _currentPage = 0;
-  Timer? _timer;
-
-  // Sample images - replace with your actual image paths
-  final List<String> _images = [
-    AppImages.chatPerson, // Replace with actual site images
-    AppImages.chatPerson, // Replace with actual site images
-    AppImages.chatPerson, // Replace with actual site images
-    AppImages.chatPerson, // Replace with actual site images
-  ];
-
-  @override
-  void initState() {
-    super.initState();
-    _startAutoSlide();
-  }
-
-  void _startAutoSlide() {
-    _timer = Timer.periodic(Duration(seconds: 3), (timer) {
-      if (_currentPage < _images.length - 1) {
-        _currentPage++;
-      } else {
-        _currentPage = 0;
-      }
-
-      if (_pageController.hasClients) {
-        _pageController.animateToPage(
-          _currentPage,
-          duration: Duration(milliseconds: 350),
-          curve: Curves.easeInOut,
-        );
-      }
-    });
-  }
-
-  @override
-  void dispose() {
-    _timer?.cancel();
-    _pageController.dispose();
-    super.dispose();
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return Column(
-      children: [
-        // Carousel Container
-        Container(
-          height: 220.h,
-          width: 3,
-          decoration: BoxDecoration(
-            borderRadius: BorderRadius.circular(4.r),
-            color: AppColors.secondaryDark,
-          ),
-          child: ClipRRect(
-            borderRadius: BorderRadius.circular(4.r),
-            child: PageView.builder(
-              controller: _pageController,
-              onPageChanged: (index) {
-                setState(() {
-                  _currentPage = index;
-                });
-              },
-              itemCount: _images.length,
-              itemBuilder: (context, index) {
-                return Container(
-                  width: double.infinity,
-                  decoration: BoxDecoration(
-                    image: DecorationImage(
-                      image: AssetImage(_images[index]),
-                      fit: BoxFit.cover,
-                    ),
-                  ),
-                  // Overlay for better text visibility if needed
-                  child: Container(
-                    decoration: BoxDecoration(
-                      gradient: LinearGradient(
-                        begin: Alignment.topCenter,
-                        end: Alignment.bottomCenter,
-                        colors: [
-                          Colors.transparent,
-                          Colors.black.withOpacity(0.3),
-                        ],
-                      ),
-                    ),
-                  ),
-                );
-              },
-            ),
-          ),
-        ),
-
-        SizedBox(height: 16.h),
-
-        // Dot Indicators
-        Row(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: List.generate(
-            _images.length,
-                (index) => AnimatedContainer(
-              duration: Duration(milliseconds: 300),
-              margin: EdgeInsets.symmetric(horizontal: 4.w),
-              height: 8.h,
-              width: _currentPage == index ? 24.w : 8.w,
-              decoration: BoxDecoration(
-                color: _currentPage == index
-                    ? AppColors.primaryDark
-                    : AppColors.grayDarker,
-                borderRadius: BorderRadius.circular(4.r),
-              ),
-            ),
-          ),
-        ),
-      ],
     );
   }
 }

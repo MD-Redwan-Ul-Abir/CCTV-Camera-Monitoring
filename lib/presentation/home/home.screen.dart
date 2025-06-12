@@ -29,28 +29,28 @@ class HomeScreen extends GetView<HomeController> {
     List<Map<String, String>> reportData = [
       {
         'title': 'Incident Report',
-        'count':
+        'description':
             'Found broken fence on the northeast side of the site. Found broken fence on the northeast side of the site. Found broken fence on the northeast side of the site.',
       },
       {
         'title': 'Safety Check',
-        'count': 'Found broken fence on the northeast side of the site.',
+        'description': 'Found broken fence on the northeast side of the site.',
       },
       {
         'title': 'Safety Check',
-        'count': 'Found broken fence on the northeast side of the site.',
+        'description': 'Found broken fence on the northeast side of the site.',
       },
       {
         'title': 'Safety Check',
-        'count': 'Found broken fence on the northeast side of the site.',
+        'description': 'Found broken fence on the northeast side of the site.',
       },
       {
         'title': 'Safety Check',
-        'count': 'Found broken fence on the northeast side of the site.',
+        'description': 'Found broken fence on the northeast side of the site.',
       },
       {
         'title': 'Maintenance',
-        'count': 'Found broken fence on the northeast side of the site.',
+        'description': 'Found broken fence on the northeast side of the site.',
       },
     ];
 
@@ -277,23 +277,28 @@ class HomeScreen extends GetView<HomeController> {
                   GridView.builder(
                     shrinkWrap: true,
                     physics: NeverScrollableScrollPhysics(),
-                    gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                      crossAxisCount: 2,
-                      crossAxisSpacing: 10.0,
-                      mainAxisSpacing: 10.0,
-                      childAspectRatio: 1.3, // Increased from 1.2 to give more height
-                    ),
+                    gridDelegate:
+                        const SliverGridDelegateWithFixedCrossAxisCount(
+                          crossAxisCount: 2,
+                          crossAxisSpacing: 10.0,
+                          mainAxisSpacing: 10.0,
+                          childAspectRatio:
+                              1.3, // Increased from 1.2 to give more height
+                        ),
                     itemCount: reportData.length,
                     itemBuilder: (context, index) {
                       return Container(
-                        padding: EdgeInsets.all(14.w), // Reduced padding from 16.w to 14.w
+                        padding: EdgeInsets.all(
+                          14.w,
+                        ), // Reduced padding from 16.w to 14.w
                         decoration: BoxDecoration(
                           color: AppColors.grayDarker,
                           borderRadius: BorderRadius.circular(4.r),
                         ),
                         child: Column(
-
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween, // Changed from center to spaceBetween
+                          mainAxisAlignment:
+                              MainAxisAlignment
+                                  .spaceBetween, // Changed from center to spaceBetween
                           mainAxisSize: MainAxisSize.min, // Keep this as min
                           children: [
                             // Top section with title and description
@@ -311,15 +316,18 @@ class HomeScreen extends GetView<HomeController> {
                                     maxLines: 1,
                                     overflow: TextOverflow.ellipsis,
                                   ),
-                                  SizedBox(height: 4.h),
+                                  SizedBox(height: 6.h),
                                   Flexible(
                                     child: Text(
-                                      reportData[index]['count']!,
-                                      maxLines: 3, // Reduced from 3 to 2 for better fit
+                                      reportData[index]['description']!,
+                                      maxLines:
+                                          3, // Reduced from 3 to 2 for better fit
                                       overflow: TextOverflow.ellipsis,
                                       style: AppTextStyles.caption1.copyWith(
                                         color: AppColors.grayNormal,
-                                        height: 1.3, // Reduced line height from 1.4 to 1.3
+                                        fontSize: 13.sp,
+                                        height:
+                                            1.4, // Reduced line height from 1.4 to 1.3
                                       ),
                                     ),
                                   ),
@@ -337,7 +345,8 @@ class HomeScreen extends GetView<HomeController> {
                                   'View Reports',
                                   style: AppTextStyles.caption1.copyWith(
                                     color: AppColors.primaryNormal,
-                                    height: 1.3, // Reduced line height from 1.4 to 1.3
+                                    height:
+                                        1.3, // Reduced line height from 1.4 to 1.3
                                   ),
                                 ),
                               ),

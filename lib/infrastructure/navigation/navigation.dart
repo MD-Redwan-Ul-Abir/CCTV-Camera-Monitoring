@@ -16,11 +16,11 @@ class EnvironmentsBadge extends StatelessWidget {
     var env = ConfigEnvironments.getEnvironments()['env'];
     return env != Environments.PRODUCTION
         ? Banner(
-            location: BannerLocation.topStart,
-            message: env!,
-            color: env == Environments.QAS ? Colors.blue : Colors.purple,
-            child: child,
-          )
+          location: BannerLocation.topStart,
+          message: env!,
+          color: env == Environments.QAS ? Colors.blue : Colors.purple,
+          child: child,
+        )
         : SizedBox(child: child);
   }
 }
@@ -106,6 +106,11 @@ class Nav {
       name: Routes.SITE_DETAILS,
       page: () => const SiteDetailsScreen(),
       binding: SiteDetailsControllerBinding(),
+    ),
+    GetPage(
+      name: Routes.LIVE_VIEW,
+      page: () => const LiveViewScreen(),
+      binding: LiveViewControllerBinding(),
     ),
   ];
 }
