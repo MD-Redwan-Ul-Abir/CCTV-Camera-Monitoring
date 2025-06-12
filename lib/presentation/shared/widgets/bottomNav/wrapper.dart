@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 
-import '../../../../infrastructure/theme/app_colors.dart';
 import 'custom_nav_bar.dart';
 import 'nav_bar_model.dart';
 

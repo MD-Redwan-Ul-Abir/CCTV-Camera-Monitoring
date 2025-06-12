@@ -11,5 +11,6 @@ export 'package:skt_sikring/infrastructure/navigation/bindings/controllers/profi
 export 'package:skt_sikring/infrastructure/navigation/bindings/controllers/report_screen.controller.binding.dart'; 
 export 'package:skt_sikring/infrastructure/navigation/bindings/controllers/reset_password.controller.binding.dart'; 
 export 'package:skt_sikring/infrastructure/navigation/bindings/controllers/sign_up_page.controller.binding.dart'; 
+export 'package:skt_sikring/infrastructure/navigation/bindings/controllers/site_details.controller.binding.dart'; 
 export 'package:skt_sikring/infrastructure/navigation/bindings/controllers/splash_language.controller.binding.dart'; 
 export 'package:skt_sikring/infrastructure/navigation/bindings/controllers/splash_screen.controller.binding.dart'; 

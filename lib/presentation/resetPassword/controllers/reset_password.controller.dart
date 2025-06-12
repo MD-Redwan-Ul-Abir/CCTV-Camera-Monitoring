@@ -28,15 +28,7 @@ class ResetPasswordController extends GetxController {
     confirmPasswordController.dispose();
     super.onClose();
   }
-  @override
-  void onInit() {
-    super.onInit();
-  }
 
-  @override
-  void onReady() {
-    super.onReady();
-  }
 
 
   void increment() => count.value++;

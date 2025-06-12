@@ -12,7 +12,6 @@ import '../../infrastructure/theme/app_colors.dart';
 import '../../infrastructure/theme/text_styles.dart';
 import '../../infrastructure/utils/app_images.dart';
 import '../shared/widgets/buttons/primary_buttons.dart';
-import '../shared/widgets/custom_text_form_field.dart';
 import 'controllers/otp_page.controller.dart';
 
 class OtpPageScreen extends GetView<OtpPageController> {

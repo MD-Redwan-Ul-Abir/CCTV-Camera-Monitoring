@@ -3,6 +3,7 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:get/get.dart';
 import 'package:skt_sikring/infrastructure/theme/text_styles.dart';
+import 'package:skt_sikring/presentation/shared/widgets/buttons/primary_buttons.dart';
 import '../../infrastructure/navigation/routes.dart';
 import '../../infrastructure/theme/app_colors.dart';
 import '../../infrastructure/utils/app_images.dart';
@@ -29,18 +30,21 @@ class HomeScreen extends GetView<HomeController> {
       {
         'title': 'Incident Report',
         'count':
-        'Found broken fence on the northeast side of the site. Found broken fence on the northeast side of the site. Found broken fence on the northeast side of the site.',
+            'Found broken fence on the northeast side of the site. Found broken fence on the northeast side of the site. Found broken fence on the northeast side of the site.',
       },
       {
         'title': 'Safety Check',
         'count': 'Found broken fence on the northeast side of the site.',
-      },{
+      },
+      {
         'title': 'Safety Check',
         'count': 'Found broken fence on the northeast side of the site.',
-      },{
+      },
+      {
         'title': 'Safety Check',
         'count': 'Found broken fence on the northeast side of the site.',
-      },{
+      },
+      {
         'title': 'Safety Check',
         'count': 'Found broken fence on the northeast side of the site.',
       },
@@ -67,7 +71,9 @@ class HomeScreen extends GetView<HomeController> {
                 final statusBarHeight = MediaQuery.of(context).padding.top;
                 final maxHeight = 130.h + statusBarHeight;
                 final minHeight = kToolbarHeight + 10.h + statusBarHeight;
-                final shrinkRatio = (constraints.maxHeight - minHeight) / (maxHeight - minHeight);
+                final shrinkRatio =
+                    (constraints.maxHeight - minHeight) /
+                    (maxHeight - minHeight);
                 final isCollapsed = shrinkRatio <= 0.2;
 
                 return AnimatedContainer(
@@ -90,9 +96,7 @@ class HomeScreen extends GetView<HomeController> {
                               mainAxisSize: MainAxisSize.min,
                               children: [
                                 // Logo
-                                SizedBox(
-                                  height: 20.h,
-                                ),
+                                SizedBox(height: 20.h),
                                 Image.asset(
                                   AppImages.appLogo2,
                                   height: 52.h,
@@ -114,21 +118,24 @@ class HomeScreen extends GetView<HomeController> {
                                     ),
                                     SizedBox(width: 12.w),
                                     Column(
-                                      crossAxisAlignment: CrossAxisAlignment.start,
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.start,
                                       children: [
                                         Text(
                                           'Welcome, John jack',
-                                          style: AppTextStyles.textButton.copyWith(
-                                            color: AppColors.secondaryLight,
-                                          ),
+                                          style: AppTextStyles.textButton
+                                              .copyWith(
+                                                color: AppColors.secondaryLight,
+                                              ),
                                         ),
                                         SizedBox(height: 6.h),
                                         Text(
                                           'Customer',
-                                          style: AppTextStyles.textCaption1.copyWith(
-                                            color: AppColors.secondaryLight,
-                                            fontWeight: FontWeight.w400,
-                                          ),
+                                          style: AppTextStyles.textCaption1
+                                              .copyWith(
+                                                color: AppColors.secondaryLight,
+                                                fontWeight: FontWeight.w400,
+                                              ),
                                         ),
                                       ],
                                     ),
@@ -194,53 +201,60 @@ class HomeScreen extends GetView<HomeController> {
                       style: AppTextStyles.headLine6.copyWith(height: 1.5),
                     ),
                   ),
-                  SizedBox(height: 4.h),
+
                   ListView.builder(
                     shrinkWrap: true,
                     physics: NeverScrollableScrollPhysics(),
                     itemCount: siteData.length,
                     itemBuilder: (context, index) {
                       final color = cardColors[index % cardColors.length];
-                      return Padding(
-                        padding: const EdgeInsets.symmetric(vertical: 4),
-                        child: Card(
-                          color: color,
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(4.r),
-                          ),
-                          child: ListTile(
-                            contentPadding: EdgeInsets.symmetric(horizontal: 6.w),
-                            title: Padding(
-                              padding: const EdgeInsets.symmetric(
-                                vertical: 4.0,
-                                horizontal: 8,
+                      return GestureDetector(
+                        onTap: () {
+                          Get.toNamed(Routes.SITE_DETAILS);
+                        },
+                        child: Padding(
+                          padding: const EdgeInsets.symmetric(vertical: 4),
+                          child: Card(
+                            color: color,
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(4.r),
+                            ),
+                            child: ListTile(
+                              contentPadding: EdgeInsets.symmetric(
+                                horizontal: 6.w,
                               ),
-                              child: Text(
-                                siteData[index]['name']!,
-                                style: AppTextStyles.button.copyWith(
-                                  color: AppColors.secondaryDarker,
+                              title: Padding(
+                                padding: const EdgeInsets.symmetric(
+                                  vertical: 4.0,
+                                  horizontal: 8,
+                                ),
+                                child: Text(
+                                  siteData[index]['name']!,
+                                  style: AppTextStyles.button.copyWith(
+                                    color: AppColors.secondaryDarker,
+                                  ),
                                 ),
                               ),
-                            ),
-                            subtitle: Padding(
-                              padding: const EdgeInsets.symmetric(
-                                vertical: 4.0,
-                                horizontal: 8,
-                              ),
-                              child: Text(
-                                siteData[index]['date']!,
-                                style: AppTextStyles.caption1.copyWith(
-                                  color: AppColors.secondaryDark,
+                              subtitle: Padding(
+                                padding: const EdgeInsets.symmetric(
+                                  vertical: 4.0,
+                                  horizontal: 8,
+                                ),
+                                child: Text(
+                                  siteData[index]['date']!,
+                                  style: AppTextStyles.caption1.copyWith(
+                                    color: AppColors.secondaryDark,
+                                  ),
                                 ),
                               ),
-                            ),
-                            trailing: SizedBox(
-                              height: 32.h,
-                              width: 32.w,
-                              child: SvgPicture.asset(
-                                AppImages.forwardIcon,
-                                color: AppColors.primaryDark,
-                                fit: BoxFit.contain,
+                              trailing: SizedBox(
+                                height: 32.h,
+                                width: 32.w,
+                                child: SvgPicture.asset(
+                                  AppImages.forwardIcon,
+                                  color: AppColors.primaryDark,
+                                  fit: BoxFit.contain,
+                                ),
                               ),
                             ),
                           ),
@@ -248,6 +262,7 @@ class HomeScreen extends GetView<HomeController> {
                       );
                     },
                   ),
+                  SizedBox(height: 10.h),
                   Align(
                     alignment: Alignment.topLeft,
                     child: Text(
@@ -258,7 +273,7 @@ class HomeScreen extends GetView<HomeController> {
                       ),
                     ),
                   ),
-                  SizedBox(height: 16.h),
+
                   GridView.builder(
                     shrinkWrap: true,
                     physics: NeverScrollableScrollPhysics(),
@@ -266,46 +281,64 @@ class HomeScreen extends GetView<HomeController> {
                       crossAxisCount: 2,
                       crossAxisSpacing: 10.0,
                       mainAxisSpacing: 10.0,
-                      childAspectRatio: 1.2,
+                      childAspectRatio: 1.3, // Increased from 1.2 to give more height
                     ),
                     itemCount: reportData.length,
                     itemBuilder: (context, index) {
                       return Container(
-                        padding: EdgeInsets.all(18.w),
+                        padding: EdgeInsets.all(14.w), // Reduced padding from 16.w to 14.w
                         decoration: BoxDecoration(
                           color: AppColors.grayDarker,
                           borderRadius: BorderRadius.circular(4.r),
                         ),
                         child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          mainAxisAlignment: MainAxisAlignment.center,
+
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween, // Changed from center to spaceBetween
+                          mainAxisSize: MainAxisSize.min, // Keep this as min
                           children: [
-                            Text(
-                              reportData[index]['title']!,
-                              style: AppTextStyles.button.copyWith(
-                                color: Colors.white,
+                            // Top section with title and description
+                            Flexible(
+                              flex: 3,
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                mainAxisSize: MainAxisSize.min,
+                                children: [
+                                  Text(
+                                    reportData[index]['title']!,
+                                    style: AppTextStyles.button.copyWith(
+                                      color: Colors.white,
+                                    ),
+                                    maxLines: 1,
+                                    overflow: TextOverflow.ellipsis,
+                                  ),
+                                  SizedBox(height: 4.h),
+                                  Flexible(
+                                    child: Text(
+                                      reportData[index]['count']!,
+                                      maxLines: 3, // Reduced from 3 to 2 for better fit
+                                      overflow: TextOverflow.ellipsis,
+                                      style: AppTextStyles.caption1.copyWith(
+                                        color: AppColors.grayNormal,
+                                        height: 1.3, // Reduced line height from 1.4 to 1.3
+                                      ),
+                                    ),
+                                  ),
+                                ],
                               ),
                             ),
-                            SizedBox(height: 6.h),
-                            Text(
-                              reportData[index]['count']!,
-                              maxLines: 4,
-                              overflow: TextOverflow.ellipsis,
-                              style: AppTextStyles.caption1.copyWith(
-                                color: AppColors.grayNormal,
-                                height: 1.5,
-                              ),
-                            ),
-                            Spacer(),
-                            GestureDetector(
-                              onTap: () {
-                                Get.toNamed(Routes.DETAILS_REPORT);
-                              },
-                              child: Text(
-                                'View Reports',
-                                style: AppTextStyles.caption1.copyWith(
-                                  color: AppColors.primaryNormal,
-                                  height: 1.5,
+                            // Bottom section with View Reports button
+                            Align(
+                              alignment: Alignment.topLeft,
+                              child: GestureDetector(
+                                onTap: () {
+                                  Get.toNamed(Routes.DETAILS_REPORT);
+                                },
+                                child: Text(
+                                  'View Reports',
+                                  style: AppTextStyles.caption1.copyWith(
+                                    color: AppColors.primaryNormal,
+                                    height: 1.3, // Reduced line height from 1.4 to 1.3
+                                  ),
                                 ),
                               ),
                             ),
@@ -314,6 +347,13 @@ class HomeScreen extends GetView<HomeController> {
                       );
                     },
                   ),
+                  SizedBox(height: 32.h),
+                  PrimaryButton(
+                    width: double.infinity,
+                    onPressed: () {},
+                    text: 'Create Report',
+                  ),
+                  SizedBox(height: 16.h),
                 ],
               ),
             ),

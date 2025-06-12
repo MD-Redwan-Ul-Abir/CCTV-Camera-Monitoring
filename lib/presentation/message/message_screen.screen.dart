@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:flutter_svg/svg.dart';
 import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
 import '../../infrastructure/navigation/routes.dart';
@@ -138,9 +137,8 @@ class MessageScreen extends GetView<MessageScreenController> {
                 physics: NeverScrollableScrollPhysics(),
                 itemCount: messageList.length,
                 itemBuilder: (context, index) {
-
-
                   final dotColor = messageList[index]['status'] == 'active'? AppColors.greenNormal: AppColors.redNormal;
+
                   return Card(
                     color: AppColors.secondaryDark,
                     elevation: 0,
@@ -148,79 +146,81 @@ class MessageScreen extends GetView<MessageScreenController> {
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(4.r),
                     ),
-                    child: GestureDetector(
-                      onTap: (){
+                    child: InkWell(
+                      onTap: () {
                         Get.toNamed(Routes.CONVERSATION_PAGE);
                       },
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Row(
-                            //mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                            children: [
-                              ClipRRect(
-                                borderRadius: BorderRadius.circular(50),
-                                child: Image.asset(
-                                  AppImages.chatPerson,
-                                  height: 64.h,
-                                  width: 64.w,
-                                  fit: BoxFit.cover,
+                      borderRadius: BorderRadius.circular(4.r), // Match card's border radius
+                      splashColor: AppColors.grayDarker.withOpacity(0.3), // Customize ripple color
+                      highlightColor: AppColors.grayDarker.withOpacity(0.3), // Customize highlight color
+                      child: Padding(
+                        padding: EdgeInsets.symmetric(horizontal: 6,vertical: 12), // Add some padding inside the card
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Row(
+                              children: [
+                                ClipRRect(
+                                  borderRadius: BorderRadius.circular(50),
+                                  child: Image.asset(
+                                    AppImages.chatPerson,
+                                    height: 64.h,
+                                    width: 64.w,
+                                    fit: BoxFit.cover,
+                                  ),
                                 ),
-                              ),
-                              SizedBox(width: 16.w,),
-                              Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  ConstrainedBox(
-                                    constraints: BoxConstraints(
-                                      maxWidth: MediaQuery.of(context).size.width * 0.5, // Limit width
-                                    ),
-                                    child: Text(
-                                      messageList[index]['name']!,
-                                      style: AppTextStyles.button.copyWith(
-                                          color: AppColors.primaryLight
+                                SizedBox(width: 16.w),
+                                Expanded(
+                                  child: Column(
+                                    crossAxisAlignment: CrossAxisAlignment.start,
+                                    children: [
+                                      ConstrainedBox(
+                                        constraints: BoxConstraints(
+                                          maxWidth: MediaQuery.of(context).size.width * 0.5,
+                                        ),
+                                        child: Text(
+                                          messageList[index]['name']!,
+                                          style: AppTextStyles.button.copyWith(
+                                              color: AppColors.primaryLight
+                                          ),
+                                          maxLines: 2,
+                                          overflow: TextOverflow.ellipsis,
+                                        ),
                                       ),
-                                      maxLines: 2,
-                                      overflow: TextOverflow.ellipsis,
+                                      SizedBox(height: 8.h),
+                                      Text(
+                                        messageList[index]['message']!,
+                                        style: AppTextStyles.caption1.copyWith(
+                                          color: Color(0xFFBAB8B9),
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                                Column(
+                                  crossAxisAlignment: CrossAxisAlignment.end,
+                                  children: [
+                                    Text(
+                                      messageList[index]['time']!,
+                                      style: GoogleFonts.plusJakartaSans(
+                                          fontSize: 15.sp,
+                                          fontWeight: FontWeight.w400,
+                                          height: 1.35,
+                                          color: Color(0xFFD1DDEB).withOpacity(0.62)
+                                      ),
                                     ),
-                                  ),
-                                  SizedBox(height: 8.h,),
-                                  Text( messageList[index]['message']!,style: AppTextStyles.caption1.copyWith(
-                                    color: Color(0xFFBAB8B9),
-                                  ),
-                      
-                                  ),
-                                ],
-                              ),
-                      
-                              Spacer(),
-                              Column(
-                      
-                                crossAxisAlignment: CrossAxisAlignment.end,
-                                children: [
-                                  Text(
-                                    messageList[index]['time']!,
-                                    style: GoogleFonts.plusJakartaSans(
-                                      fontSize: 15.sp,
-                                      fontWeight: FontWeight.w400,
-                                      height: 1.35,
-                                      color: Color(0xFFD1DDEB).withOpacity(0.62)
+                                    SizedBox(height: 12.h),
+                                    Icon(
+                                      Icons.circle,
+                                      size: 10,
+                                      color: dotColor,
                                     ),
-                                  ),
-                                  SizedBox(
-                                    height: 12.h,
-                                  ),
-                                  Icon(
-                                    Icons.circle,
-                                    size: 10,
-                                    color: dotColor,
-                                  ),
-                                ],
-                              ),
-                            ],
-                          ),
-                      
-                        ],
+                                  ],
+                                ),
+                              ],
+                            ),
+                          ],
+                        ),
                       ),
                     ),
                   );

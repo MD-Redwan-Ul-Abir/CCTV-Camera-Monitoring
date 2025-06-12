@@ -18,6 +18,7 @@ class AppImages {
   static String rateOurApp = "$baseUrlImage/rateOurApp.png";
   static String agreementPaper = "$baseUrlImage/agreementPaper.png";
   static String chatPerson = "$baseUrlImage/chatPerson.png";
+  static String sitePic = "$baseUrlImage/sitePic.png";
 
   // Here All are SVG
 

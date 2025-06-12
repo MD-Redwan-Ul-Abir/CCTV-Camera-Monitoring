@@ -35,21 +35,21 @@ class PrimaryButton extends StatelessWidget {
       child: ElevatedButton(
         onPressed: isActive ? onPressed : null,
         style: ButtonStyle(
-          backgroundColor: MaterialStateProperty.resolveWith<Color>((states) {
-            if (states.contains(MaterialState.disabled)) {
+          backgroundColor: WidgetStateProperty.resolveWith<Color>((states) {
+            if (states.contains(WidgetState.disabled)) {
               return AppColors.grayDarker; // Custom color when inactive
             }
             return backgroundColor ?? AppColors.primaryDark;
           }),
-          padding: MaterialStateProperty.all(
+          padding: WidgetStateProperty.all(
             const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
           ),
-          shape: MaterialStateProperty.all(
+          shape: WidgetStateProperty.all(
             RoundedRectangleBorder(
               borderRadius: BorderRadius.circular(4),
             ),
           ),
-          elevation: MaterialStateProperty.all(0),
+          elevation: WidgetStateProperty.all(0),
         ),
         child: Row(
           mainAxisSize: MainAxisSize.min,

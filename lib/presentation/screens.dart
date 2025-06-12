@@ -11,5 +11,6 @@ export 'package:skt_sikring/presentation/profile/profile.screen.dart';
 export 'package:skt_sikring/presentation/reportScreen/report_screen.screen.dart';
 export 'package:skt_sikring/presentation/resetPassword/reset_password.screen.dart';
 export 'package:skt_sikring/presentation/signUpPage/sign_up_page.screen.dart';
+export 'package:skt_sikring/presentation/siteDetails/site_details.screen.dart';
 export 'package:skt_sikring/presentation/splashLanguage/splash_language.screen.dart';
 export 'package:skt_sikring/presentation/splashScreen/splash_screen.screen.dart';

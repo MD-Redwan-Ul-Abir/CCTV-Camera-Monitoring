@@ -10,7 +10,7 @@ import 'routes.dart';
 
 class EnvironmentsBadge extends StatelessWidget {
   final Widget child;
-  EnvironmentsBadge({required this.child});
+  const EnvironmentsBadge({super.key, required this.child});
   @override
   Widget build(BuildContext context) {
     var env = ConfigEnvironments.getEnvironments()['env'];
@@ -101,6 +101,11 @@ class Nav {
       name: Routes.CONVERSATION_PAGE,
       page: () => const ConversationPageScreen(),
       binding: ConversationPageControllerBinding(),
+    ),
+    GetPage(
+      name: Routes.SITE_DETAILS,
+      page: () => const SiteDetailsScreen(),
+      binding: SiteDetailsControllerBinding(),
     ),
   ];
 }

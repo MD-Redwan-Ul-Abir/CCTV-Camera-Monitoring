@@ -7,19 +7,8 @@ class MainNavigationScreenController extends GetxController {
     currentIndex.value = index;
   }
 
-  void onInit() {
-    super.onInit();
-  }
 
-  @override
-  void onReady() {
-    super.onReady();
-  }
 
-  @override
-  void onClose() {
-    super.onClose();
-  }
 
   // void increment() => count.value++;
 }

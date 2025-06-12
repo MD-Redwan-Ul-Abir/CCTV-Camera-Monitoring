@@ -4,6 +4,7 @@ class Routes {
     return SPLASH_SCREEN;
   }
 
+  static const CONVERSATION_PAGE = '/conversation-page';
   static const CUSTOM_SUCCESS_MASSEGE = '/custom-success-massege';
   static const DETAILS_REPORT = '/details-report';
   static const FORGET_PASSWORD = '/forget-password';
@@ -18,5 +19,5 @@ class Routes {
   static const SIGN_UP_PAGE = '/sign-up-page';
   static const SPLASH_LANGUAGE = '/splash-language';
   static const SPLASH_SCREEN = '/splash-screen';
-  static const CONVERSATION_PAGE = '/conversation-page';
+  static const SITE_DETAILS = '/site-details';
 }
