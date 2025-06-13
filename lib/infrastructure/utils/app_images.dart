@@ -73,6 +73,7 @@ class AppImages {
   static String downloadIcon = "$baseUrlLogo/download.svg";
   static String date = "$baseUrlLogo/date.svg";
   static String location2 = "$baseUrlLogo/location2.svg";
+  static String camera2 = "$baseUrlLogo/camera2.svg";
 
   //
 }

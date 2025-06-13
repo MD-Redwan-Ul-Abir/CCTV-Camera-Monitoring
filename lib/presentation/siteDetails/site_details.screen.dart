@@ -90,7 +90,7 @@ class SiteDetailsScreen extends GetView<SiteDetailsController> {
                 ),
               ),
 
-              SizedBox(height: 8.h),
+              SizedBox(height: 4.h),
 
               Text(
                 "23 - 30 May (40 Hours)",

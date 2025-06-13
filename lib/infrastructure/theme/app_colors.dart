@@ -2,25 +2,55 @@ import 'package:flutter/material.dart';
 
 class AppColors {
   AppColors._();
-// -------------------------------------Primary Color------------------------------------------
+  // -------------------------------------Primary Color------------------------------------------
   static const Color primaryLight = Color.fromRGBO(251, 240, 234, 1); // #fb0ea
-  static const Color primaryLighthover = Color.fromRGBO(249, 233, 224, 1); // #f9e9e0
-  static const Color orangeLightactive = Color.fromRGBO(242, 210, 191, 1); // #f2dbbf
+  static const Color primaryLighthover = Color.fromRGBO(
+    249,
+    233,
+    224,
+    1,
+  ); // #f9e9e0
+  static const Color primaryLightActive = Color.fromRGBO(
+    242,
+    210,
+    191,
+    1,
+  ); // #f2dbbf
 
   // Normal
   static const Color primaryNormal = Color.fromRGBO(213, 109, 47, 1); // #d56d2f
-  static const Color primaryNormalhover = Color.fromRGBO(192, 98, 42, 1); // #c0622a
-  static const Color primaryNormalactive = Color.fromRGBO(170, 87, 38, 1); // #aa5726
+  static const Color primaryNormalhover = Color.fromRGBO(
+    192,
+    98,
+    42,
+    1,
+  ); // #c0622a
+  static const Color primaryNormalactive = Color.fromRGBO(
+    170,
+    87,
+    38,
+    1,
+  ); // #aa5726
 
   // Dark
   static const Color primaryDark = Color.fromRGBO(160, 82, 35, 1); // #a05223
-  static const Color primaryDarkhover = Color.fromRGBO(128, 65, 28, 1); // #80411c
-  static const Color primaryDarkactive = Color.fromRGBO(96, 49, 21, 1); // #803115
+  static const Color primaryDarkhover = Color.fromRGBO(
+    128,
+    65,
+    28,
+    1,
+  ); // #80411c
+  static const Color primaryDarkactive = Color.fromRGBO(
+    96,
+    49,
+    21,
+    1,
+  ); // #803115
 
   // Darker
   static const Color primaryDarker = Color.fromRGBO(75, 38, 16, 1); // #4b2610
 
-// ------------------------------------Secondary color------------------------------------------
+  // ------------------------------------Secondary color------------------------------------------
   static const Color secondaryLight = Color(0xFFe9e8e8);
   static const Color secondaryLightHover = Color(0xFFdddddd);
   static const Color secondaryLightActive = Color(0xFFbab8b9);
@@ -56,7 +86,6 @@ class AppColors {
   // Darker theme colors
   static const Color grayDarker = Color(0xFF403E3E);
 
-
   ///-------------------------------Green color-----------------------------------------
 
   static const Color greenLight = Color(0xFFe8f9ee);
@@ -75,7 +104,6 @@ class AppColors {
 
   // Darker theme colors
   static const Color greenDarker = Color(0xFF07411e);
-
 
   //---------------------------------Red Color--------------------------------
 
@@ -116,6 +144,4 @@ class AppColors {
 
   // Yellow Darker theme colors
   static const Color yellowDarker = Color(0xFF4f3b03);
-
-
 }
