@@ -87,8 +87,8 @@ class AppTextStyles {
   static TextStyle textButton = TextStyle(
     fontSize: 14.sp,
     fontWeight: FontWeight.w500,
-    fontFamily: GoogleFonts.spaceGrotesk().fontFamily,
-    color: AppColors.secondaryLight,
+    fontFamily: GoogleFonts.poppins().fontFamily,
+    color: AppColors.secondaryLightActive,
     height: 1.2,
     letterSpacing: 0,
   );

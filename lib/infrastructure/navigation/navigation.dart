@@ -3,8 +3,10 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
 import '../../config.dart';
+import '../../presentation/languageChanging/language_screen.dart';
 import '../../presentation/message/message_screen.screen.dart';
 import '../../presentation/screens.dart';
+import '../../presentation/shared/widgets/imagePicker/imagePickerController.dart';
 import 'bindings/controllers/controllers_bindings.dart';
 import 'routes.dart';
 
@@ -16,11 +18,11 @@ class EnvironmentsBadge extends StatelessWidget {
     var env = ConfigEnvironments.getEnvironments()['env'];
     return env != Environments.PRODUCTION
         ? Banner(
-          location: BannerLocation.topStart,
-          message: env!,
-          color: env == Environments.QAS ? Colors.blue : Colors.purple,
-          child: child,
-        )
+            location: BannerLocation.topStart,
+            message: env!,
+            color: env == Environments.QAS ? Colors.blue : Colors.purple,
+            child: child,
+          )
         : SizedBox(child: child);
   }
 }
@@ -34,7 +36,9 @@ class Nav {
     ),
     GetPage(
       name: Routes.SPLASH_LANGUAGE,
-      page: () => const SplashLanguageScreen(),
+       page: () => const SplashLanguageScreen(),
+      //page: () => const LanguageScreen(),
+
       binding: SplashLanguageControllerBinding(),
     ),
     GetPage(
@@ -80,7 +84,13 @@ class Nav {
     GetPage(
       name: Routes.MAIN_NAVIGATION_SCREEN,
       page: () => const MainNavigationScreenScreen(),
-      binding: MainNavigationScreenControllerBinding(),
+      //binding: MainNavigationScreenControllerBinding(),
+      bindings: [
+        MainNavigationScreenControllerBinding(),
+        BindingsBuilder(() {
+          Get.lazyPut<imagePickerController>(() => imagePickerController());
+        }),
+      ],
     ),
     GetPage(
       name: Routes.MESSAGE_SCREEN,
@@ -111,6 +121,21 @@ class Nav {
       name: Routes.LIVE_VIEW,
       page: () => const LiveViewScreen(),
       binding: LiveViewControllerBinding(),
+    ),
+    GetPage(
+      name: Routes.CHANGE_PASSWORD,
+      page: () => const ChangePasswordScreen(),
+      binding: ChangePasswordControllerBinding(),
+    ),
+    GetPage(
+      name: Routes.PRIVACY_SETTINGS,
+      page: () => const PrivacySettingsScreen(),
+      binding: PrivacySettingsControllerBinding(),
+    ),
+    GetPage(
+      name: Routes.CUSTOM_PRIVACY_POLICY,
+      page: () => const CustomPrivacyPolicyScreen(),
+      binding: CustomPrivacyPolicyControllerBinding(),
     ),
   ];
 }

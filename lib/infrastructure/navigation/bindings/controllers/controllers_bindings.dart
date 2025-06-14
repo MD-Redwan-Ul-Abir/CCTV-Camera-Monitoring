@@ -1,7 +1,9 @@
+
+export 'package:skt_sikring/infrastructure/navigation/bindings/controllers/change_password.controller.binding.dart'; 
 export 'package:skt_sikring/infrastructure/navigation/bindings/controllers/conversation_page.controller.binding.dart';
+export 'package:skt_sikring/infrastructure/navigation/bindings/controllers/custom_privacy_policy.controller.binding.dart'; 
 export 'package:skt_sikring/infrastructure/navigation/bindings/controllers/custom_success_massege.controller.binding.dart';
 export 'package:skt_sikring/infrastructure/navigation/bindings/controllers/details_report.controller.binding.dart';
-
 export 'package:skt_sikring/infrastructure/navigation/bindings/controllers/forget_password.controller.binding.dart';
 export 'package:skt_sikring/infrastructure/navigation/bindings/controllers/home.controller.binding.dart';
 export 'package:skt_sikring/infrastructure/navigation/bindings/controllers/live_view.controller.binding.dart';
@@ -9,6 +11,7 @@ export 'package:skt_sikring/infrastructure/navigation/bindings/controllers/log_i
 export 'package:skt_sikring/infrastructure/navigation/bindings/controllers/main_navigation_screen.controller.binding.dart';
 export 'package:skt_sikring/infrastructure/navigation/bindings/controllers/message_screen.controller.binding.dart';
 export 'package:skt_sikring/infrastructure/navigation/bindings/controllers/otp_page.controller.binding.dart';
+export 'package:skt_sikring/infrastructure/navigation/bindings/controllers/privacy_settings.controller.binding.dart'; 
 export 'package:skt_sikring/infrastructure/navigation/bindings/controllers/profile.controller.binding.dart';
 export 'package:skt_sikring/infrastructure/navigation/bindings/controllers/report_screen.controller.binding.dart';
 export 'package:skt_sikring/infrastructure/navigation/bindings/controllers/reset_password.controller.binding.dart';

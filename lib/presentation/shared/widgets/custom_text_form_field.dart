@@ -173,7 +173,7 @@ class _CustomTextFormFieldState extends State<CustomTextFormField> {
   InputDecoration _inputDecoration(BuildContext context) {
     return InputDecoration(
       hintText: widget.hintText,
-      hintStyle: AppTextStyles.textButton,
+      hintStyle: AppTextStyles.button,
       filled: widget.filledstatus ?? true,
       fillColor:
       widget.filledColor ?? (widget.isEnabled ? AppColors.grayDarker : AppColors.grayDarker),
