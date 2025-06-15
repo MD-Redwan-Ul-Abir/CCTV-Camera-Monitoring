@@ -1,6 +1,7 @@
 
 export 'package:skt_sikring/presentation/changePassword/change_password.screen.dart';
 export 'package:skt_sikring/presentation/conversationPage/conversation_page.screen.dart';
+export 'package:skt_sikring/presentation/createReport/create_report.screen.dart';
 export 'package:skt_sikring/presentation/customPrivacyPolicy/custom_privacy_policy.screen.dart';
 export 'package:skt_sikring/presentation/customSuccessMassege/custom_success_massege.screen.dart';
 export 'package:skt_sikring/presentation/detailsReport/details_report.screen.dart';

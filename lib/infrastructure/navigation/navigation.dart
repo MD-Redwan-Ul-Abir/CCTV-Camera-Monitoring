@@ -36,7 +36,7 @@ class Nav {
     ),
     GetPage(
       name: Routes.SPLASH_LANGUAGE,
-       page: () => const SplashLanguageScreen(),
+      page: () => const SplashLanguageScreen(),
       //page: () => const LanguageScreen(),
 
       binding: SplashLanguageControllerBinding(),
@@ -136,6 +136,11 @@ class Nav {
       name: Routes.CUSTOM_PRIVACY_POLICY,
       page: () => const CustomPrivacyPolicyScreen(),
       binding: CustomPrivacyPolicyControllerBinding(),
+    ),
+    GetPage(
+      name: Routes.CREATE_REPORT,
+      page: () => const CreateReportScreen(),
+      binding: CreateReportControllerBinding(),
     ),
   ];
 }

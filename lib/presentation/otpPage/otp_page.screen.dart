@@ -46,7 +46,7 @@ class OtpPageScreen extends GetView<OtpPageController> {
         toolbarHeight: 95.h,
       ),
       body: Padding(
-        padding: const EdgeInsets.all(20),
+        padding:  EdgeInsets.symmetric(horizontal: 24.w,vertical: 20.h),
         child: Column(
           children: [
             SizedBox(height: 10.h),

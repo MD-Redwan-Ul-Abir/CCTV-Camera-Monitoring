@@ -47,7 +47,7 @@ class MessageScreen extends GetView<MessageScreenController> {
       ),
       body: SingleChildScrollView(
         child: Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 16,vertical: 12),
+          padding:  EdgeInsets.symmetric(horizontal: 24.w,vertical: 12.h),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.center,
             mainAxisAlignment: MainAxisAlignment.start,

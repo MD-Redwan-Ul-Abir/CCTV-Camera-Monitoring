@@ -50,7 +50,7 @@ class DetailsReportScreen extends GetView<DetailsReportController> {
         centerTitle: true,
       ),
       body: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
+        padding:  EdgeInsets.symmetric(horizontal: 24.w, vertical: 10.h),
         child: SingleChildScrollView(
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
@@ -224,8 +224,8 @@ class DetailsReportScreen extends GetView<DetailsReportController> {
                         ClipRRect(
                           borderRadius: BorderRadius.circular(16.r),
                           child: Container(
-                            width: 19.r,
-                            height: 19.r,
+                            width: 26.r,
+                            height: 26.r,
 
                             color: AppColors.grayDarker,
                             child: Image.asset(
@@ -245,18 +245,19 @@ class DetailsReportScreen extends GetView<DetailsReportController> {
                                 color: Color(0xFFFFFFFF),
                               ),
                             ),
+                            SizedBox(height: 4.h),
+                            Text(
+                              'Security Superviser',
+                              style: AppTextStyles.button.copyWith(
+                                color: Color(0xFFFFFFFF),
+                                //fontSize: 12.sp,
+                              ),
+                            ),
                           ],
                         ),
                       ],
                     ),
-                    SizedBox(height: 8.h),
-                    Text(
-                      'Security Superviser',
-                      style: AppTextStyles.button.copyWith(
-                        color: Color(0xFFFFFFFF),
-                        //fontSize: 12.sp,
-                      ),
-                    ),
+
                   ],
                 ),
               ),

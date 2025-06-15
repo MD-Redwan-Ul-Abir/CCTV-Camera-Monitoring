@@ -359,7 +359,9 @@ class HomeScreen extends GetView<HomeController> {
                   SizedBox(height: 32.h),
                   PrimaryButton(
                     width: double.infinity,
-                    onPressed: () {},
+                    onPressed: () {
+                      Get.toNamed(Routes.CREATE_REPORT);
+                    },
                     text: 'Create Report',
                   ),
                   SizedBox(height: 16.h),

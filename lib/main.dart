@@ -25,7 +25,8 @@ void main() async {
   final logicalHeight = physicalSize.height / devicePixelRatio;
 
   runApp(
-    Main(initialRoute, Size(logicalWidth, logicalHeight), languages: languages),
+     Main(initialRoute, Size(logicalWidth, logicalHeight), languages: languages),
+    //Main(initialRoute, Size(375, 812), languages: languages),
   );
 }
 

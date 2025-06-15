@@ -17,7 +17,7 @@ class CustomSuccessMassegeScreen
   Widget build(BuildContext context) {
     return   Scaffold(
       body: Padding(
-        padding: const EdgeInsets.all(24),
+        padding:  EdgeInsets.symmetric(horizontal: 24.w,vertical: 24.h),
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           crossAxisAlignment: CrossAxisAlignment.center,

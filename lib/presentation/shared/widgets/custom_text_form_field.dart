@@ -9,6 +9,8 @@ import '../../../infrastructure/theme/text_styles.dart';
 class CustomTextFormField extends StatefulWidget {
   final TextEditingController? controller;
   final String hintText;
+  final Color? dropdownHintTextColor;
+
   final int? prefixIconHeight;
   final int? prefixIconWeight;
   final int? sufixIconHeight;
@@ -73,7 +75,7 @@ class CustomTextFormField extends StatefulWidget {
     this.prefixIconHeight,
     this.prefixIconWeight,
     this.sufixIconHeight,
-    this.sufixIconWeight,
+    this.sufixIconWeight, this.dropdownHintTextColor,
   });
 
   @override
@@ -121,7 +123,6 @@ class _CustomTextFormFieldState extends State<CustomTextFormField> {
           style: AppTextStyles.button,
           dropdownColor: AppColors.grayDarker,
           iconEnabledColor: widget.dropdownIconColor,
-          // Set the bell icon as the dropdown icon
           icon: Transform.rotate(
             angle: 3.14 / -2, // Rotate 90 degrees, in radians (for 180 degrees use 3.14, for 90 degrees use 3.14 / 2)
             child: SvgPicture.asset(
@@ -163,7 +164,7 @@ class _CustomTextFormFieldState extends State<CustomTextFormField> {
       maxLength: widget.maxlength,
       obscureText: _isPasswordField ? _obscureText : false,
       keyboardType: _getKeyboardType(widget.keyboardType),
-      minLines: widget.keyboardType == 'multiline' ? 3 : 1,
+      minLines: widget.keyboardType == 'multiline' ? 5 : 1,
       maxLines: widget.keyboardType == 'multiline' ? null : 1,
       decoration: _inputDecoration(context),
       style: AppTextStyles.button,
@@ -171,9 +172,17 @@ class _CustomTextFormFieldState extends State<CustomTextFormField> {
   }
 
   InputDecoration _inputDecoration(BuildContext context) {
+    // Check if this is a dropdown with a selected value
+    bool isDropdownWithSelection = widget.dropDownItems != null &&
+        widget.dropDownItems!.isNotEmpty &&
+        widget.selectedValue != null;
+
+
     return InputDecoration(
       hintText: widget.hintText,
-      hintStyle: AppTextStyles.button,
+      hintStyle: AppTextStyles.button.copyWith(
+        color: widget.dropdownHintTextColor ?? widget.hintTextColor ?? AppColors.primaryLight,
+      ),
       filled: widget.filledstatus ?? true,
       fillColor:
       widget.filledColor ?? (widget.isEnabled ? AppColors.grayDarker : AppColors.grayDarker),
@@ -200,8 +209,8 @@ class _CustomTextFormFieldState extends State<CustomTextFormField> {
             ? _buildSuffixIcon(context)!
             : SvgPicture.asset(
           _obscureText ? AppImages.passwordOff : AppImages.passwordOn,
-          height: 18.h, // Adjust height as needed
-          width: 18.w,  // Adjust width as needed
+          height: 18.h,
+          width: 18.w,
           color: AppColors.primaryLight,
         ),
         onPressed: () {

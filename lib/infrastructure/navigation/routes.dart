@@ -6,6 +6,7 @@ class Routes {
 
   static const CHANGE_PASSWORD = '/change-password';
   static const CONVERSATION_PAGE = '/conversation-page';
+  static const CUSTOM_PRIVACY_POLICY = '/custom-privacy-policy';
   static const CUSTOM_SUCCESS_MASSEGE = '/custom-success-massege';
   static const DETAILS_REPORT = '/details-report';
   static const DETAILS_REPORTS = '/details-reports';
@@ -24,5 +25,5 @@ class Routes {
   static const SITE_DETAILS = '/site-details';
   static const SPLASH_LANGUAGE = '/splash-language';
   static const SPLASH_SCREEN = '/splash-screen';
-  static const CUSTOM_PRIVACY_POLICY = '/custom-privacy-policy';
+  static const CREATE_REPORT = '/create-report';
 }

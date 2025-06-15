@@ -42,7 +42,7 @@ class LogInScreen extends GetView<LogInController> {
       ),
       body: SafeArea(
         child: Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 18),
+          padding:  EdgeInsets.symmetric(horizontal: 24.w),
           child: SingleChildScrollView(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,

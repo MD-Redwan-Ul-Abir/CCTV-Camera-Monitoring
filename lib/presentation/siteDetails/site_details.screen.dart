@@ -54,7 +54,7 @@ class SiteDetailsScreen extends GetView<SiteDetailsController> {
         centerTitle: true,
       ),
       body: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
+        padding:  EdgeInsets.symmetric(horizontal: 24.w, vertical: 10.h),
         child: SingleChildScrollView(
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,

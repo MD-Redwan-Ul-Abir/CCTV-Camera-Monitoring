@@ -109,6 +109,15 @@ class AppTextStyles {
     height: 1.35,
     letterSpacing: 0,
   );
+
+  static TextStyle caption2 = TextStyle(
+    fontSize: 10.sp,
+    fontWeight: FontWeight.w400,
+    fontFamily: GoogleFonts.poppins().fontFamily,
+    color: Color(0xFFFFFFFF),
+    height: 1.35,
+    letterSpacing: 0,
+  );
   // static TextStyle calendarText = TextStyle(
   //   fontSize: 12.sp,
   //   fontWeight: FontWeight.w600,

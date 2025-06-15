@@ -28,6 +28,8 @@ class AppImages {
   static String report = "$baseUrlLogo/report.svg";
 
   static String imageFileIcon = "$baseUrlLogo/imageFile.svg";
+  static String upload = "$baseUrlLogo/upload.svg";
+  static String undo = "$baseUrlLogo/Undo.svg";
   static String swedish = "$baseUrlLogo/swedish.svg";
   static String Danish = "$baseUrlLogo/Danish.svg";
   static String English = "$baseUrlLogo/English.svg";

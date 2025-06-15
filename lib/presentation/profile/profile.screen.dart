@@ -46,7 +46,7 @@ class ProfileScreen extends GetView<ProfileController> {
         ),
       ),
       body: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 20),
+        padding:  EdgeInsets.symmetric(horizontal: 24.w),
         child: SingleChildScrollView(
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
@@ -255,7 +255,7 @@ class ProfileScreen extends GetView<ProfileController> {
                       Spacer(),
                       ProfileSettings(
                         text: 'Delete Account',
-                        leftIcon: AppImages.deleteIcon,
+                        leftIcon: AppImages.undo,
                         onTap: () {
                           // implement it here
                           _showDeleteAccountDialog(context);

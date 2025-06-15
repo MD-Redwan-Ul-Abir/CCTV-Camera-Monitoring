@@ -54,7 +54,7 @@ class CustomPrivacyPolicyScreen extends GetView<CustomPrivacyPolicyController> {
         centerTitle: true,
       ),
       body: Padding(
-        padding: EdgeInsets.symmetric(horizontal: 20.0, vertical: 10),
+        padding: EdgeInsets.symmetric(horizontal: 24.w, vertical: 10.h),
         child: Align(
           alignment: Alignment.topCenter,
           child: SingleChildScrollView(
