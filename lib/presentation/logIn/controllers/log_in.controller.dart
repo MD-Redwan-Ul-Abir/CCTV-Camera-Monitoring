@@ -35,10 +35,6 @@ class LogInController extends GetxController  with GetSingleTickerProviderStateM
 
 
 
-  @override
-  void onReady() {
-    super.onReady();
-  }
 
 
 

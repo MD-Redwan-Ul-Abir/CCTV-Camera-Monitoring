@@ -52,8 +52,13 @@ dependencies:
   get_storage: ^2.1.1
   table_calendar: ^3.2.0
   signature: ^6.0.0
+  carousel_slider: ^5.1.1
+  video_player: ^2.10.0
+  dropdown_button2: ^2.3.9
+  dotted_border: ^3.0.1
 
 
+  path_provider: any
 dev_dependencies:
   flutter_test:
     sdk: flutter
@@ -80,6 +85,7 @@ flutter:
   assets:
     - assets/image/
     - assets/logo/
+    - assets/language/
 
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/to/resolution-aware-images

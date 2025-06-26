@@ -44,7 +44,7 @@ class AppScaffoldWithNav extends StatelessWidget {
         currentIndex: currentIndex,
         onTap: onNavItemTap,
         items: navItems,
-        backgroundColor: navBarColor,
+        //backgroundColor:  AppColors.secondaryDark,
         selectedItemColor: selectedItemColor,
         unselectedItemColor: unselectedItemColor,
         cornerRadius: 16.0,

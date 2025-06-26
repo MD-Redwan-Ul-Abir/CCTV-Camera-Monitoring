@@ -3,13 +3,16 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
 import '../../config.dart';
+import '../../presentation/languageChanging/language_screen.dart';
+import '../../presentation/message/message_screen.screen.dart';
 import '../../presentation/screens.dart';
+import '../../presentation/shared/widgets/imagePicker/imagePickerController.dart';
 import 'bindings/controllers/controllers_bindings.dart';
 import 'routes.dart';
 
 class EnvironmentsBadge extends StatelessWidget {
   final Widget child;
-  EnvironmentsBadge({required this.child});
+  const EnvironmentsBadge({super.key, required this.child});
   @override
   Widget build(BuildContext context) {
     var env = ConfigEnvironments.getEnvironments()['env'];
@@ -34,6 +37,8 @@ class Nav {
     GetPage(
       name: Routes.SPLASH_LANGUAGE,
       page: () => const SplashLanguageScreen(),
+      //page: () => const LanguageScreen(),
+
       binding: SplashLanguageControllerBinding(),
     ),
     GetPage(
@@ -70,6 +75,72 @@ class Nav {
       name: Routes.CUSTOM_SUCCESS_MASSEGE,
       page: () => const CustomSuccessMassegeScreen(),
       binding: CustomSuccessMassegeControllerBinding(),
+    ),
+    GetPage(
+      name: Routes.DETAILS_REPORT,
+      page: () => const DetailsReportScreen(),
+      binding: DetailsReportControllerBinding(),
+    ),
+    GetPage(
+      name: Routes.MAIN_NAVIGATION_SCREEN,
+      page: () => const MainNavigationScreenScreen(),
+      //binding: MainNavigationScreenControllerBinding(),
+      bindings: [
+        MainNavigationScreenControllerBinding(),
+        BindingsBuilder(() {
+          Get.lazyPut<imagePickerController>(() => imagePickerController());
+        }),
+      ],
+    ),
+    GetPage(
+      name: Routes.MESSAGE_SCREEN,
+      page: () => const MessageScreen(),
+      binding: MessageScreenControllerBinding(),
+    ),
+    GetPage(
+      name: Routes.REPORT_SCREEN,
+      page: () => const ReportScreen(),
+      binding: ReportScreenControllerBinding(),
+    ),
+    GetPage(
+      name: Routes.PROFILE,
+      page: () => const ProfileScreen(),
+      binding: ProfileControllerBinding(),
+    ),
+    GetPage(
+      name: Routes.CONVERSATION_PAGE,
+      page: () => const ConversationPageScreen(),
+      binding: ConversationPageControllerBinding(),
+    ),
+    GetPage(
+      name: Routes.SITE_DETAILS,
+      page: () => const SiteDetailsScreen(),
+      binding: SiteDetailsControllerBinding(),
+    ),
+    GetPage(
+      name: Routes.LIVE_VIEW,
+      page: () => const LiveViewScreen(),
+      binding: LiveViewControllerBinding(),
+    ),
+    GetPage(
+      name: Routes.CHANGE_PASSWORD,
+      page: () => const ChangePasswordScreen(),
+      binding: ChangePasswordControllerBinding(),
+    ),
+    GetPage(
+      name: Routes.PRIVACY_SETTINGS,
+      page: () => const PrivacySettingsScreen(),
+      binding: PrivacySettingsControllerBinding(),
+    ),
+    GetPage(
+      name: Routes.CUSTOM_PRIVACY_POLICY,
+      page: () => const CustomPrivacyPolicyScreen(),
+      binding: CustomPrivacyPolicyControllerBinding(),
+    ),
+    GetPage(
+      name: Routes.CREATE_REPORT,
+      page: () => const CreateReportScreen(),
+      binding: CreateReportControllerBinding(),
     ),
   ];
 }

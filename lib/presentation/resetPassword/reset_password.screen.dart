@@ -40,7 +40,7 @@ class ResetPasswordScreen extends GetView<ResetPasswordController> {
         toolbarHeight: 95.h,
       ),
       body: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 20),
+        padding:  EdgeInsets.symmetric(horizontal: 24.w),
         child: Column(
           children: [
             SizedBox(height: 5.h),
@@ -82,7 +82,7 @@ class ResetPasswordScreen extends GetView<ResetPasswordController> {
                 onPressed:
                 controller.isButtonActive.value
                     ? () {
-                  Get.offAllNamed(Routes.CUSTOM_SUCCESS_MASSEGE);
+                  Get.offAllNamed(Routes.CUSTOM_SUCCESS_MASSEGE );
                 }
                     : null,
                 text: "Done",

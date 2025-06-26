@@ -137,7 +137,7 @@ class _CustomDropdownState extends State<CustomDropdown> {
   Widget build(BuildContext context) {
     return CompositedTransformTarget(
       link: _layerLink,
-      child: Container(
+      child: SizedBox(
         width: Get.width,
         child: GestureDetector(
           onTap: _toggleDropdown,

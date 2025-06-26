@@ -1,4 +1,3 @@
-import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/svg.dart';
@@ -43,7 +42,7 @@ class LogInScreen extends GetView<LogInController> {
       ),
       body: SafeArea(
         child: Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 18),
+          padding:  EdgeInsets.symmetric(horizontal: 24.w),
           child: SingleChildScrollView(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
@@ -128,7 +127,7 @@ class LogInScreen extends GetView<LogInController> {
                 PrimaryButton(
                   width: double.infinity,
                   onPressed: () {
-                    Get.toNamed(Routes.HOME);
+                    Get.offAllNamed(Routes.MAIN_NAVIGATION_SCREEN);
                   },
                   text: "Log in",
                   // isActive: true,

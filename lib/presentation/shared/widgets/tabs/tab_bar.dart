@@ -12,7 +12,7 @@ class CustomTabBar extends StatefulWidget {
   final int initialSelectedIndex;
 
   const CustomTabBar({
-    Key? key,
+    super.key,
     required this.items,
     this.selectedColor = Colors.black,
     this.unselectedColor = Colors.white,
@@ -20,7 +20,7 @@ class CustomTabBar extends StatefulWidget {
     this.unselectedTextColor = Colors.grey,
     this.onTabChanged,
     this.initialSelectedIndex = 0,
-  }) : super(key: key);
+  });
 
   @override
   State<CustomTabBar> createState() => _CustomTabBarState();
