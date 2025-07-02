@@ -33,13 +33,13 @@ class ConversationPageScreen extends GetView<ConversationPageController> {
             ),
             SizedBox(width: 6.w),
             Text("SGT Sikring", style: AppTextStyles.headLine6),
-            Spacer(),
-            SvgPicture.asset(
-              AppImages.settingsIcon,
-              height: 16.h,
-              width: 16.w,
-              color: Color(0xFFFFFFFF).withOpacity(0.62),
-            )
+            // Spacer(),
+            // SvgPicture.asset(
+            //   AppImages.settingsIcon,
+            //   height: 16.h,
+            //   width: 16.w,
+            //   color: Color(0xFFFFFFFF).withOpacity(0.62),
+            // )
           ],
         ),
         leading: Padding(

@@ -18,17 +18,17 @@ class LiveViewScreen extends GetView<LiveViewController> {
       {
         'camera': 'camera 01',
         'url':
-            'https://vg-republictvlive.akamaized.net/v1/manifest/611d79b11b77e2f571934fd80ca1413453772ac7/vglive-sk-456368/71dd8ad8-6b5e-4c8a-b708-4832dbcbecc8/1.m3u8?ads.partner=republicweb&sessionId=76fdaed3-abfd-4b64-8317-133644eadf4b',
+        'https://vg-republictvlive.akamaized.net/v1/manifest/611d79b11b77e2f571934fd80ca1413453772ac7/vglive-sk-456368/71dd8ad8-6b5e-4c8a-b708-4832dbcbecc8/1.m3u8?ads.partner=republicweb&sessionId=76fdaed3-abfd-4b64-8317-133644eadf4b',
       },
       {
         'camera': 'camera 02',
         'url':
-            'https://vg-republictvlive.akamaized.net/v1/manifest/611d79b11b77e2f571934fd80ca1413453772ac7/vglive-sk-456368/71dd8ad8-6b5e-4c8a-b708-4832dbcbecc8/1.m3u8?ads.partner=republicweb&sessionId=76fdaed3-abfd-4b64-8317-133644eadf4b',
+        'https://vg-republictvlive.akamaized.net/v1/manifest/611d79b11b77e2f571934fd80ca1413453772ac7/vglive-sk-456368/71dd8ad8-6b5e-4c8a-b708-4832dbcbecc8/1.m3u8?ads.partner=republicweb&sessionId=76fdaed3-abfd-4b64-8317-133644eadf4b',
       },
       {
         'camera': 'camera 03',
         'url':
-            'https://vg-republictvlive.akamaized.net/v1/manifest/611d79b11b77e2f571934fd80ca1413453772ac7/vglive-sk-456368/71dd8ad8-6b5e-4c8a-b708-4832dbcbecc8/1.m3u8?ads.partner=republicweb&sessionId=76fdaed3-abfd-4b64-8317-133644eadf4b',
+        'https://vg-republictvlive.akamaized.net/v1/manifest/611d79b11b77e2f571934fd80ca1413453772ac7/vglive-sk-456368/71dd8ad8-6b5e-4c8a-b708-4832dbcbecc8/1.m3u8?ads.partner=republicweb&sessionId=76fdaed3-abfd-4b64-8317-133644eadf4b',
       },
     ];
 
@@ -93,50 +93,50 @@ class LiveViewScreen extends GetView<LiveViewController> {
                       children: [
                         // Video Player
                         controller.videoPlayerController != null &&
+                            controller
+                                .videoPlayerController!
+                                .value
+                                .isInitialized
+                            ? ClipRRect(
+                          borderRadius: BorderRadius.circular(4.r),
+                          child: SizedBox(
+                            width: double.infinity,
+                            height: double.infinity,
+                            child: FittedBox(
+                              fit: BoxFit.cover,
+                              child: SizedBox(
+                                width:
                                 controller
                                     .videoPlayerController!
                                     .value
-                                    .isInitialized
-                            ? ClipRRect(
-                              borderRadius: BorderRadius.circular(4.r),
-                              child: SizedBox(
-                                width: double.infinity,
-                                height: double.infinity,
-                                child: FittedBox(
-                                  fit: BoxFit.cover,
-                                  child: SizedBox(
-                                    width:
-                                        controller
-                                            .videoPlayerController!
-                                            .value
-                                            .size
-                                            .width,
-                                    height:
-                                        controller
-                                            .videoPlayerController!
-                                            .value
-                                            .size
-                                            .height,
-                                    child: VideoPlayer(
-                                      controller.videoPlayerController!,
-                                    ),
-                                  ),
+                                    .size
+                                    .width,
+                                height:
+                                controller
+                                    .videoPlayerController!
+                                    .value
+                                    .size
+                                    .height,
+                                child: VideoPlayer(
+                                  controller.videoPlayerController!,
                                 ),
                               ),
-                            )
-                            : Center(
-                              child:
-                                  controller.isLoading
-                                      ? CircularProgressIndicator(
-                                        color: AppColors.primaryLight,
-                                      )
-                                      : Text(
-                                        'Loading camera feed...',
-                                        style: AppTextStyles.button.copyWith(
-                                          color: AppColors.primaryLight,
-                                        ),
-                                      ),
                             ),
+                          ),
+                        )
+                            : Center(
+                          child:
+                          controller.isLoading
+                              ? CircularProgressIndicator(
+                            color: AppColors.primaryLight,
+                          )
+                              : Text(
+                            'Loading camera feed...',
+                            style: AppTextStyles.button.copyWith(
+                              color: AppColors.primaryLight,
+                            ),
+                          ),
+                        ),
 
                         // LIVE indicator (top right)
                         if (controller.videoPlayerController != null &&
@@ -273,9 +273,9 @@ class LiveViewScreen extends GetView<LiveViewController> {
                             decoration: BoxDecoration(
                               border: Border.all(
                                 color:
-                                    isSelected
-                                        ? AppColors.primaryDark
-                                        : AppColors.grayDarker,
+                                isSelected
+                                    ? AppColors.primaryDark
+                                    : AppColors.grayDarker,
                                 width: 1.5,
                               ),
                               color: AppColors.secondaryDark,
@@ -286,9 +286,9 @@ class LiveViewScreen extends GetView<LiveViewController> {
                                 CircleAvatar(
                                   radius: 18.r,
                                   backgroundColor:
-                                      isSelected
-                                          ? AppColors.primaryDark
-                                          : AppColors.grayDarker,
+                                  isSelected
+                                      ? AppColors.primaryDark
+                                      : AppColors.grayDarker,
                                   child: Center(
                                     child: SvgPicture.asset(
                                       AppImages.camera2,
@@ -303,9 +303,9 @@ class LiveViewScreen extends GetView<LiveViewController> {
                                   cameraList[index]['camera']!,
                                   style: AppTextStyles.button.copyWith(
                                     color:
-                                        isSelected
-                                            ? AppColors.primaryLight
-                                            : AppColors.secondaryLightActive,
+                                    isSelected
+                                        ? AppColors.primaryLight
+                                        : AppColors.secondaryLightActive,
                                   ),
                                 ),
                               ],

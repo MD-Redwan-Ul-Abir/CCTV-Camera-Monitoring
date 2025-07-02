@@ -80,16 +80,16 @@ class CreateReportScreen extends GetView<CreateReportController> {
               ),
 
               //customDropDown(reportController: reportController),
-              SizedBox(height: 16.h),
-              Obx(
-                    () => CustomDropDown(
-                  hintText: "Select Customer",
-                  errorText: "Please select customer",
-                  selectedValue: reportController.selectedCustomer.value,
-                  items: reportController.customerList,
-                  onChanged: reportController.updateCustomer,
-                ),
-              ),
+              // SizedBox(height: 16.h),
+              // Obx(
+              //       () => CustomDropDown(
+              //     hintText: "Select Customer",
+              //     errorText: "Please select customer",
+              //     selectedValue: reportController.selectedCustomer.value,
+              //     items: reportController.customerList,
+              //     onChanged: reportController.updateCustomer,
+              //   ),
+              // ),
 
               SizedBox(height: 16.h),
               Obx(

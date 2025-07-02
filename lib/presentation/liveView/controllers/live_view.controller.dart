@@ -69,11 +69,7 @@ class LiveViewController extends GetxController {
       update();
 
       // Show error message
-      Get.snackbar(
-        'Error',
-        'Failed to load camera feed',
-        snackPosition: SnackPosition.BOTTOM,
-      );
+
     }
   }
 
