@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/svg.dart';
-import 'package:video_player/video_player.dart';
+import 'package:flutter_vlc_player/flutter_vlc_player.dart';
 import 'package:get/get.dart';
 
 import '../../infrastructure/theme/app_colors.dart';
@@ -14,30 +14,7 @@ class LiveViewScreen extends GetView<LiveViewController> {
 
   @override
   Widget build(BuildContext context) {
-    List<Map<String, String>> cameraList = [
-      {
-        'camera': 'camera 01',
-        'url':
-        'https://vg-republictvlive.akamaized.net/v1/manifest/611d79b11b77e2f571934fd80ca1413453772ac7/vglive-sk-456368/71dd8ad8-6b5e-4c8a-b708-4832dbcbecc8/1.m3u8?ads.partner=republicweb&sessionId=76fdaed3-abfd-4b64-8317-133644eadf4b',
-      },
-      {
-        'camera': 'camera 02',
-        'url':
-        'https://vg-republictvlive.akamaized.net/v1/manifest/611d79b11b77e2f571934fd80ca1413453772ac7/vglive-sk-456368/71dd8ad8-6b5e-4c8a-b708-4832dbcbecc8/1.m3u8?ads.partner=republicweb&sessionId=76fdaed3-abfd-4b64-8317-133644eadf4b',
-      },
-      {
-        'camera': 'camera 03',
-        'url':
-        'https://vg-republictvlive.akamaized.net/v1/manifest/611d79b11b77e2f571934fd80ca1413453772ac7/vglive-sk-456368/71dd8ad8-6b5e-4c8a-b708-4832dbcbecc8/1.m3u8?ads.partner=republicweb&sessionId=76fdaed3-abfd-4b64-8317-133644eadf4b',
-      },
-    ];
-
-    // Auto-select first camera when screen loads
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      if (cameraList.isNotEmpty && controller.selectedCameraIndex == -1) {
-        controller.selectCamera(0, cameraList[0]['url']!);
-      }
-    });
+    final LiveViewController liveViewController = Get.find<LiveViewController>();
 
     return Scaffold(
       appBar: AppBar(
@@ -74,7 +51,7 @@ class LiveViewScreen extends GetView<LiveViewController> {
         centerTitle: true,
       ),
       body: Padding(
-        padding:  EdgeInsets.symmetric(horizontal: 24.w, vertical: 10.h),
+        padding: EdgeInsets.symmetric(horizontal: 24.w, vertical: 10.h),
         child: SingleChildScrollView(
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
@@ -92,58 +69,33 @@ class LiveViewScreen extends GetView<LiveViewController> {
                     child: Stack(
                       children: [
                         // Video Player
-                        controller.videoPlayerController != null &&
-                            controller
-                                .videoPlayerController!
-                                .value
-                                .isInitialized
-                            ? ClipRRect(
+                        ClipRRect(
                           borderRadius: BorderRadius.circular(4.r),
                           child: SizedBox(
                             width: double.infinity,
                             height: double.infinity,
-                            child: FittedBox(
-                              fit: BoxFit.cover,
-                              child: SizedBox(
-                                width:
-                                controller
-                                    .videoPlayerController!
-                                    .value
-                                    .size
-                                    .width,
-                                height:
-                                controller
-                                    .videoPlayerController!
-                                    .value
-                                    .size
-                                    .height,
-                                child: VideoPlayer(
-                                  controller.videoPlayerController!,
+                            child: controller.isInitialized.value && controller.vlcPlayerController != null
+                                ? controller.playVideo()
+                                : Center(
+                              child: controller.isLoading
+                                  ? CircularProgressIndicator(
+                                color: AppColors.primaryLight,
+                              )
+                                  : Text(
+                                controller.selectedCameraIndex == -1
+                                    ? 'Select a camera to view live feed'
+                                    : 'Loading camera feed...',
+                                style: AppTextStyles.button.copyWith(
+                                  color: AppColors.primaryLight,
                                 ),
+                                textAlign: TextAlign.center,
                               ),
-                            ),
-                          ),
-                        )
-                            : Center(
-                          child:
-                          controller.isLoading
-                              ? CircularProgressIndicator(
-                            color: AppColors.primaryLight,
-                          )
-                              : Text(
-                            'Loading camera feed...',
-                            style: AppTextStyles.button.copyWith(
-                              color: AppColors.primaryLight,
                             ),
                           ),
                         ),
 
                         // LIVE indicator (top right)
-                        if (controller.videoPlayerController != null &&
-                            controller
-                                .videoPlayerController!
-                                .value
-                                .isInitialized)
+                        if (controller.isInitialized.value)
                           Positioned(
                             top: 12.h,
                             right: 12.w,
@@ -153,7 +105,7 @@ class LiveViewScreen extends GetView<LiveViewController> {
                                 vertical: 4.h,
                               ),
                               decoration: BoxDecoration(
-                                color: Colors.transparent,
+                                color: Colors.black38,
                                 borderRadius: BorderRadius.circular(4.r),
                               ),
                               child: Row(
@@ -180,11 +132,7 @@ class LiveViewScreen extends GetView<LiveViewController> {
                           ),
 
                         // Current time (bottom right)
-                        if (controller.videoPlayerController != null &&
-                            controller
-                                .videoPlayerController!
-                                .value
-                                .isInitialized)
+                        if (controller.isInitialized.value)
                           Positioned(
                             bottom: 12.h,
                             right: 12.w,
@@ -194,7 +142,7 @@ class LiveViewScreen extends GetView<LiveViewController> {
                                 vertical: 4.h,
                               ),
                               decoration: BoxDecoration(
-                                color: Colors.transparent,
+                                color: Colors.black38,
                                 borderRadius: BorderRadius.circular(4.r),
                               ),
                               child: Text(
@@ -256,26 +204,23 @@ class LiveViewScreen extends GetView<LiveViewController> {
                   return ListView.builder(
                     shrinkWrap: true,
                     physics: NeverScrollableScrollPhysics(),
-                    itemCount: cameraList.length,
+                    itemCount: liveViewController.cameraList.length,
                     itemBuilder: (context, index) {
                       bool isSelected = controller.selectedCameraIndex == index;
                       return Padding(
                         padding: const EdgeInsets.symmetric(vertical: 8.0),
                         child: GestureDetector(
                           onTap: () {
-                            controller.selectCamera(
+                            liveViewController.selectCamera(
                               index,
-                              cameraList[index]['url']!,
+                              liveViewController.cameraList[index]['url']!,
                             );
                           },
                           child: Container(
                             padding: EdgeInsets.all(12.w),
                             decoration: BoxDecoration(
                               border: Border.all(
-                                color:
-                                isSelected
-                                    ? AppColors.primaryDark
-                                    : AppColors.grayDarker,
+                                color: isSelected ? AppColors.primaryDark : AppColors.grayDarker,
                                 width: 1.5,
                               ),
                               color: AppColors.secondaryDark,
@@ -285,10 +230,7 @@ class LiveViewScreen extends GetView<LiveViewController> {
                               children: [
                                 CircleAvatar(
                                   radius: 18.r,
-                                  backgroundColor:
-                                  isSelected
-                                      ? AppColors.primaryDark
-                                      : AppColors.grayDarker,
+                                  backgroundColor: isSelected ? AppColors.primaryDark : AppColors.grayDarker,
                                   child: Center(
                                     child: SvgPicture.asset(
                                       AppImages.camera2,
@@ -300,12 +242,9 @@ class LiveViewScreen extends GetView<LiveViewController> {
                                 ),
                                 SizedBox(width: 12.w),
                                 Text(
-                                  cameraList[index]['camera']!,
+                                  liveViewController.cameraList[index]['camera']!,
                                   style: AppTextStyles.button.copyWith(
-                                    color:
-                                    isSelected
-                                        ? AppColors.primaryLight
-                                        : AppColors.secondaryLightActive,
+                                    color: isSelected ? AppColors.primaryLight : AppColors.secondaryLightActive,
                                   ),
                                 ),
                               ],
