@@ -1,4 +1,3 @@
-
 import 'dart:convert';
 import 'dart:io';
 import 'package:flutter/foundation.dart';
@@ -6,7 +5,7 @@ import 'package:get/get.dart';
 import 'package:http/http.dart' as http;
 import 'package:http_parser/http_parser.dart';
 import 'package:mime_type/mime_type.dart';
-import 'package:skt_sikring/infrastructure/utils/share_pref_helper.dart';
+import 'package:skt_sikring/infrastructure/utils/secure_storage_helper.dart';
 
 import 'api_content.dart';
 
@@ -17,14 +16,16 @@ class ApiClient extends GetxService {
   static const _noInternet = "Can't connect to the internet!";
 
   Future<Response> _makeRequest(
-      String url,
-      String method,
-      Map<String, dynamic>? body, {
-        Map<String, String>? headers,
-        List<MultipartBody>? files,
-      }) async {
+    String url,
+    String method,
+    Map<String, dynamic>? body, {
+    Map<String, String>? headers,
+    List<MultipartBody>? files,
+  }) async {
     try {
-      _bearerToken = await PrefsHelper.getString(ApiConstants.bearerToken);
+      _bearerToken = await SecureStorageHelper.getString(
+        ApiConstants.bearerToken,
+      );
       final mainHeaders = {
         'Content-Type': 'application/x-www-form-urlencoded',
         'Authorization': 'Bearer $_bearerToken',
@@ -56,10 +57,10 @@ class ApiClient extends GetxService {
         case 'PUT':
           response = await _client
               .put(
-            Uri.parse(url),
-            headers: finalHeaders,
-            body: jsonEncode(body),
-          )
+                Uri.parse(url),
+                headers: finalHeaders,
+                body: jsonEncode(body),
+              )
               .timeout(_timeout);
           break;
         case 'PATCH':
@@ -92,11 +93,11 @@ class ApiClient extends GetxService {
   }
 
   Future<http.Response> _postMultipart(
-      String url,
-      Map<String, String>? fields,
-      List<MultipartBody> files,
-      Map<String, String> headers,
-      ) async {
+    String url,
+    Map<String, String>? fields,
+    List<MultipartBody> files,
+    Map<String, String> headers,
+  ) async {
     var request = http.MultipartRequest('POST', Uri.parse(url));
     request.fields.addAll(fields ?? {});
     request.headers.addAll(headers);
@@ -118,11 +119,11 @@ class ApiClient extends GetxService {
   }
 
   Future<http.Response> _patchMultipart(
-      String url,
-      Map<String, String>? fields,
-      List<MultipartBody> files,
-      Map<String, String> headers,
-      ) async {
+    String url,
+    Map<String, String>? fields,
+    List<MultipartBody> files,
+    Map<String, String> headers,
+  ) async {
     var request = http.MultipartRequest('PATCH', Uri.parse(url));
     request.fields.addAll(fields ?? {});
     request.headers.addAll(headers);
@@ -166,11 +167,11 @@ class ApiClient extends GetxService {
 
   // POST
   Future<Response> postData(
-      String uri,
-      dynamic body, {
-        Map<String, String>? headers,
-        List<MultipartBody>? files,
-      }) => _makeRequest(
+    String uri,
+    dynamic body, {
+    Map<String, String>? headers,
+    List<MultipartBody>? files,
+  }) => _makeRequest(
     ApiConstants.baseUrl + uri,
     'POST',
     body,
@@ -180,11 +181,11 @@ class ApiClient extends GetxService {
 
   // PUT
   Future<Response> putData(
-      String uri,
-      dynamic body, {
-        Map<String, String>? headers,
-        List<MultipartBody>? files,
-      }) => _makeRequest(
+    String uri,
+    dynamic body, {
+    Map<String, String>? headers,
+    List<MultipartBody>? files,
+  }) => _makeRequest(
     ApiConstants.baseUrl + uri,
     'PUT',
     body,
@@ -194,11 +195,11 @@ class ApiClient extends GetxService {
 
   //PATCH
   Future<Response> patchData(
-      String uri,
-      dynamic body, {
-        Map<String, String>? headers,
-        List<MultipartBody>? files,
-      }) => _makeRequest(
+    String uri,
+    dynamic body, {
+    Map<String, String>? headers,
+    List<MultipartBody>? files,
+  }) => _makeRequest(
     ApiConstants.baseUrl + uri,
     'PATCH',
     body,
@@ -208,10 +209,10 @@ class ApiClient extends GetxService {
 
   // DELETE
   Future<Response> deleteData(
-      String uri, {
-        Map<String, String>? headers,
-        dynamic body,
-      }) => _makeRequest(
+    String uri, {
+    Map<String, String>? headers,
+    dynamic body,
+  }) => _makeRequest(
     ApiConstants.baseUrl + uri,
     'DELETE',
     body,
