@@ -25,26 +25,46 @@ class ReportScreen extends GetView<ReportScreenController> {
     // Restructured data to support multiple categories
     List<Map<String, dynamic>> categorizedData = [
       {
-        'categoryTitle': 'Alarm report',
+        'categoryTitle': 'Ap',
         'sites': [
           {'name': 'Site A, Bashundhara', 'date': '23 - 30 May'},
           {'name': 'Site C, Mirpur', 'date': '15 - 22 June'},
           {'name': 'Site D, Gulshan', 'date': '01 - 08 July'},
-        ]
+        ],
       },
       {
-        'categoryTitle': 'Irregularity reports',
+        'categoryTitle': 'Patrol',
         'sites': [
           {'name': 'Site B, Dhanmondi', 'date': '10 - 17 April'},
           {'name': 'Site E, Uttara', 'date': '25 May - 01 June'},
-        ]
+        ],
       },
       {
-        'categoryTitle': 'Service Reports',
+        'categoryTitle': 'Service',
         'sites': [
           {'name': 'Site G, Banani', 'date': '15 - 22 August'},
           {'name': 'Site H, Motijheel', 'date': '01 - 08 September'},
-        ]
+          {'name': 'Site H, Motijheel', 'date': '01 - 08 September'},
+          {'name': 'Site H, Motijheel', 'date': '01 - 08 September'},
+          {'name': 'Site H, Motijheel', 'date': '01 - 08 September'},
+          {'name': 'Site G, Banani', 'date': '15 - 22 August'},
+          {'name': 'Site H, Motijheel', 'date': '01 - 08 September'},
+          {'name': 'Site G, Banani', 'date': '15 - 22 August'},
+          {'name': 'Site H, Motijheel', 'date': '01 - 08 September'},
+          {'name': 'Site G, Banani', 'date': '15 - 22 August'},
+          {'name': 'Site H, Motijheel', 'date': '01 - 08 September'},
+          {'name': 'Site G, Banani', 'date': '15 - 22 August'},
+          {'name': 'Site H, Motijheel', 'date': '01 - 08 September'},
+          {'name': 'Site G, Banani', 'date': '15 - 22 August'},
+          {'name': 'Site H, Motijheel', 'date': '01 - 08 September'},
+        ],
+      },
+      {
+        'categoryTitle': 'Emergency Call',
+        'sites': [
+          {'name': 'Site G, Banani', 'date': '15 - 22 August'},
+          {'name': 'Site H, Motijheel', 'date': '01 - 08 September'},
+        ],
       },
     ];
 
@@ -57,7 +77,7 @@ class ReportScreen extends GetView<ReportScreenController> {
           scrolledUnderElevation: 0,
           automaticallyImplyLeading: false,
           title: Text(
-            "Profile & Settings",
+            "Reports",
             style: AppTextStyles.headLine6.copyWith(
               fontWeight: FontWeight.w400,
               height: 1.5,
@@ -68,102 +88,27 @@ class ReportScreen extends GetView<ReportScreenController> {
         ),
       ),
       body: Padding(
-        padding:  EdgeInsets.symmetric(horizontal: 24.w, vertical: 10.h),
+        padding: EdgeInsets.symmetric(horizontal: 24.w, vertical: 10.h),
         child: SingleChildScrollView(
           child: Column(
             children: [
-              // Outer ListView.builder for categories
-              ListView.builder(
-                shrinkWrap: true,
-                physics: NeverScrollableScrollPhysics(),
-                itemCount: categorizedData.length,
-                itemBuilder: (context, categoryIndex) {
-                  final category = categorizedData[categoryIndex];
-                  final sites = category['sites'] as List<Map<String, String>>;
+              // Filter buttons section
+              Obx(() => _buildFilterButtons(categorizedData)),
 
-                  return Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      // Category title
-                      Align(
-                        alignment: Alignment.topLeft,
-                        child: Text(
-                          category['categoryTitle'],
-                          style: AppTextStyles.headLine6.copyWith(height: 1.5),
-                        ),
-                      ),
+              SizedBox(height: 16.h),
 
-                      SizedBox(height: 8.h),
-
-                      // Inner ListView.builder for sites in this category
-                      ListView.builder(
-                        shrinkWrap: true,
-                        physics: NeverScrollableScrollPhysics(),
-                        itemCount: sites.length,
-                        itemBuilder: (context, siteIndex) {
-                          final color = cardColors[siteIndex % cardColors.length];
-                          return GestureDetector(
-                            onTap: () {
-                              Get.toNamed(Routes.DETAILS_REPORT);
-                            },
-                            child: Padding(
-                              padding: const EdgeInsets.symmetric(vertical: 4),
-                              child: Card(
-                                color: color,
-                                shape: RoundedRectangleBorder(
-                                  borderRadius: BorderRadius.circular(4.r),
-                                ),
-                                child: ListTile(
-                                  contentPadding: EdgeInsets.symmetric(
-                                    horizontal: 6.w,
-                                  ),
-                                  title: Padding(
-                                    padding: const EdgeInsets.symmetric(
-                                      vertical: 4.0,
-                                      horizontal: 8,
-                                    ),
-                                    child: Text(
-                                      sites[siteIndex]['name']!,
-                                      style: AppTextStyles.button.copyWith(
-                                        color: AppColors.secondaryDarker,
-                                      ),
-                                    ),
-                                  ),
-                                  subtitle: Padding(
-                                    padding: const EdgeInsets.symmetric(
-                                      vertical: 4.0,
-                                      horizontal: 8,
-                                    ),
-                                    child: Text(
-                                      sites[siteIndex]['date']!,
-                                      style: AppTextStyles.caption1.copyWith(
-                                        color: AppColors.secondaryDark,
-                                      ),
-                                    ),
-                                  ),
-                                  trailing: SizedBox(
-                                    height: 32.h,
-                                    width: 32.w,
-                                    child: SvgPicture.asset(
-                                      AppImages.forwardIcon,
-                                      color: AppColors.primaryDark,
-                                      fit: BoxFit.contain,
-                                    ),
-                                  ),
-                                ),
-                              ),
-                            ),
-                          );
-                        },
-                      ),
-
-                      // Add spacing between categories
-                      SizedBox(height: 20.h),
-                    ],
-                  );
-                },
+              // Reports list section
+              Obx(
+                () =>
+                    _buildReportsList(categorizedData, cardColors, controller),
               ),
 
+              SizedBox(height: 20.h),
+
+              // Pagination section
+              Obx(() => _buildPagination()),
+
+              SizedBox(height: 20.h),
 
               PrimaryButton(
                 width: double.infinity,
@@ -177,6 +122,252 @@ class ReportScreen extends GetView<ReportScreenController> {
           ),
         ),
       ),
+    );
+  }
+
+  Widget _buildFilterButtons(List<Map<String, dynamic>> categorizedData) {
+    List<String> categories =
+        categorizedData.map((e) => e['categoryTitle'] as String).toList();
+
+    return Wrap(
+      spacing: 18.w,
+      runSpacing: 12.h,
+      children:
+          categories.map((category) {
+            bool isSelected = controller.selectedCategory.value == category;
+            return GestureDetector(
+              onTap: () {
+                controller.setSelectedCategory(category);
+              },
+              child: Container(
+                padding: EdgeInsets.symmetric(horizontal: 26.w, vertical: 8.h),
+                decoration: BoxDecoration(
+                  color:
+                      isSelected
+                          ? AppColors.primaryNormal
+                          : AppColors.primaryLight.withOpacity(0.3),
+                  borderRadius: BorderRadius.circular(20.r),
+                ),
+                child: Text(
+                  category,
+                  style: AppTextStyles.button.copyWith(
+                    color:
+                        isSelected
+                            ? AppColors.primaryLight
+                            : AppColors.primaryLight,
+                    fontWeight: isSelected ? FontWeight.w600 : FontWeight.w400,
+                  ),
+                ),
+              ),
+            );
+          }).toList(),
+    );
+  }
+
+  Widget _buildReportsList(
+    List<Map<String, dynamic>> categorizedData,
+    List<Color> cardColors,
+    ReportScreenController controller,
+  ) {
+    // Filter data based on selected category
+    List<Map<String, String>> filteredSites = [];
+
+    if (controller.selectedCategory.value.isNotEmpty) {
+      var selectedCategoryData = categorizedData.firstWhere(
+        (category) =>
+            category['categoryTitle'] == controller.selectedCategory.value,
+        orElse: () => {'sites': []},
+      );
+      filteredSites = List<Map<String, String>>.from(
+        selectedCategoryData['sites'] ?? [],
+      );
+    }
+
+    // Apply pagination
+    int itemsPerPage = 5;
+    int totalPagesCalculated = (filteredSites.length / itemsPerPage).ceil();
+
+    // Update total pages if different
+    if (controller.totalPages.value != totalPagesCalculated) {
+      Future.microtask(() => controller.updateTotalPages(totalPagesCalculated));
+    }
+
+    int startIndex = (controller.currentPage.value - 1) * itemsPerPage;
+    int endIndex = (startIndex + itemsPerPage).clamp(0, filteredSites.length);
+    List<Map<String, String>> paginatedSites = filteredSites.sublist(
+      startIndex,
+      endIndex,
+    );
+
+    if (paginatedSites.isEmpty) {
+      return Container(
+        height: 200.h,
+        child: Center(
+          child: Text(
+            'No reports found',
+            style: AppTextStyles.headLine6.copyWith(
+              color: AppColors.primaryLight.withOpacity(0.7),
+            ),
+          ),
+        ),
+      );
+    }
+
+    return ListView.builder(
+      shrinkWrap: true,
+      physics: NeverScrollableScrollPhysics(),
+      itemCount: paginatedSites.length,
+      itemBuilder: (context, index) {
+        final site = paginatedSites[index];
+        final color = cardColors[index % cardColors.length];
+
+        return GestureDetector(
+          onTap: () {
+            Get.toNamed(Routes.DETAILS_REPORT);
+          },
+          child: Padding(
+            padding: EdgeInsets.symmetric(vertical: 4.h),
+            child: Card(
+              color: color,
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(4.r),
+              ),
+              child: ListTile(
+                contentPadding: EdgeInsets.symmetric(horizontal: 6.w),
+                title: Padding(
+                  padding: EdgeInsets.symmetric(vertical: 4.h, horizontal: 8.w),
+                  child: Text(
+                    site['name']!,
+                    style: AppTextStyles.button.copyWith(
+                      color: AppColors.secondaryDarker,
+                    ),
+                  ),
+                ),
+                subtitle: Padding(
+                  padding: EdgeInsets.symmetric(vertical: 4.h, horizontal: 8.w),
+                  child: Text(
+                    site['date']!,
+                    style: AppTextStyles.caption1.copyWith(
+                      color: AppColors.secondaryDark,
+                    ),
+                  ),
+                ),
+                trailing: SizedBox(
+                  height: 32.h,
+                  width: 32.w,
+                  child: SvgPicture.asset(
+                    AppImages.forwardIcon,
+                    color: AppColors.primaryDark,
+                    fit: BoxFit.contain,
+                  ),
+                ),
+              ),
+            ),
+          ),
+        );
+      },
+    );
+  }
+
+  Widget _buildPagination() {
+    if (controller.totalPages.value <= 1) return SizedBox.shrink();
+
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.center,
+      children: [
+        // Previous button
+        GestureDetector(
+          onTap:
+              controller.currentPage.value > 1
+                  ? () => controller.goToPreviousPage()
+                  : null,
+          child: Container(
+            width: 32.w,
+            height: 32.h,
+            decoration: BoxDecoration(
+              color:
+                  controller.currentPage.value > 1
+                      ? AppColors.primaryLight.withOpacity(0.3)
+                      : AppColors.primaryLight.withOpacity(0.1),
+              borderRadius: BorderRadius.circular(16.r),
+            ),
+            child: Icon(
+              Icons.chevron_left,
+              color:
+                  controller.currentPage.value > 1
+                      ? AppColors.primaryLight
+                      : AppColors.primaryLight.withOpacity(0.5),
+              size: 20.sp,
+            ),
+          ),
+        ),
+
+        SizedBox(width: 16.w),
+
+        // Page numbers
+        ...List.generate(controller.totalPages.value, (index) {
+          int pageNumber = index + 1;
+          bool isCurrentPage = pageNumber == controller.currentPage.value;
+
+          return GestureDetector(
+            onTap: () => controller.goToPage(pageNumber),
+            child: Container(
+              margin: EdgeInsets.symmetric(horizontal: 4.w),
+              width: 32.w,
+              height: 32.h,
+              decoration: BoxDecoration(
+                color:
+                    isCurrentPage
+                        ? AppColors.primaryNormal
+                        :Colors.transparent,
+                borderRadius: BorderRadius.circular(16.r),
+              ),
+              child: Center(
+                child: Text(
+                  pageNumber.toString(),
+                  style: AppTextStyles.button.copyWith(
+                    color:
+                        isCurrentPage
+                            ? AppColors.primaryLight
+                            : Color(0xFFFFFFFF).withOpacity(0.6),
+                    fontWeight:
+                        isCurrentPage ? FontWeight.w600 : FontWeight.w400,
+                  ),
+                ),
+              ),
+            ),
+          );
+        }),
+
+        SizedBox(width: 16.w),
+
+        // Next button
+        GestureDetector(
+          onTap:
+              controller.currentPage.value < controller.totalPages.value
+                  ? () => controller.goToNextPage()
+                  : null,
+          child: Container(
+            width: 32.w,
+            height: 32.h,
+            decoration: BoxDecoration(
+              color:
+                  controller.currentPage.value < controller.totalPages.value
+                      ? AppColors.primaryLight.withOpacity(0.3)
+                      : AppColors.primaryLight.withOpacity(0.1),
+              borderRadius: BorderRadius.circular(16.r),
+            ),
+            child: Icon(
+              Icons.chevron_right,
+              color:
+                  controller.currentPage.value < controller.totalPages.value
+                      ? AppColors.primaryLight
+                      : AppColors.primaryLight.withOpacity(0.5),
+              size: 20.sp,
+            ),
+          ),
+        ),
+      ],
     );
   }
 }
