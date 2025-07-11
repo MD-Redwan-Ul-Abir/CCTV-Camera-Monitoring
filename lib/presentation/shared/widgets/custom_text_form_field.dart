@@ -150,14 +150,32 @@ class _CustomTextFormFieldState extends State<CustomTextFormField> {
         if (customError != null) return customError;
 
         if (widget.keyboardType == 'email') {
-          const emailRegex =
-          r"""^[a-zA-Z0-9.a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9]+\.[a-zA-Z]+""";
-          if (value == null || value.isEmpty) {
+          const emailRegex = r'^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$';
+          final allowedDomains = [
+            'gmail.com',
+            'yahoo.com',
+            'outlook.com',
+            'icloud.com',
+            'hotmail.com',
+            'live.com',
+            'protonmail.com'
+          ];
+
+          if (value == null || value.trim().isEmpty) {
             return 'Email is required';
-          } else if (!RegExp(emailRegex).hasMatch(value)) {
+          } else if (!RegExp(emailRegex).hasMatch(value.trim())) {
             return 'Enter a valid email address';
+          } else {
+            final domain = value.trim().split('@').last.toLowerCase();
+            if (!allowedDomains.contains(domain)) {
+              return 'Please use a valid email provider (e.g. gmail.com)';
+            }
           }
+
+          return null;
         }
+
+
 
         return null;
       },

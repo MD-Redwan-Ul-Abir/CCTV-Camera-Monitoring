@@ -1,6 +1,6 @@
 import 'package:get/get.dart';
 
-import '../../../../presentation/signUpPage/controllers/sign_up_page.controller.dart';
+import '../../../../presentation/auth/signUpPage/controllers/sign_up_page.controller.dart';
 
 class SignUpPageControllerBinding extends Bindings {
   @override

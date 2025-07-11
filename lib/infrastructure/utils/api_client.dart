@@ -167,18 +167,17 @@ class ApiClient extends GetxService {
 
   // POST
   Future<Response> postData(
-    String uri,
-    dynamic body, {
-    Map<String, String>? headers,
-    List<MultipartBody>? files,
-  }) => _makeRequest(
-    ApiConstants.baseUrl + uri,
+      String uri,
+      dynamic body, {
+        Map<String, String>? headers,
+        List<MultipartBody>? files,
+      }) => _makeRequest(
+    '${ApiConstants.baseUrl}/$uri',  // Use string interpolation with explicit separator
     'POST',
     body,
     headers: headers,
     files: files,
   );
-
   // PUT
   Future<Response> putData(
     String uri,

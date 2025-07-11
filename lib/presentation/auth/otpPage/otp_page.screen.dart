@@ -7,11 +7,11 @@ import 'package:flutter_svg/svg.dart';
 import 'package:get/get.dart';
 import 'package:pin_code_fields/pin_code_fields.dart';
 
-import '../../infrastructure/navigation/routes.dart';
-import '../../infrastructure/theme/app_colors.dart';
-import '../../infrastructure/theme/text_styles.dart';
-import '../../infrastructure/utils/app_images.dart';
-import '../shared/widgets/buttons/primary_buttons.dart';
+import '../../../infrastructure/navigation/routes.dart';
+import '../../../infrastructure/theme/app_colors.dart';
+import '../../../infrastructure/theme/text_styles.dart';
+import '../../../infrastructure/utils/app_images.dart';
+import '../../shared/widgets/buttons/primary_buttons.dart';
 import 'controllers/otp_page.controller.dart';
 
 class OtpPageScreen extends GetView<OtpPageController> {

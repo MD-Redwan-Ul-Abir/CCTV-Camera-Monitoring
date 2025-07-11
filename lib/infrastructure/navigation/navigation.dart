@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
 import '../../config.dart';
+import '../../presentation/auth/customSuccessMassege/custom_success_massege.screen.dart';
 import '../../presentation/languageChanging/language_screen.dart';
 import '../../presentation/message/message_screen.screen.dart';
 import '../../presentation/screens.dart';

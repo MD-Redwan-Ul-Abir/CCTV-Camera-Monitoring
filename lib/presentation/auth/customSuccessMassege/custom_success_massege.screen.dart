@@ -4,10 +4,11 @@ import 'package:flutter_svg/svg.dart';
 
 import 'package:get/get.dart';
 
-import '../../infrastructure/navigation/routes.dart';
-import '../../infrastructure/theme/text_styles.dart';
-import '../../infrastructure/utils/app_images.dart';
-import '../shared/widgets/buttons/primary_buttons.dart';
+
+import '../../../infrastructure/navigation/routes.dart';
+import '../../../infrastructure/theme/text_styles.dart';
+import '../../../infrastructure/utils/app_images.dart';
+import '../../shared/widgets/buttons/primary_buttons.dart';
 import 'controllers/custom_success_massege.controller.dart';
 
 class CustomSuccessMassegeScreen

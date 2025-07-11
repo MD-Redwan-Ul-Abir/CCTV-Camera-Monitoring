@@ -4,12 +4,12 @@ import 'package:flutter_svg/svg.dart';
 
 import 'package:get/get.dart';
 
-import '../../infrastructure/navigation/routes.dart';
-import '../../infrastructure/theme/app_colors.dart';
-import '../../infrastructure/theme/text_styles.dart';
-import '../../infrastructure/utils/app_images.dart';
-import '../shared/widgets/buttons/primary_buttons.dart';
-import '../shared/widgets/custom_text_form_field.dart';
+import '../../../infrastructure/navigation/routes.dart';
+import '../../../infrastructure/theme/app_colors.dart';
+import '../../../infrastructure/theme/text_styles.dart';
+import '../../../infrastructure/utils/app_images.dart';
+import '../../shared/widgets/buttons/primary_buttons.dart';
+import '../../shared/widgets/custom_text_form_field.dart';
 import 'controllers/forget_password.controller.dart';
 
 class ForgetPasswordScreen extends GetView<ForgetPasswordController> {
