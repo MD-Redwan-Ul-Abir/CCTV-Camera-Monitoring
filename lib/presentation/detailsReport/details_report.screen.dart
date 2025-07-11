@@ -21,7 +21,7 @@ class DetailsReportScreen extends GetView<DetailsReportController> {
         elevation: 0,
         scrolledUnderElevation: 0,
         automaticallyImplyLeading: false,
-        toolbarHeight: 80.h,
+        toolbarHeight: 70.h,
         title: Text(
           "Details reports",
           style: AppTextStyles.headLine6.copyWith(

@@ -31,7 +31,7 @@ class CreateReportScreen extends GetView<CreateReportController> {
         elevation: 0,
         scrolledUnderElevation: 0,
         automaticallyImplyLeading: false,
-        toolbarHeight: 80.h,
+        toolbarHeight: 70.h,
         title: Text(
           "Create reports",
           style: AppTextStyles.headLine6.copyWith(

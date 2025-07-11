@@ -27,7 +27,7 @@ class ProfileScreen extends GetView<ProfileController> {
 
     return Scaffold(
       appBar: PreferredSize(
-        preferredSize: Size.fromHeight(70.h),
+        preferredSize: Size.fromHeight(45.h),
         // Set the height as per your requirement
         child: AppBar(
           backgroundColor: AppColors.secondaryDark,

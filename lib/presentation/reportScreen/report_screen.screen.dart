@@ -50,7 +50,7 @@ class ReportScreen extends GetView<ReportScreenController> {
 
     return Scaffold(
       appBar: PreferredSize(
-        preferredSize: Size.fromHeight(70.h),
+        preferredSize: Size.fromHeight(45.h),
         child: AppBar(
           backgroundColor: AppColors.secondaryDark,
           elevation: 0,
