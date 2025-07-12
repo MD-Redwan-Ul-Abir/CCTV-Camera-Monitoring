@@ -45,7 +45,7 @@ class CustomSuccessMassegeScreen
             PrimaryButton(
               width: double.infinity,
               onPressed: () {
-                Get.offAllNamed(Routes.HOME);
+                Get.offAllNamed(Routes.LOG_IN);
               },
               text: "Done",
             ),

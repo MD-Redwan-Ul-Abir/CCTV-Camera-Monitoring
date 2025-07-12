@@ -67,11 +67,7 @@ class Nav {
       page: () => const ResetPasswordScreen(),
       binding: ResetPasswordControllerBinding(),
     ),
-    GetPage(
-      name: Routes.SIGN_UP_PAGE,
-      page: () => const SignUpPageScreen(),
-      binding: SignUpPageControllerBinding(),
-    ),
+
     GetPage(
       name: Routes.CUSTOM_SUCCESS_MASSEGE,
       page: () => const CustomSuccessMassegeScreen(),

@@ -14,10 +14,12 @@ import 'controllers/reset_password.controller.dart';
 
 class ResetPasswordScreen extends GetView<ResetPasswordController> {
   const ResetPasswordScreen({super.key});
+
   @override
   Widget build(BuildContext context) {
+    final ResetPasswordController resetPasswordController = Get.find<ResetPasswordController>();
     return Scaffold(
-      appBar:AppBar(
+      appBar: AppBar(
         backgroundColor: AppColors.secondaryDark,
         leading: Padding(
           padding: const EdgeInsets.only(top: 12),
@@ -40,13 +42,18 @@ class ResetPasswordScreen extends GetView<ResetPasswordController> {
         toolbarHeight: 95.h,
       ),
       body: Padding(
-        padding:  EdgeInsets.symmetric(horizontal: 24.w),
+        padding: EdgeInsets.symmetric(horizontal: 24.w),
         child: Column(
           children: [
             SizedBox(height: 5.h),
             Align(
               alignment: Alignment.topLeft,
-              child: Text("Reset password", style: AppTextStyles.headLine6.copyWith(color: Color(0xFFFFFFFF))),
+              child: Text(
+                "Reset password",
+                style: AppTextStyles.headLine6.copyWith(
+                  color: Color(0xFFFFFFFF),
+                ),
+              ),
             ),
             SizedBox(height: 12.h),
             Align(
@@ -59,8 +66,8 @@ class ResetPasswordScreen extends GetView<ResetPasswordController> {
             SizedBox(height: 30.h),
             CustomTextFormField(
               hintText: "Enter New password",
-              controller: controller.newPasswordController,
-              onChanged: (_) => controller.validatePasswords(),
+              controller: resetPasswordController.newPasswordController,
+              onChanged: (_) => resetPasswordController.validatePasswords(),
 
               keyboardType: 'visiblePassword',
               prefixSvg: AppImages.password,
@@ -68,26 +75,43 @@ class ResetPasswordScreen extends GetView<ResetPasswordController> {
             SizedBox(height: 11.h),
             CustomTextFormField(
               hintText: "Confirm New password",
-              controller: controller.confirmPasswordController,
-              onChanged: (_) => controller.validatePasswords(),
+              controller: resetPasswordController.confirmPasswordController,
+              onChanged: (_) => resetPasswordController.validatePasswords(),
 
               keyboardType: 'visiblePassword',
               prefixSvg: AppImages.password,
             ),
             SizedBox(height: 30.h),
-            Obx(
-                  () => PrimaryButton(
-                isActive: controller.isButtonActive.value,
+            //button 1
+            Obx(() {
+              if (resetPasswordController.isLoading.value) {
+                return Center(
+                  child: CircularProgressIndicator(
+                    color: AppColors.primaryLight,
+                  ),
+                );
+              }
+              return PrimaryButton(
+                isActive: resetPasswordController.isButtonActive.value,
                 width: double.infinity,
-                onPressed:
-                controller.isButtonActive.value
-                    ? () {
-                  Get.offAllNamed(Routes.CUSTOM_SUCCESS_MASSEGE );
+                onPressed: resetPasswordController.isButtonActive.value
+                    ? () async {
+                  // Set loading to true
+                 // controller.isLoading.value = true;
+
+                  // Add any async operations here if needed
+                 // await Future.delayed(Duration(milliseconds: 500)); // Optional delay
+
+                  // Navigate
+                 // await Get.offAllNamed(Routes.CUSTOM_SUCCESS_MASSEGE);
+resetPasswordController.resetPassword();
+                  // Reset loading state
+                  // controller.isLoading.value = false;
                 }
                     : null,
                 text: "Done",
-              ),
-            ),
+              );
+            }),
           ],
         ),
       ),

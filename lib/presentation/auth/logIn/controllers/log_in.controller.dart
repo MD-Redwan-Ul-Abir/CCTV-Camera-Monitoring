@@ -104,9 +104,9 @@ class LogInController extends GetxController with GetSingleTickerProviderStateMi
 
         // Store all user data in secure storage
         await addDataInSecureStorage();
-
-        var storedData = await getStoredUserData();
         await Get.offAllNamed(Routes.MAIN_NAVIGATION_SCREEN);
+
+
         return true;
       } else {
         try {
