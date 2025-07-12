@@ -10,15 +10,13 @@ import '../../../../infrastructure/utils/secure_storage_helper.dart';
 import '../model/logInModel.dart';
 
 class LogInController extends GetxController with GetSingleTickerProviderStateMixin {
-
-
   final ApiClient _apiClient = Get.put(ApiClient());
   Rxn<LogInModel> loginResponse = Rxn<LogInModel>();
 
-
-  late TabController tabController;
+  // Make tabController nullable initially
+  TabController? tabController;
   final tabIndex = 0.obs;
-  final role = 'user'.obs; // Initialize with default value
+  final role = 'user'.obs;
 
   // Form controllers
   final emailController = TextEditingController();
@@ -36,28 +34,45 @@ class LogInController extends GetxController with GetSingleTickerProviderStateMi
   @override
   void onInit() {
     super.onInit();
-    tabController = TabController(length: 2, vsync: this);
-    tabController.addListener(() {
-      if (!tabController.indexIsChanging) {
-        tabIndex.value = tabController.index;
-        role.value = tabIndex.value == 0 ? 'user' : 'customer';
-        print(role.value);
-      }
-    });
+
+    // Initialize TabController and add null check
+    try {
+      tabController = TabController(length: 2, vsync: this);
+      tabController?.addListener(() {
+        if (tabController != null && !tabController!.indexIsChanging) {
+          tabIndex.value = tabController!.index;
+          role.value = tabIndex.value == 0 ? 'user' : 'customer';
+          print(role.value);
+        }
+      });
+    } catch (e) {
+      print('Error initializing TabController: $e');
+    }
   }
+
   void changeTab(int index) {
     tabIndex.value = index;
-    tabController.animateTo(index);
+    tabController?.animateTo(index);
   }
 
   @override
   void onClose() {
-    tabController.dispose();
+    tabController?.dispose();
     emailController.dispose();
     passwordController.dispose();
     super.onClose();
   }
-// Updated login() method - replace the existing one
+
+  // Reset controller state when navigating back
+  @override
+  void onReady() {
+    super.onReady();
+    // Clear form fields when screen is ready
+    emailController.clear();
+    passwordController.clear();
+    isLoading.value = false;
+  }
+
   Future<bool> login() async {
     isLoading.value = true;
     update();
@@ -72,28 +87,33 @@ class LogInController extends GetxController with GetSingleTickerProviderStateMi
 
       if (response.statusCode == 200 || response.statusCode == 201) {
         loginResponse.value = LogInModel.fromJson(response.body);
-        message = loginResponse.value!.message;
-        Get.snackbar("Log In Successful!", message!,backgroundColor: AppColors.primaryNormal,colorText: AppColors.primaryLighthover);
-
-        // Store all user data in secure storage
-        await addDataInSecureStorage();
-
+        message = loginResponse.value?.message;
         // print("-----------------------------storing data started-------------------------------------");
-         var storedData = await getStoredUserData();
+        // var storedData = await getStoredUserData();
         // print("------------------------------storing complete and viewed------------------------------------");
         // storedData.forEach((key, value) {
         //   print("$key: $value");
         // });
+
+        Get.snackbar(
+            "Log In Successful!",
+            message ?? "Welcome back!",
+            backgroundColor: AppColors.primaryNormal,
+            colorText: AppColors.primaryLighthover
+        );
+
+        // Store all user data in secure storage
+        await addDataInSecureStorage();
+
+        var storedData = await getStoredUserData();
         await Get.offAllNamed(Routes.MAIN_NAVIGATION_SCREEN);
-        return true; // Success
+        return true;
       } else {
         try {
           final errorResponse = LogInModel.fromRawJson(response.body);
           Get.snackbar("Log In Failed!", errorResponse.message ?? "Unknown error");
         } catch (e) {
           Get.snackbar("Log In Failed!", "Failed with status code: ${response.statusCode}");
-          isLoading.value = false;
-          update();
         }
         return false;
       }
@@ -102,10 +122,10 @@ class LogInController extends GetxController with GetSingleTickerProviderStateMi
       return false;
     } finally {
       isLoading.value = false;
+      update();
     }
   }
 
-// Complete addDataInSecureStorage method
   Future<void> addDataInSecureStorage() async {
     if (loginResponse.value?.data?.attributes?.userWithoutPassword == null) {
       print("No user data available to store");
@@ -219,7 +239,6 @@ class LogInController extends GetxController with GetSingleTickerProviderStateMi
     }
   }
 
-// Helper method to retrieve stored user data (optional utility method)
   Future<Map<String, dynamic>> getStoredUserData() async {
     try {
       return {
@@ -255,7 +274,6 @@ class LogInController extends GetxController with GetSingleTickerProviderStateMi
     }
   }
 
-// Helper method to clear all stored user data (for logout)
   Future<void> clearStoredUserData() async {
     try {
       final keysToDelete = [
@@ -275,5 +293,4 @@ class LogInController extends GetxController with GetSingleTickerProviderStateMi
       print("Error clearing stored user data: $e");
     }
   }
-
 }

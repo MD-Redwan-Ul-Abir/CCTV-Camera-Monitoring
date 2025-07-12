@@ -1,13 +1,13 @@
 class ApiConstants {
   ///----------------sucure storage constent--------------------
 
-  static const String signInToken = 'sign-in-token';
-  static const String signUpToken = 'sign-up-token';
-  static const String forgetPassToken = 'forget-pass-token';
-  static const String userId = 'user-id';
-  static const String userName = 'user-name';
-  static const String userEmail = 'user-email';
-  static const String userImage = 'user-image';
+  // static const String signInToken = 'sign-in-token';
+  // static const String signUpToken = 'sign-up-token';
+  // static const String forgetPassToken = 'forget-pass-token';
+  // static const String userId = 'user-id';
+  // static const String userName = 'user-name';
+  // static const String userEmail = 'user-email';
+  // static const String userImage = 'user-image';
 
   static const token = 'token';
   static const company = 'company';

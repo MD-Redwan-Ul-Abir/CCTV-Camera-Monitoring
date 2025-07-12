@@ -1,7 +1,10 @@
 import 'package:get/get.dart';
 
 class OtpPageController extends GetxController {
-  //TODO: Implement OtpPageController
+
+  var otpToken;
+  var otpEmail;
+
   RxList<int?> pinValues = List<int?>.filled(6, null).obs;
   RxInt currentPinIndex = 0.obs;
   RxBool isPinComplete = false.obs;

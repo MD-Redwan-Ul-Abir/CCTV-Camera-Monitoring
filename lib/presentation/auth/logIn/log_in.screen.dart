@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/svg.dart';
-
 import 'package:get/get.dart';
 
 import '../../../infrastructure/navigation/routes.dart';
@@ -10,7 +9,6 @@ import '../../../infrastructure/theme/text_styles.dart';
 import '../../../infrastructure/utils/app_images.dart';
 import '../../shared/widgets/buttons/primary_buttons.dart';
 import '../../shared/widgets/custom_text_form_field.dart';
-
 import 'controllers/log_in.controller.dart';
 
 class LogInScreen extends GetView<LogInController> {
@@ -18,8 +16,11 @@ class LogInScreen extends GetView<LogInController> {
 
   @override
   Widget build(BuildContext context) {
-    final LogInController logInController = Get.find<LogInController>();
+    // Remove this line - use controller directly since you extend GetView
+    // final LogInController logInController = Get.find<LogInController>();
+
     final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
+
     return Scaffold(
       appBar: AppBar(
         scrolledUnderElevation: 0,
@@ -64,60 +65,65 @@ class LogInScreen extends GetView<LogInController> {
                     style: AppTextStyles.button,
                   ),
                   SizedBox(height: 30.h),
-              
+
                   Container(
                     height: 50.h,
                     decoration: BoxDecoration(
                       color: AppColors.grayDarker,
                       borderRadius: BorderRadius.circular(4.r),
                     ),
-                    child: TabBar(
-                      controller: controller.tabController,
-                      onTap: controller.changeTab,
-                      labelPadding: EdgeInsets.zero,
-                      indicatorColor: Colors.transparent,
-                      // This removes the default indicator
-                      indicatorWeight: 0,
-                      // Add this to remove indicator weight
-                      indicatorSize: TabBarIndicatorSize.tab,
-                      dividerColor: Colors.transparent,
-                      // Add this to remove the divider line
-                      indicator: BoxDecoration(
-                        color: AppColors.primaryDark,
-                        borderRadius: BorderRadius.circular(4.r),
-                      ),
-                      labelColor: AppColors.grayDark,
-                      unselectedLabelColor: AppColors.grayDark,
-                      tabs: [
-                        Tab(
-                          child: Align(
-                            alignment: Alignment.center,
-                            child: Text("user", style: AppTextStyles.button),
+                    child: GetBuilder<LogInController>(
+                      builder: (controller) {
+                        // Add null check for tabController
+                        if (controller.tabController == null) {
+                          return SizedBox.shrink(); // or a loading widget
+                        }
+
+                        return TabBar(
+                          controller: controller.tabController,
+                          onTap: controller.changeTab,
+                          labelPadding: EdgeInsets.zero,
+                          indicatorColor: Colors.transparent,
+                          indicatorWeight: 0,
+                          indicatorSize: TabBarIndicatorSize.tab,
+                          dividerColor: Colors.transparent,
+                          indicator: BoxDecoration(
+                            color: AppColors.primaryDark,
+                            borderRadius: BorderRadius.circular(4.r),
                           ),
-                        ),
-                        Tab(
-                          child: Align(
-                            alignment: Alignment.center,
-                            child: Text("Customer", style: AppTextStyles
-                                .button), // Capitalized to match your second image
-                          ),
-                        ),
-                      ],
+                          labelColor: AppColors.grayDark,
+                          unselectedLabelColor: AppColors.grayDark,
+                          tabs: [
+                            Tab(
+                              child: Align(
+                                alignment: Alignment.center,
+                                child: Text("user", style: AppTextStyles.button),
+                              ),
+                            ),
+                            Tab(
+                              child: Align(
+                                alignment: Alignment.center,
+                                child: Text("Customer", style: AppTextStyles.button),
+                              ),
+                            ),
+                          ],
+                        );
+                      },
                     ),
                   ),
-              
+
                   SizedBox(height: 30.h),
-                   CustomTextFormField(
-                     validator: (value) => (value?.trim().isEmpty ?? true) ? 'Enter your Email address' : null,
-                      controller: logInController.emailController,
-                      hintText: "Email",
-                      keyboardType: 'email',
-                      prefixSvg: AppImages.emailIcon,
-                    ),
+                  CustomTextFormField(
+                    validator: (value) => (value?.trim().isEmpty ?? true) ? 'Enter your Email address' : null,
+                    controller: controller.emailController,
+                    hintText: "Email",
+                    keyboardType: 'email',
+                    prefixSvg: AppImages.emailIcon,
+                  ),
                   SizedBox(height: 17.h),
                   CustomTextFormField(
                     validator: (value) => (value?.trim().isEmpty ?? true) ? 'Enter your Password' : null,
-                    controller: logInController.passwordController,
+                    controller: controller.passwordController,
                     hintText: "Password",
                     keyboardType: 'visiblePassword',
                     prefixSvg: AppImages.password,
@@ -139,22 +145,23 @@ class LogInScreen extends GetView<LogInController> {
                       ),
                     ),
                   ),
-                 
+
                   GetBuilder<LogInController>(
                     builder: (controller) {
                       if (controller.isLoading.value) {
-                        return Center(child: CircularProgressIndicator(color: AppColors.primaryLight,));
+                        return Center(
+                          child: CircularProgressIndicator(
+                            color: AppColors.primaryLight,
+                          ),
+                        );
                       }
                       return PrimaryButton(
                         width: double.infinity,
                         onPressed: () async {
-                          if (_formKey.currentState!.validate()) {
-                           logInController.login();
-                          //  var x =logInController.getStoredUserData();
-                          //  print("------------------------------------------------------------------");
-                          // print(x);
+                          // Add null check for form validation
+                          if (_formKey.currentState?.validate() ?? false) {
+                            controller.login();
                           }
-
                         },
                         text: "Log in",
                       );
