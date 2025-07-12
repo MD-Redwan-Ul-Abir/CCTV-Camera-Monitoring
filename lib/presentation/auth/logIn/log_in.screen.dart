@@ -22,6 +22,7 @@ class LogInScreen extends GetView<LogInController> {
     final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
     return Scaffold(
       appBar: AppBar(
+        scrolledUnderElevation: 0,
         backgroundColor: AppColors.secondaryDark,
         leading: Padding(
           padding: const EdgeInsets.only(top: 12),
@@ -149,6 +150,9 @@ class LogInScreen extends GetView<LogInController> {
                         onPressed: () async {
                           if (_formKey.currentState!.validate()) {
                            logInController.login();
+                          //  var x =logInController.getStoredUserData();
+                          //  print("------------------------------------------------------------------");
+                          // print(x);
                           }
 
                         },

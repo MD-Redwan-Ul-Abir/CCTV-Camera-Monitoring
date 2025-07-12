@@ -6,6 +6,7 @@ import 'package:skt_sikring/infrastructure/theme/app_colors.dart';
 import '../../../../infrastructure/navigation/routes.dart';
 import '../../../../infrastructure/utils/api_client.dart';
 import '../../../../infrastructure/utils/api_content.dart';
+import '../../../../infrastructure/utils/secure_storage_helper.dart';
 import '../model/logInModel.dart';
 
 class LogInController extends GetxController with GetSingleTickerProviderStateMixin {
@@ -44,7 +45,19 @@ class LogInController extends GetxController with GetSingleTickerProviderStateMi
       }
     });
   }
+  void changeTab(int index) {
+    tabIndex.value = index;
+    tabController.animateTo(index);
+  }
 
+  @override
+  void onClose() {
+    tabController.dispose();
+    emailController.dispose();
+    passwordController.dispose();
+    super.onClose();
+  }
+// Updated login() method - replace the existing one
   Future<bool> login() async {
     isLoading.value = true;
     update();
@@ -62,6 +75,15 @@ class LogInController extends GetxController with GetSingleTickerProviderStateMi
         message = loginResponse.value!.message;
         Get.snackbar("Log In Successful!", message!,backgroundColor: AppColors.primaryNormal,colorText: AppColors.primaryLighthover);
 
+        // Store all user data in secure storage
+        await addDataInSecureStorage();
+
+        // print("-----------------------------storing data started-------------------------------------");
+         var storedData = await getStoredUserData();
+        // print("------------------------------storing complete and viewed------------------------------------");
+        // storedData.forEach((key, value) {
+        //   print("$key: $value");
+        // });
         await Get.offAllNamed(Routes.MAIN_NAVIGATION_SCREEN);
         return true; // Success
       } else {
@@ -70,6 +92,8 @@ class LogInController extends GetxController with GetSingleTickerProviderStateMi
           Get.snackbar("Log In Failed!", errorResponse.message ?? "Unknown error");
         } catch (e) {
           Get.snackbar("Log In Failed!", "Failed with status code: ${response.statusCode}");
+          isLoading.value = false;
+          update();
         }
         return false;
       }
@@ -81,20 +105,175 @@ class LogInController extends GetxController with GetSingleTickerProviderStateMi
     }
   }
 
-  void changeTab(int index) {
-    tabIndex.value = index;
-    tabController.animateTo(index);
+// Complete addDataInSecureStorage method
+  Future<void> addDataInSecureStorage() async {
+    if (loginResponse.value?.data?.attributes?.userWithoutPassword == null) {
+      print("No user data available to store");
+      return;
+    }
+
+    final user = loginResponse.value!.data!.attributes!.userWithoutPassword!;
+    final tokens = loginResponse.value!.data!.attributes!.tokens;
+
+    try {
+      // Store user basic info
+      if (user.id != null && user.id!.isNotEmpty) {
+        await SecureStorageHelper.setString("id", user.id!);
+      }
+
+      if (user.userCustomId != null && user.userCustomId!.isNotEmpty) {
+        await SecureStorageHelper.setString("userCustomId", user.userCustomId!);
+      }
+
+      if (user.email != null && user.email!.isNotEmpty) {
+        await SecureStorageHelper.setString("email", user.email!);
+      }
+
+      if (user.name != null && user.name!.isNotEmpty) {
+        await SecureStorageHelper.setString("name", user.name!);
+      }
+
+      // Store user preferences and settings
+      await SecureStorageHelper.setBool("canMessage", user.canMessage ?? false);
+
+      if (user.role != null && user.role!.isNotEmpty) {
+        await SecureStorageHelper.setString("role", user.role!);
+      }
+
+      if (user.address != null && user.address!.isNotEmpty) {
+        await SecureStorageHelper.setString("address", user.address!);
+      }
+
+      if (user.fcmToken != null && user.fcmToken.toString().isNotEmpty) {
+        await SecureStorageHelper.setString("fcmToken", user.fcmToken.toString());
+      }
+
+      // Store profile image URL
+      if (user.profileImage?.imageUrl != null && user.profileImage!.imageUrl!.isNotEmpty) {
+        await SecureStorageHelper.setString("profileImageUrl", user.profileImage!.imageUrl!);
+      }
+
+      if (user.profileImage?.id != null && user.profileImage!.id!.isNotEmpty) {
+        await SecureStorageHelper.setString("profileImageId", user.profileImage!.id!);
+      }
+
+      // Store user status and subscription info
+      if (user.status != null && user.status!.isNotEmpty) {
+        await SecureStorageHelper.setString("status", user.status!);
+      }
+
+      if (user.subscriptionType != null && user.subscriptionType!.isNotEmpty) {
+        await SecureStorageHelper.setString("subscriptionType", user.subscriptionType!);
+      }
+
+      // Store boolean flags
+      await SecureStorageHelper.setBool("isEmailVerified", user.isEmailVerified ?? false);
+      await SecureStorageHelper.setBool("isDeleted", user.isDeleted ?? false);
+      await SecureStorageHelper.setBool("isResetPassword", user.isResetPassword ?? false);
+      await SecureStorageHelper.setBool("isGoogleVerified", user.isGoogleVerified ?? false);
+      await SecureStorageHelper.setBool("isAppleVerified", user.isAppleVerified ?? false);
+
+      // Store auth provider
+      if (user.authProvider != null && user.authProvider!.isNotEmpty) {
+        await SecureStorageHelper.setString("authProvider", user.authProvider!);
+      }
+
+      // Store failed login attempts
+      if (user.failedLoginAttempts != null) {
+        await SecureStorageHelper.setInt("failedLoginAttempts", user.failedLoginAttempts!);
+      }
+
+      // Store Stripe customer ID if available
+      if (user.stripeCustomerId != null && user.stripeCustomerId.toString().isNotEmpty) {
+        await SecureStorageHelper.setString("stripeCustomerId", user.stripeCustomerId.toString());
+      }
+
+      // Store conversation restrictions (as JSON string)
+      if (user.conversationRestrictWith != null && user.conversationRestrictWith!.isNotEmpty) {
+        await SecureStorageHelper.setString("conversationRestrictWith", user.conversationRestrictWith.toString());
+      }
+
+      // Store timestamps
+      if (user.createdAt != null) {
+        await SecureStorageHelper.setString("createdAt", user.createdAt!.toIso8601String());
+      }
+
+      if (user.updatedAt != null) {
+        await SecureStorageHelper.setString("updatedAt", user.updatedAt!.toIso8601String());
+      }
+
+      // Store tokens
+      if (tokens?.accessToken != null && tokens!.accessToken!.isNotEmpty) {
+        await SecureStorageHelper.setString("accessToken", tokens.accessToken!);
+      }
+
+      if (tokens?.refreshToken != null && tokens!.refreshToken!.isNotEmpty) {
+        await SecureStorageHelper.setString("refreshToken", tokens.refreshToken!);
+      }
+
+      print("All user data stored successfully in secure storage");
+
+    } catch (e) {
+      print("Error storing data in secure storage: $e");
+      Get.snackbar("Storage Error", "Failed to store user data securely");
+    }
   }
 
-  @override
-  void onClose() {
-    tabController.dispose();
-    emailController.dispose();
-    passwordController.dispose();
-    super.onClose();
+// Helper method to retrieve stored user data (optional utility method)
+  Future<Map<String, dynamic>> getStoredUserData() async {
+    try {
+      return {
+        'id': await SecureStorageHelper.getString("id"),
+        'userCustomId': await SecureStorageHelper.getString("userCustomId"),
+        'email': await SecureStorageHelper.getString("email"),
+        'name': await SecureStorageHelper.getString("name"),
+        'canMessage': await SecureStorageHelper.getBool("canMessage"),
+        'role': await SecureStorageHelper.getString("role"),
+        'address': await SecureStorageHelper.getString("address"),
+        'fcmToken': await SecureStorageHelper.getString("fcmToken"),
+        'profileImageUrl': await SecureStorageHelper.getString("profileImageUrl"),
+        'profileImageId': await SecureStorageHelper.getString("profileImageId"),
+        'status': await SecureStorageHelper.getString("status"),
+        'subscriptionType': await SecureStorageHelper.getString("subscriptionType"),
+        'isEmailVerified': await SecureStorageHelper.getBool("isEmailVerified"),
+        'isDeleted': await SecureStorageHelper.getBool("isDeleted"),
+        'isResetPassword': await SecureStorageHelper.getBool("isResetPassword"),
+        'isGoogleVerified': await SecureStorageHelper.getBool("isGoogleVerified"),
+        'isAppleVerified': await SecureStorageHelper.getBool("isAppleVerified"),
+        'authProvider': await SecureStorageHelper.getString("authProvider"),
+        'failedLoginAttempts': await SecureStorageHelper.getInt("failedLoginAttempts"),
+        'stripeCustomerId': await SecureStorageHelper.getString("stripeCustomerId"),
+        'conversationRestrictWith': await SecureStorageHelper.getString("conversationRestrictWith"),
+        'createdAt': await SecureStorageHelper.getString("createdAt"),
+        'updatedAt': await SecureStorageHelper.getString("updatedAt"),
+        'accessToken': await SecureStorageHelper.getString("accessToken"),
+        'refreshToken': await SecureStorageHelper.getString("refreshToken"),
+      };
+    } catch (e) {
+      print("Error retrieving stored user data: $e");
+      return {};
+    }
   }
 
-  final count = 0.obs;
+// Helper method to clear all stored user data (for logout)
+  Future<void> clearStoredUserData() async {
+    try {
+      final keysToDelete = [
+        "id", "userCustomId", "email", "name", "canMessage", "role", "address",
+        "fcmToken", "profileImageUrl", "profileImageId", "status", "subscriptionType",
+        "isEmailVerified", "isDeleted", "isResetPassword", "isGoogleVerified",
+        "isAppleVerified", "authProvider", "failedLoginAttempts", "stripeCustomerId",
+        "conversationRestrictWith", "createdAt", "updatedAt", "accessToken", "refreshToken"
+      ];
 
-  void increment() => count.value++;
+      for (String key in keysToDelete) {
+        await SecureStorageHelper.remove(key);
+      }
+
+      print("All stored user data cleared successfully");
+    } catch (e) {
+      print("Error clearing stored user data: $e");
+    }
+  }
+
 }
