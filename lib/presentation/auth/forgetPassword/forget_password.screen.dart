@@ -31,8 +31,8 @@ class ForgetPasswordScreen extends GetView<ForgetPasswordController> {
               icon: SvgPicture.asset(
                 AppImages.backIcon,
                 color: AppColors.primaryLight,
-                height: 30.h,
-                width: 30.w,
+                  height: 24.h,
+                  width: 24.w
               ),
               onPressed: () {
                 Get.offAllNamed(Routes.LOG_IN);

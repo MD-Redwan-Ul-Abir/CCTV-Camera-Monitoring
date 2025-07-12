@@ -12,6 +12,7 @@ class SplashScreenController extends GetxController {
     Future.delayed(Duration(seconds: 3), () async {
       // Navigate to next page, replace '/next' with your route
       // var token = await SecureStorageHelper.getString("accessToken");
+      final SplashScreenController splashScreenController = Get.find<SplashScreenController>();
       var storedData = await getStoredUserData();
 
       if(storedData['accessToken']!=''){

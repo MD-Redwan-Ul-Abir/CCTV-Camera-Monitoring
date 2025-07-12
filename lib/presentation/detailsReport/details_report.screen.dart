@@ -38,8 +38,8 @@ class DetailsReportScreen extends GetView<DetailsReportController> {
               icon: SvgPicture.asset(
                 AppImages.backIcon,
                 color: AppColors.primaryLight,
-                height: 30.h,
-                width: 30.w,
+                height: 24.h,
+                width: 24.w,
               ),
               onPressed: () {
                 Get.back();
@@ -63,11 +63,11 @@ class DetailsReportScreen extends GetView<DetailsReportController> {
                   AppImages.sitePic, // Replace with actual site images
                   AppImages.chatPerson,
                 ],
-                height: 230.h,
+                height: 220.h,
                 autoPlayInterval: Duration(seconds: 5),
                 activeIndicatorColor: AppColors.primaryDark,
                 inactiveIndicatorColor: AppColors.grayDarker,
-                borderRadius: BorderRadius.circular(4),
+                borderRadius: BorderRadius.circular(4.r),
                 onPageChanged: (index) {
                   //print('Page changed to $index');
                 },

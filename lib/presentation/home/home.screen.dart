@@ -327,7 +327,7 @@ class HomeScreen extends GetView<HomeController> {
                                         color: AppColors.grayNormal,
                                         fontSize: 13.sp,
                                         height:
-                                            1.4, // Reduced line height from 1.4 to 1.3
+                                            1.4.h, // Reduced line height from 1.4 to 1.3
                                       ),
                                     ),
                                   ),
