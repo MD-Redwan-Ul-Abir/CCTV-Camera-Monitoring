@@ -55,7 +55,7 @@ class HomeController extends GetxController {
         // print(response.statusCode);
         // print("------------------------profile image-------------------------");
         // print(profileImageUrl.value);
-       
+
 
 
       }else{
