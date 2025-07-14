@@ -13,7 +13,7 @@ import '../model/otpModel.dart';
 class OtpPageController extends GetxController {
   final otpTextEditingController = TextEditingController();
   final ResetPasswordController resetPasswordController = Get.find<ResetPasswordController>();
-  final ApiClient _apiClient = Get.put(ApiClient());
+  final ApiClient _apiClient = Get.find<ApiClient>();
   Rxn<OtpVerifyModel> otpVerify = Rxn<OtpVerifyModel>();
 
   final isLoading = false.obs;

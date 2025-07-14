@@ -11,7 +11,7 @@ import '../../otpPage/controllers/otp_page.controller.dart';
 import '../model/forgetPasswordModel.dart';
 
 class ForgetPasswordController extends GetxController {
-  final ApiClient _apiClient = Get.put(ApiClient());
+  final ApiClient _apiClient = Get.find<ApiClient>();
   Rxn<ForgetPassword> loginResponse = Rxn<ForgetPassword>();
   final OtpPageController otpPageController = Get.find<OtpPageController>();
 

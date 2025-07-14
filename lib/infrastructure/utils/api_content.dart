@@ -35,7 +35,8 @@ class ApiConstants {
   ////----------------------Network URL for app---------------------------
 
   static String baseUrl = "https://sheakh6733.sobhoy.com/api/v1";
-  static String imageBaseUrl = "https://radwan2000.sobhoy.com";
+  static String imageBaseUrl = "https://sheakh6733.sobhoy.com" ;
+  static String dummyImageUrl = "https://sheakh6733.sobhoy.com";
 
   ///-------------------------------------Auth------------------------------------
 
@@ -44,4 +45,9 @@ class ApiConstants {
   static String changPassUrl = 'auth/change-password';
   static String forgetPassUrl = 'auth/forgot-password';
   static String resetPassUrl = 'auth/reset-password';
+
+  ///------------------------------------Customer---------------------------------
+
+  static String getUserInfo = '/user/get-profile-info';
+
 }

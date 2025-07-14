@@ -1,9 +1,11 @@
 import 'package:get/get.dart';
+import 'package:skt_sikring/presentation/home/controllers/home.controller.dart';
 
 import '../../../../presentation/mainNavigationScreen/controllers/main_navigation_screen.controller.dart';
 import '../../../../presentation/profile/controllers/profile.controller.dart';
 import '../../../../presentation/reportScreen/controllers/report_screen.controller.dart';
 import '../../../../presentation/shared/widgets/imagePicker/imagePickerController.dart';
+import '../../../utils/api_client.dart';
 
 class MainNavigationScreenControllerBinding extends Bindings {
   @override
@@ -19,6 +21,9 @@ class MainNavigationScreenControllerBinding extends Bindings {
     );
     Get.lazyPut<ProfileController>(
           () => ProfileController(),
+    );
+    Get.lazyPut<ApiClient>(
+          () => ApiClient(),
     );
   }
 }

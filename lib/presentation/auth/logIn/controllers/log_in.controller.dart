@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:skt_sikring/infrastructure/theme/app_colors.dart';
+import 'package:skt_sikring/presentation/home/controllers/home.controller.dart';
 
 import '../../../../infrastructure/navigation/routes.dart';
 import '../../../../infrastructure/utils/api_client.dart';
@@ -10,9 +11,9 @@ import '../../../../infrastructure/utils/secure_storage_helper.dart';
 import '../model/logInModel.dart';
 
 class LogInController extends GetxController with GetSingleTickerProviderStateMixin {
-  final ApiClient _apiClient = Get.put(ApiClient());
+  final ApiClient _apiClient = Get.find<ApiClient>();
   Rxn<LogInModel> loginResponse = Rxn<LogInModel>();
-
+  //final HomeController homeController= Get.find<HomeController>();
   // Make tabController nullable initially
 
   // Form controllers
@@ -73,10 +74,12 @@ class LogInController extends GetxController with GetSingleTickerProviderStateMi
 
 
         // Store all user data in secure storage
+       // homeController.token=loginResponse.value!.data!.attributes!.tokens!.accessToken;
 
         Get.offAllNamed(Routes.MAIN_NAVIGATION_SCREEN);
         Future.microtask(() async {
           await addDataInSecureStorage();
+
           Get.snackbar(
               "Log In Successful!",
               message ?? "Welcome back!",
@@ -90,13 +93,19 @@ class LogInController extends GetxController with GetSingleTickerProviderStateMi
       } else {
         try {
           final errorResponse = LogInModel.fromRawJson(response.body);
+          isLoading.value = false;
+          update();
           Get.snackbar("Log In Failed!", errorResponse.message ?? "Unknown error");
         } catch (e) {
+          isLoading.value = false;
+          update();
           Get.snackbar("Log In Failed!", "Failed with status code: ${response.statusCode}");
         }
         return false;
       }
     } catch (e) {
+      isLoading.value = false;
+      update();
       Get.snackbar("Error", "An error occurred: ${e.toString()}");
       return false;
     } finally {

@@ -11,7 +11,7 @@ import '../../../../infrastructure/utils/api_content.dart';
 import '../../forgetPassword/model/forgetPasswordModel.dart';
 
 class ResetPasswordController extends GetxController {
-  final ApiClient _apiClient = Get.put(ApiClient());
+  final ApiClient _apiClient = Get.find<ApiClient>();
   final isLoading = false.obs;
   final emailError = ''.obs;
   var message;
