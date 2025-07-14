@@ -14,16 +14,13 @@ class LogInController extends GetxController with GetSingleTickerProviderStateMi
   Rxn<LogInModel> loginResponse = Rxn<LogInModel>();
 
   // Make tabController nullable initially
-  TabController? tabController;
-  final tabIndex = 0.obs;
-  final role = 'user'.obs;
 
   // Form controllers
   final emailController = TextEditingController();
   final passwordController = TextEditingController();
 
   // UI state
-  final isLoading = false.obs;
+  RxBool isLoading = false.obs;
   final isPasswordVisible = false.obs;
 
   // Form validation errors
@@ -31,37 +28,13 @@ class LogInController extends GetxController with GetSingleTickerProviderStateMi
   final passwordError = ''.obs;
   var message;
 
-  @override
-  void onInit() {
-    super.onInit();
 
-    // Initialize TabController and add null check
-    try {
-      tabController = TabController(length: 2, vsync: this);
-      tabController?.addListener(() {
-        if (tabController != null && !tabController!.indexIsChanging) {
-          tabIndex.value = tabController!.index;
-          role.value = tabIndex.value == 0 ? 'user' : 'customer';
-          print(role.value);
-        }
-      });
-    } catch (e) {
-      print('Error initializing TabController: $e');
-    }
-  }
-
-  void changeTab(int index) {
-    tabIndex.value = index;
-    tabController?.animateTo(index);
-  }
-
-  @override
-  void onClose() {
-    tabController?.dispose();
-    emailController.dispose();
-    passwordController.dispose();
-    super.onClose();
-  }
+  // void dosposeController () {
+  //   tabController.dispose();
+  //   emailController.dispose();
+  //   passwordController.dispose();
+  //   super.onClose();
+  // }
 
   // Reset controller state when navigating back
   @override
@@ -70,7 +43,6 @@ class LogInController extends GetxController with GetSingleTickerProviderStateMi
     // Clear form fields when screen is ready
     emailController.clear();
     passwordController.clear();
-    isLoading.value = false;
   }
 
   Future<bool> login() async {
@@ -88,6 +60,8 @@ class LogInController extends GetxController with GetSingleTickerProviderStateMi
       if (response.statusCode == 200 || response.statusCode == 201) {
         loginResponse.value = LogInModel.fromJson(response.body);
         message = loginResponse.value?.message;
+        isLoading.value = false;
+        update();
         // print("-----------------------------storing data started-------------------------------------");
         // var storedData = await getStoredUserData();
         // print("------------------------------storing complete and viewed------------------------------------");
@@ -95,16 +69,21 @@ class LogInController extends GetxController with GetSingleTickerProviderStateMi
         //   print("$key: $value");
         // });
 
-        Get.snackbar(
-            "Log In Successful!",
-            message ?? "Welcome back!",
-            backgroundColor: AppColors.primaryNormal,
-            colorText: AppColors.primaryLighthover
-        );
+
+
 
         // Store all user data in secure storage
-        await addDataInSecureStorage();
-        await Get.offAllNamed(Routes.MAIN_NAVIGATION_SCREEN);
+
+        Get.offAllNamed(Routes.MAIN_NAVIGATION_SCREEN);
+        Future.microtask(() async {
+          await addDataInSecureStorage();
+          Get.snackbar(
+              "Log In Successful!",
+              message ?? "Welcome back!",
+              backgroundColor: AppColors.primaryNormal,
+              colorText: AppColors.primaryLighthover
+          );
+        });
 
 
         return true;
@@ -122,7 +101,6 @@ class LogInController extends GetxController with GetSingleTickerProviderStateMi
       return false;
     } finally {
       isLoading.value = false;
-      update();
     }
   }
 

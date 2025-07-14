@@ -16,7 +16,7 @@ class ResetPasswordController extends GetxController {
   final emailError = ''.obs;
   var message;
 
-  var otpToken;
+  var otp;
   var otpEmail;
 
   final newPasswordController = TextEditingController();
@@ -30,8 +30,8 @@ class ResetPasswordController extends GetxController {
 
     isButtonActive.value =
         newPassword.length >= 8 &&
-            confirmPassword.length >= 8 &&
-            newPassword == confirmPassword;
+        confirmPassword.length >= 8 &&
+        newPassword == confirmPassword;
   }
 
   Future<bool> resetPassword() async {
@@ -40,10 +40,14 @@ class ResetPasswordController extends GetxController {
 
     try {
       final Map<String, String> verifyOtp = {
-        'email':otpEmail,
-        'otp': otpToken,
-        'password': otpToken,
+        'email': otpEmail,
+        'otp': otp,
+        'password': confirmPasswordController.text,
       };
+      print("---------------reset value--------------");
+      print(otpEmail);
+      print(otp);
+      print(confirmPasswordController.text);
 
       final response = await _apiClient.postData(
         ApiConstants.resetPassUrl,
@@ -51,10 +55,9 @@ class ResetPasswordController extends GetxController {
       );
 
       if (response.statusCode == 200 || response.statusCode == 201) {
-
         isLoading.value = false;
         update();
-        ;
+
         Get.snackbar(
           "",
           "",
@@ -76,13 +79,13 @@ class ResetPasswordController extends GetxController {
         );
         //  Get.snackbar("Check Email", message!,backgroundColor: AppColors.primaryNormal,colorText: AppColors.primaryLighthover);
 
-        Get.offAllNamed(Routes.CUSTOM_SUCCESS_MASSEGE );
+        Get.offAllNamed(Routes.CUSTOM_SUCCESS_MASSEGE);
         return true; // Success
       } else {
         try {
           isLoading.value = false;
           update();
-        // final errorResponse = response.body.;
+          // final errorResponse = response.body.;
           Get.snackbar(
             response.statusCode as String,
             "Unable to reset password",
@@ -132,13 +135,10 @@ class ResetPasswordController extends GetxController {
     }
   }
 
-
   @override
   void onClose() {
     newPasswordController.dispose();
     confirmPasswordController.dispose();
     super.onClose();
   }
-
-
 }

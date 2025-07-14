@@ -39,9 +39,9 @@ class ApiConstants {
 
   ///-------------------------------------Auth------------------------------------
 
-  static String logInUrl = '/auth/login';
-  static String verifyEmail = '/auth/verify-email';
-  static String changPassUrl = '/auth/change-password';
-  static String forgetPassUrl = '/auth/forgot-password';
-  static String resetPassUrl = '/auth/reset-password';
+  static String logInUrl = 'auth/login';
+  static String verifyEmail = 'auth/verify-email';
+  static String changPassUrl = 'auth/change-password';
+  static String forgetPassUrl = 'auth/forgot-password';
+  static String resetPassUrl = 'auth/reset-password';
 }

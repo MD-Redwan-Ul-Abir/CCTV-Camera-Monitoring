@@ -56,7 +56,7 @@ class OtpPageController extends GetxController {
 
         isLoading.value = false;
         update();
-        resetPasswordController.otpToken= otpToken;
+        resetPasswordController.otp= otpTextEditingController.text.trim();
         resetPasswordController.otpEmail= otpEmail;
         Get.snackbar(
           "",

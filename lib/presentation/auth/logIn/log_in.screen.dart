@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:get/get.dart';
+import 'package:skt_sikring/presentation/shared/widgets/custom_button.dart';
 
 import '../../../infrastructure/navigation/routes.dart';
 import '../../../infrastructure/theme/app_colors.dart';
@@ -11,15 +12,46 @@ import '../../shared/widgets/buttons/primary_buttons.dart';
 import '../../shared/widgets/custom_text_form_field.dart';
 import 'controllers/log_in.controller.dart';
 
-class LogInScreen extends GetView<LogInController> {
+class LogInScreen extends StatefulWidget {
   const LogInScreen({super.key});
+
+  @override
+  State<LogInScreen> createState() => _LogInScreenState();
+}
+
+class _LogInScreenState extends State<LogInScreen> with TickerProviderStateMixin {
+  final LogInController loginController = Get.find<LogInController>();
+  final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
+   TabController? tabController;
+  final tabIndex = 0.obs;
+  final role = 'user'.obs;
+
+  @override
+  void initState() {
+    super.initState();
+    // Initialize TabController and add null check
+    try {
+      tabController = TabController(length: 2, vsync: this);
+      tabController?.addListener(() {
+        if (!tabController!.indexIsChanging) {
+          tabIndex.value = tabController!.index;
+          role.value = tabIndex.value == 0 ? 'user' : 'customer';
+
+        }
+      });
+    } catch (e) {
+      print('Error initializing TabController: $e');
+    }
+  }
+
+  void changeTab(int index) {
+    tabIndex.value = index;
+    tabController!.animateTo(index);
+  }
 
   @override
   Widget build(BuildContext context) {
     // Remove this line - use controller directly since you extend GetView
-    // final LogInController logInController = Get.find<LogInController>();
-
-    final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
 
     return Scaffold(
       appBar: AppBar(
@@ -75,13 +107,13 @@ class LogInScreen extends GetView<LogInController> {
                     child: GetBuilder<LogInController>(
                       builder: (controller) {
                         // Add null check for tabController
-                        if (controller.tabController == null) {
+                        if (tabController == null) {
                           return SizedBox.shrink(); // or a loading widget
                         }
 
                         return TabBar(
-                          controller: controller.tabController,
-                          onTap: controller.changeTab,
+                          controller: tabController,
+                          onTap: changeTab,
                           labelPadding: EdgeInsets.zero,
                           indicatorColor: Colors.transparent,
                           indicatorWeight: 0,
@@ -115,7 +147,7 @@ class LogInScreen extends GetView<LogInController> {
                   SizedBox(height: 30.h),
                   CustomTextFormField(
                     validator: (value) => (value?.trim().isEmpty ?? true) ? 'Enter your Email address' : null,
-                    controller: controller.emailController,
+                    controller: loginController.emailController,
                     hintText: "Email",
                     keyboardType: 'email',
                     prefixSvg: AppImages.emailIcon,
@@ -123,7 +155,7 @@ class LogInScreen extends GetView<LogInController> {
                   SizedBox(height: 17.h),
                   CustomTextFormField(
                     validator: (value) => (value?.trim().isEmpty ?? true) ? 'Enter your Password' : null,
-                    controller: controller.passwordController,
+                    controller: loginController.passwordController,
                     hintText: "Password",
                     keyboardType: 'visiblePassword',
                     prefixSvg: AppImages.password,
@@ -146,6 +178,19 @@ class LogInScreen extends GetView<LogInController> {
                     ),
                   ),
 
+                 // Obx((){
+                 //   return CustomButton(
+                 //     loading: loginController.isLoading.value,
+                 //     width: double.infinity,
+                 //     onTap: () async {
+                 //       // Add null check for form validation
+                 //       if (_formKey.currentState?.validate() ?? false) {
+                 //       await loginController.login();
+                 //       }
+                 //     },
+                 //     text: "Log in",
+                 //   );
+                 // })
                   GetBuilder<LogInController>(
                     builder: (controller) {
                       if (controller.isLoading.value) {
@@ -160,7 +205,7 @@ class LogInScreen extends GetView<LogInController> {
                         onPressed: () async {
                           // Add null check for form validation
                           if (_formKey.currentState?.validate() ?? false) {
-                            controller.login();
+                           await controller.login();
                           }
                         },
                         text: "Log in",
@@ -175,4 +220,12 @@ class LogInScreen extends GetView<LogInController> {
       ),
     );
   }
+  @override
+  void dispose() {
+    tabController!.dispose();
+    loginController.emailController.dispose();
+    loginController.passwordController.dispose();
+    super.dispose();
+  }
+
 }
