@@ -75,18 +75,25 @@ class LogInController extends GetxController with GetSingleTickerProviderStateMi
 
         // Store all user data in secure storage
        // homeController.token=loginResponse.value!.data!.attributes!.tokens!.accessToken;
+        await addDataInSecureStorage();
 
+       Get.snackbar(
+            "Log In Successful!",
+            message ?? "Welcome back!",
+            backgroundColor: AppColors.primaryNormal,
+            colorText: AppColors.primaryLighthover
+        );
         Get.offAllNamed(Routes.MAIN_NAVIGATION_SCREEN);
-        Future.microtask(() async {
-          await addDataInSecureStorage();
-
-          Get.snackbar(
-              "Log In Successful!",
-              message ?? "Welcome back!",
-              backgroundColor: AppColors.primaryNormal,
-              colorText: AppColors.primaryLighthover
-          );
-        });
+        // Future.microtask(() async {
+        //   await addDataInSecureStorage();
+        //
+        //   Get.snackbar(
+        //       "Log In Successful!",
+        //       message ?? "Welcome back!",
+        //       backgroundColor: AppColors.primaryNormal,
+        //       colorText: AppColors.primaryLighthover
+        //   );
+        // });
 
 
         return true;
@@ -169,45 +176,6 @@ class LogInController extends GetxController with GetSingleTickerProviderStateMi
         await SecureStorageHelper.setString("status", user.status!);
       }
 
-      if (user.subscriptionType != null && user.subscriptionType!.isNotEmpty) {
-        await SecureStorageHelper.setString("subscriptionType", user.subscriptionType!);
-      }
-
-      // Store boolean flags
-      await SecureStorageHelper.setBool("isEmailVerified", user.isEmailVerified ?? false);
-      await SecureStorageHelper.setBool("isDeleted", user.isDeleted ?? false);
-      await SecureStorageHelper.setBool("isResetPassword", user.isResetPassword ?? false);
-      await SecureStorageHelper.setBool("isGoogleVerified", user.isGoogleVerified ?? false);
-      await SecureStorageHelper.setBool("isAppleVerified", user.isAppleVerified ?? false);
-
-      // Store auth provider
-      if (user.authProvider != null && user.authProvider!.isNotEmpty) {
-        await SecureStorageHelper.setString("authProvider", user.authProvider!);
-      }
-
-      // Store failed login attempts
-      if (user.failedLoginAttempts != null) {
-        await SecureStorageHelper.setInt("failedLoginAttempts", user.failedLoginAttempts!);
-      }
-
-      // Store Stripe customer ID if available
-      if (user.stripeCustomerId != null && user.stripeCustomerId.toString().isNotEmpty) {
-        await SecureStorageHelper.setString("stripeCustomerId", user.stripeCustomerId.toString());
-      }
-
-      // Store conversation restrictions (as JSON string)
-      if (user.conversationRestrictWith != null && user.conversationRestrictWith!.isNotEmpty) {
-        await SecureStorageHelper.setString("conversationRestrictWith", user.conversationRestrictWith.toString());
-      }
-
-      // Store timestamps
-      if (user.createdAt != null) {
-        await SecureStorageHelper.setString("createdAt", user.createdAt!.toIso8601String());
-      }
-
-      if (user.updatedAt != null) {
-        await SecureStorageHelper.setString("updatedAt", user.updatedAt!.toIso8601String());
-      }
 
       // Store tokens
       if (tokens?.accessToken != null && tokens!.accessToken!.isNotEmpty) {

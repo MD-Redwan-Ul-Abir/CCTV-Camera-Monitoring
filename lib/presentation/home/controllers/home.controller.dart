@@ -10,7 +10,8 @@ class HomeController extends GetxController {
   Rxn<ProfileDetailsModel> profileDetails = Rxn<ProfileDetailsModel>();
   RxString profileImageUrl = "".obs;
   RxBool isLoading = false.obs;
-   var token;
+  var token;
+  RxString role = ''.obs;
 
   @override
   void onInit() {
@@ -41,7 +42,11 @@ class HomeController extends GetxController {
     isLoading.value = true;
     update();
     try {
-       token = await SecureStorageHelper.getString("accessToken");
+      token = await SecureStorageHelper.getString("accessToken");
+      // Fix: Assign the string value to the RxString.value property
+      String? roleString = await SecureStorageHelper.getString("role");
+      role.value = roleString ?? '';
+
       final response = await _apiClient.getData(
         ApiConstants.getUserInfo,
         headers: token != '' ? {"Authorization": "Bearer $token"} : null,
@@ -51,25 +56,20 @@ class HomeController extends GetxController {
         update();
         profileDetails.value = ProfileDetailsModel.fromJson(response.body);
         updateProfileImage();
-        // print("------------------------profile response from server-------------------------");
-        // print(response.statusCode);
-        // print("------------------------profile image-------------------------");
-        // print(profileImageUrl.value);
-
-
-
-      }else{
+        print("------------------------profile response from server-------------------------");
+        print(response.statusCode);
+        print("------------------------profile image-------------------------");
+        print(profileImageUrl.value);
+      }
+    /// -----------------more task to be needed----------------------
+    else if(response.statusCode == 400){
         CustomSnackbar.show(
           title: "Oops!",
-          message: "Connection error",
+          message: "Session Expired",
         );
-        isLoading.value=false;
+        isLoading.value = false;
         update();
-
-        Get.snackbar("Error", "Unable to get data");
       }
-
-
     } catch (e) {
       isLoading.value = false;
       update();
