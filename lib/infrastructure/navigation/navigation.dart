@@ -67,7 +67,6 @@ class Nav {
       page: () => const ResetPasswordScreen(),
       binding: ResetPasswordControllerBinding(),
     ),
-
     GetPage(
       name: Routes.CUSTOM_SUCCESS_MASSEGE,
       page: () => const CustomSuccessMassegeScreen(),
@@ -138,6 +137,11 @@ class Nav {
       name: Routes.CREATE_REPORT,
       page: () => const CreateReportScreen(),
       binding: CreateReportControllerBinding(),
+    ),
+    GetPage(
+      name: Routes.ERROR_PAGE,
+      page: () => const ErrorPageScreen(),
+      binding: ErrorPageControllerBinding(),
     ),
   ];
 }

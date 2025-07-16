@@ -26,6 +26,9 @@ class AppImages {
   static String message = "$baseUrlLogo/message.svg";
   static String profile2 = "$baseUrlLogo/profile2.svg";
   static String report = "$baseUrlLogo/report.svg";
+  static String error400 = "$baseUrlLogo/400ErrorSvg.svg";
+  static String error400Gif = "$baseUrlLogo/400ErrorGif.gif";
+
 
   static String imageFileIcon = "$baseUrlLogo/imageFile.svg";
   static String upload = "$baseUrlLogo/upload.svg";

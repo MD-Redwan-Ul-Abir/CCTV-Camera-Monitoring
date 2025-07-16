@@ -5,6 +5,7 @@ export 'package:skt_sikring/infrastructure/navigation/bindings/controllers/creat
 export 'package:skt_sikring/infrastructure/navigation/bindings/controllers/custom_privacy_policy.controller.binding.dart'; 
 export 'package:skt_sikring/infrastructure/navigation/bindings/controllers/custom_success_massege.controller.binding.dart';
 export 'package:skt_sikring/infrastructure/navigation/bindings/controllers/details_report.controller.binding.dart';
+export 'package:skt_sikring/infrastructure/navigation/bindings/controllers/error_page.controller.binding.dart'; 
 export 'package:skt_sikring/infrastructure/navigation/bindings/controllers/forget_password.controller.binding.dart';
 export 'package:skt_sikring/infrastructure/navigation/bindings/controllers/home.controller.binding.dart';
 export 'package:skt_sikring/infrastructure/navigation/bindings/controllers/live_view.controller.binding.dart';

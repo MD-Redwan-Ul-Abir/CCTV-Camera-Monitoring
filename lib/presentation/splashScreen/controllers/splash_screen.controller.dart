@@ -18,9 +18,9 @@ class SplashScreenController extends GetxController {
 
       if(storedData['accessToken']!=''){
 
-        await Get.offAllNamed(Routes.MAIN_NAVIGATION_SCREEN);
+         Get.offAllNamed(Routes.MAIN_NAVIGATION_SCREEN);
       }else{
-        await Get.offNamed(Routes.SPLASH_LANGUAGE);
+         Get.offNamed(Routes.SPLASH_LANGUAGE);
       }
 
     });

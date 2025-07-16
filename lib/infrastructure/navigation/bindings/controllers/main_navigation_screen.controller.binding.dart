@@ -25,8 +25,8 @@ class MainNavigationScreenControllerBinding extends Bindings {
     Get.lazyPut<ApiClient>(
           () => ApiClient(),
     );
-    Get.lazyPut<HomeController>(
-          () => HomeController(),
-    );
+    // Get.lazyPut<HomeController>(
+    //       () => HomeController(),
+    // );
   }
 }
