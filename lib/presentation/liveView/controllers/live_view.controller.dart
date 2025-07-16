@@ -2,13 +2,13 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:intl/intl.dart';
-import 'package:flutter_vlc_player/flutter_vlc_player.dart';
 
 class LiveViewController extends GetxController {
+  // Camera list with name and URL
   RxList<Map<String, String>> cameraList = [
     {
       'camera': 'camera 01',
-      'url': 'rtsp://rtspuser:liVEtv4me@62.79.144.146/Streaming/Channels/101',
+      'url': 'rtsp://rtspuser:liVEtv4me@62.79.144.146/Streaming/Channels/102',
     },
     {
       'camera': 'camera 02',
@@ -18,139 +18,70 @@ class LiveViewController extends GetxController {
       'camera': 'camera 03',
       'url': 'rtsp://rtspuser:liVEtv4me@62.79.144.146/Streaming/Channels/103',
     },
-    {
-      'camera': 'camera 04',
-      'url': 'rtsp://rtspuser:liVEtv4me@62.79.144.146/Streaming/Channels/104',
-    },
+    // {
+    //   'camera': 'camera 04',
+    //   'url': 'rtsp://rtspuser:liVEtv4me@62.79.144.146/Streaming/Channels/104',
+    // },
   ].obs;
 
-  VlcPlayerController? vlcPlayerController;
-  int selectedCameraIndex = -1;
-  bool isLoading = false;
-  var isInitialized = false.obs;
-  String currentTime = '';
+  // Selected camera index and URL
+  RxInt selectedCameraIndex = (-1).obs;
+  RxString selectedCameraUrl = ''.obs;
+
+  // Current time for display
+  RxString currentTime = ''.obs;
   Timer? timeTimer;
 
   @override
   void onInit() {
     super.onInit();
     startTimeTimer();
-    // Auto-select first camera
-    if (cameraList.isNotEmpty && selectedCameraIndex == -1) {
-      selectCamera(0, cameraList[0]['url']!);
-      isInitialized(true);
-      var x=isInitialized.value;
-    }
+    checkAndSelectFirstCamera();
   }
 
   @override
   void onClose() {
     timeTimer?.cancel();
-    vlcPlayerController?.dispose();
     super.onClose();
   }
 
-  void selectCamera(int index, String videoUrl) async {
-    if (selectedCameraIndex == index) return; // Already selected
-
-    // Set loading state
-    isLoading = true;
-    isInitialized(false);
-    selectedCameraIndex = index;
-    update();
-
-    try {
-      // Dispose previous controller if exists
-      if (vlcPlayerController != null) {
-        await vlcPlayerController!.dispose();
-      }
-
-      // Create new controller
-      vlcPlayerController = VlcPlayerController.network(
-        videoUrl,
-        hwAcc: HwAcc.full,
-        autoPlay: true,
-        options: VlcPlayerOptions(
-          advanced: VlcAdvancedOptions([
-            VlcAdvancedOptions.networkCaching(2000),
-          ]),
-          rtp: VlcRtpOptions([
-            VlcRtpOptions.rtpOverRtsp(true),
-          ]),
-        ),
-      );
-
-      // Add initialization listener
-      vlcPlayerController!.addOnInitListener(() async {
-        print('VLC Player initialized');
-        isInitialized(true);
-        isLoading = false;
-        update();
-      });
-
-      // Add error listener
-      // vlcPlayerController!.addOnErrorListener(() {
-      //   print('VLC Player error occurred');
-      //   isLoading = false;
-      //   isInitialized = false;
-      //   update();
-      // });
-
-      // Initialize the controller
-      await vlcPlayerController!.initialize();
-
-    } catch (e) {
-      print('Error loading video: $e');
-      isLoading = false;
-      isInitialized(false);
-      selectedCameraIndex = -1;
-      update();
+  // Check if camera list is not empty and auto-select first camera
+  void checkAndSelectFirstCamera() {
+    if (cameraList.isNotEmpty) {
+      selectedCameraIndex.value = 0;
+      selectedCameraUrl.value = cameraList[0]['url']!;
+      print('Auto-selected first camera: ${cameraList[0]['camera']} with URL: ${selectedCameraUrl.value}');
+    } else {
+      selectedCameraIndex.value = -1;
+      selectedCameraUrl.value = '';
+      print('No cameras available');
     }
   }
 
-  Widget playVideo() {
-    if (vlcPlayerController == null) {
-      return Center(
-        child: Text(
-          'No camera selected',
-          style: TextStyle(color: Colors.white),
-        ),
-      );
+  // Select camera by index
+  void selectCamera(int index) {
+    if (index >= 0 && index < cameraList.length) {
+      selectedCameraIndex.value = index;
+      selectedCameraUrl.value = cameraList[index]['url']!;
+      print('Selected camera: ${cameraList[index]['camera']} with URL: ${selectedCameraUrl.value}');
     }
-
-    return VlcPlayer(
-      controller: vlcPlayerController!,
-      aspectRatio: 16 / 9,
-      placeholder: Center(
-        child: CircularProgressIndicator(
-          color: Colors.white,
-        ),
-      ),
-    );
   }
 
+  // Start time timer for current time display
   void startTimeTimer() {
     timeTimer = Timer.periodic(Duration(seconds: 1), (timer) {
-      currentTime = DateFormat('HH:mm:ss').format(DateTime.now());
-      update();
+      currentTime.value = DateFormat('HH:mm:ss').format(DateTime.now());
     });
   }
 
-  void togglePlayPause() {
-    if (vlcPlayerController != null && isInitialized.value) {
-      if (vlcPlayerController!.value.isPlaying) {
-        vlcPlayerController!.pause();
-      } else {
-        vlcPlayerController!.play();
-      }
-      update();
-    }
-  }
+  // Check if any camera is selected
+  bool get hasCameraSelected => selectedCameraIndex.value >= 0;
 
-  void stopPlayer() {
-    if (vlcPlayerController != null && isInitialized.value) {
-      vlcPlayerController!.stop();
-      update();
+  // Get selected camera name
+  String get selectedCameraName {
+    if (hasCameraSelected) {
+      return cameraList[selectedCameraIndex.value]['camera']!;
     }
+    return 'No camera selected';
   }
 }

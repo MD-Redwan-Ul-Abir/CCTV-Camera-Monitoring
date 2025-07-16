@@ -31,7 +31,7 @@ class CreateReportScreen extends GetView<CreateReportController> {
         elevation: 0,
         scrolledUnderElevation: 0,
         automaticallyImplyLeading: false,
-        toolbarHeight: 80.h,
+        toolbarHeight: 70.h,
         title: Text(
           "Create reports",
           style: AppTextStyles.headLine6.copyWith(
@@ -48,8 +48,8 @@ class CreateReportScreen extends GetView<CreateReportController> {
               icon: SvgPicture.asset(
                 AppImages.backIcon,
                 color: AppColors.primaryLight,
-                height: 30.h,
-                width: 30.w,
+                  height: 24.h,
+                  width: 24.w
               ),
               onPressed: () {
                 Get.back();

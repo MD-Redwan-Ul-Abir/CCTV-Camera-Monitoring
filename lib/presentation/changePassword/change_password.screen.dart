@@ -39,8 +39,8 @@ class ChangePasswordScreen extends GetView<ChangePasswordController> {
               icon: SvgPicture.asset(
                 AppImages.backIcon,
                 color: AppColors.primaryLight,
-                height: 30.h,
-                width: 30.w,
+                  height: 24.h,
+                  width: 24.w
               ),
               onPressed: () {
                 Get.back();

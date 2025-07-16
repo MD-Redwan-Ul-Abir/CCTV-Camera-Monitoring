@@ -1,13 +1,13 @@
 class ApiConstants {
   ///----------------sucure storage constent--------------------
 
-  static const String signInToken = 'sign-in-token';
-  static const String signUpToken = 'sign-up-token';
-  static const String forgetPassToken = 'forget-pass-token';
-  static const String userId = 'user-id';
-  static const String userName = 'user-name';
-  static const String userEmail = 'user-email';
-  static const String userImage = 'user-image';
+  // static const String signInToken = 'sign-in-token';
+  // static const String signUpToken = 'sign-up-token';
+  // static const String forgetPassToken = 'forget-pass-token';
+  // static const String userId = 'user-id';
+  // static const String userName = 'user-name';
+  // static const String userEmail = 'user-email';
+  // static const String userImage = 'user-image';
 
   static const token = 'token';
   static const company = 'company';
@@ -34,14 +34,20 @@ class ApiConstants {
 
   ////----------------------Network URL for app---------------------------
 
-  static String baseUrl = "https://sheakh6731.sobhoy.com/api/v1";
-  static String imageBaseUrl = "https://radwan2000.sobhoy.com";
+  static String baseUrl = "https://sheakh6733.sobhoy.com/api/v1";
+  static String imageBaseUrl = "https://sheakh6733.sobhoy.com" ;
+  static String dummyImageUrl = "https://sheakh6733.sobhoy.com";
 
   ///-------------------------------------Auth------------------------------------
 
-  static String logInUrl = '$baseUrl/auth/login';
-  static String verifyEmail = '$baseUrl/auth/verify-email';
-  static String changPassUrl = '$baseUrl/auth/change-password';
-  static String forgetPassUrl = '$baseUrl/auth/forgot-password';
-  static String resetPassUrl = '$baseUrl/auth/reset-password';
+  static String logInUrl = 'auth/login';
+  static String verifyEmail = 'auth/verify-email';
+  static String changPassUrl = 'auth/change-password';
+  static String forgetPassUrl = 'auth/forgot-password';
+  static String resetPassUrl = 'auth/reset-password';
+
+  ///------------------------------------Customer---------------------------------
+
+  static String getUserInfo = '/user/get-profile-info';
+
 }

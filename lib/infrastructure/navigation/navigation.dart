@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
 import '../../config.dart';
+import '../../presentation/auth/customSuccessMassege/custom_success_massege.screen.dart';
 import '../../presentation/languageChanging/language_screen.dart';
 import '../../presentation/message/message_screen.screen.dart';
 import '../../presentation/screens.dart';
@@ -66,11 +67,7 @@ class Nav {
       page: () => const ResetPasswordScreen(),
       binding: ResetPasswordControllerBinding(),
     ),
-    GetPage(
-      name: Routes.SIGN_UP_PAGE,
-      page: () => const SignUpPageScreen(),
-      binding: SignUpPageControllerBinding(),
-    ),
+
     GetPage(
       name: Routes.CUSTOM_SUCCESS_MASSEGE,
       page: () => const CustomSuccessMassegeScreen(),

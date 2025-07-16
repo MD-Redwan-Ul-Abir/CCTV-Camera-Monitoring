@@ -28,7 +28,7 @@ class MessageScreen extends GetView<MessageScreenController> {
 
     return Scaffold(
       appBar: PreferredSize(
-        preferredSize: Size.fromHeight(70.h), // Set the height as per your requirement
+        preferredSize: Size.fromHeight(45.h), // Set the height as per your requirement
         child: AppBar(
           backgroundColor: AppColors.secondaryDark,
           elevation: 0,

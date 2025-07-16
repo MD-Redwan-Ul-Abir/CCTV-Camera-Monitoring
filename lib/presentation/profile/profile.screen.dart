@@ -9,6 +9,7 @@ import 'package:skt_sikring/presentation/shared/widgets/buttons/primary_buttons.
 import '../../infrastructure/navigation/routes.dart';
 import '../../infrastructure/theme/app_colors.dart';
 import '../../infrastructure/utils/app_images.dart';
+import '../../infrastructure/utils/secure_storage_helper.dart';
 import '../shared/widgets/customRatings/customRatings.dart';
 import '../shared/widgets/custom_text_form_field.dart';
 import '../shared/widgets/imagePicker/custom_image_picker.dart';
@@ -27,7 +28,7 @@ class ProfileScreen extends GetView<ProfileController> {
 
     return Scaffold(
       appBar: PreferredSize(
-        preferredSize: Size.fromHeight(70.h),
+        preferredSize: Size.fromHeight(45.h),
         // Set the height as per your requirement
         child: AppBar(
           backgroundColor: AppColors.secondaryDark,
@@ -254,7 +255,7 @@ class ProfileScreen extends GetView<ProfileController> {
                       ),
                       Spacer(),
                       ProfileSettings(
-                        text: 'Delete Account',
+                        text: 'Log out',
                         leftIcon: AppImages.undo,
                         onTap: () {
                           // implement it here
@@ -419,11 +420,11 @@ class ProfileScreen extends GetView<ProfileController> {
               children: [
                 // Title
                 Text(
-                  'Are you delete Account?',
+                  'Are you sure you want to log out of your account?',
                   style: AppTextStyles.button.copyWith(
-                    fontWeight: FontWeight.w500,
+                    fontWeight: FontWeight.w400,
                     color: AppColors.secondaryDarker,
-                    fontSize: 14.sp
+                    fontSize: 16.sp
                   ),
                   textAlign: TextAlign.center,
                 ),
@@ -470,7 +471,7 @@ class ProfileScreen extends GetView<ProfileController> {
                         height: 48.h,
                         child: ElevatedButton(
                           onPressed: () {
-                            // Handle delete action
+                            clearStoredUserData();
                             Navigator.of(context).pop();
                             _handleDeleteAccount();
                           },
@@ -482,7 +483,7 @@ class ProfileScreen extends GetView<ProfileController> {
                             elevation: 0,
                           ),
                           child: Text(
-                            'Delete',
+                            'Log out',
                             style: AppTextStyles.button.copyWith(
                               color: Colors.white,
                             ),
@@ -500,6 +501,26 @@ class ProfileScreen extends GetView<ProfileController> {
     );
   }
 
+  Future<void> clearStoredUserData() async {
+    try {
+      final keysToDelete = [
+        "id", "userCustomId", "email", "name", "canMessage", "role", "address",
+        "fcmToken", "profileImageUrl", "profileImageId", "status", "subscriptionType",
+        "isEmailVerified", "isDeleted", "isResetPassword", "isGoogleVerified",
+        "isAppleVerified", "authProvider", "failedLoginAttempts", "stripeCustomerId",
+        "conversationRestrictWith", "createdAt", "updatedAt", "accessToken", "refreshToken"
+      ];
+
+      for (String key in keysToDelete) {
+        await SecureStorageHelper.remove(key);
+      }
+
+      print("All stored user data cleared successfully");
+    } catch (e) {
+      print("Error clearing stored user data: $e");
+    }
+  }
+
   void _handleDeleteAccount() {
     // Add your delete account logic here
     // For example:
@@ -508,8 +529,8 @@ class ProfileScreen extends GetView<ProfileController> {
 
     // You can also show a success message
     Get.snackbar(
-      'Account Deleted',
-      'Your account has been successfully deleted',
+      'Logout Successful',
+      'You have successfully logged out from your account.',
       backgroundColor: Colors.red,
       colorText: Colors.white,
     );

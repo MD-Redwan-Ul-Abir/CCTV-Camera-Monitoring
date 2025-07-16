@@ -7,18 +7,19 @@ import 'package:flutter_svg/svg.dart';
 import 'package:get/get.dart';
 import 'package:pin_code_fields/pin_code_fields.dart';
 
-import '../../infrastructure/navigation/routes.dart';
-import '../../infrastructure/theme/app_colors.dart';
-import '../../infrastructure/theme/text_styles.dart';
-import '../../infrastructure/utils/app_images.dart';
-import '../shared/widgets/buttons/primary_buttons.dart';
+import '../../../infrastructure/navigation/routes.dart';
+import '../../../infrastructure/theme/app_colors.dart';
+import '../../../infrastructure/theme/text_styles.dart';
+import '../../../infrastructure/utils/app_images.dart';
+import '../../shared/widgets/buttons/primary_buttons.dart';
 import 'controllers/otp_page.controller.dart';
 
 class OtpPageScreen extends GetView<OtpPageController> {
   const OtpPageScreen({super.key});
   @override
   Widget build(BuildContext context) {
-    final TextEditingController textEditingController = TextEditingController();
+    final OtpPageController otpPageController = Get.find<OtpPageController>();
+
     final StreamController<ErrorAnimationType> errorController =
     StreamController<ErrorAnimationType>();
 
@@ -33,8 +34,8 @@ class OtpPageScreen extends GetView<OtpPageController> {
               icon: SvgPicture.asset(
                 AppImages.backIcon,
                 color: AppColors.primaryLight,
-                height: 30.h,
-                width: 30.w,
+                  height: 24.h,
+                  width: 24.w
               ),
               onPressed: () {
                 Get.offAllNamed(Routes.LOG_IN);
@@ -85,7 +86,7 @@ class OtpPageScreen extends GetView<OtpPageController> {
               animationDuration: const Duration(milliseconds: 300),
               enableActiveFill: true,
               errorAnimationController: errorController,
-              controller: textEditingController,
+              controller: otpPageController.otpTextEditingController,
               keyboardType: TextInputType.number,
               textStyle: AppTextStyles.button.copyWith(
                   fontSize: 14.sp,
@@ -110,20 +111,42 @@ class OtpPageScreen extends GetView<OtpPageController> {
               },
             ),
             SizedBox(height: 20.h),
-            Obx(
-                  () => PrimaryButton(
-                isActive: controller.isPinComplete.value,
-                width: double.infinity,
-                onPressed:
-                controller.isPinComplete.value
-                    ? () {
-                  Get.toNamed(Routes.RESET_PASSWORD);
+//             Obx(
+//                   () => PrimaryButton(
+//                 isActive: controller.isPinComplete.value,
+//                 width: double.infinity,
+//                 onPressed:
+//                 controller.isPinComplete.value
+//                     ? () {
+// // otpPageController.showPin();
+//                 otpPageController.verifyOtp();
+//                  // Get.toNamed(Routes.RESET_PASSWORD);
+//                 }
+//                     : null,
+//                 text: "Verify Email",
+//               ),
+//             ),
+            GetBuilder<OtpPageController>(
+              builder: (controller) {
+                if (controller.isLoading.value) {
+                  return Center(child: CircularProgressIndicator(color: AppColors.primaryLight,));
                 }
-                    : null,
-                text: "Verify Email",
-              ),
-            ),
+                return PrimaryButton(
+                  width: double.infinity,
+                  onPressed: () async {
+                    // if (_formKey.currentState!.validate()) {
+                    //   forgetPasswordController.sendOTP();
+                    //   //  var x =logInController.getStoredUserData();
+                    //   //  print("------------------------------------------------------------------");
+                    //   // print(x);
+                    // }
+                    controller.verifyOtp();
 
+                  },
+                  text: "Send OTP",
+                );
+              },
+            ),
           ],
         ),
       ),
