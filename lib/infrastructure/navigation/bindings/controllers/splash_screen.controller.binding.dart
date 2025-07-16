@@ -10,9 +10,9 @@ class SplashScreenControllerBinding extends Bindings {
     Get.lazyPut<SplashScreenController>(
       () => SplashScreenController(),
     );
-    Get.lazyPut<HomeController>(
-      () => HomeController(),
-    );
+    // Get.lazyPut<HomeController>(
+    //   () => HomeController(),
+    // );
     Get.lazyPut<ApiClient>(
       () => ApiClient(),
     );

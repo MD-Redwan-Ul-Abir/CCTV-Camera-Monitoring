@@ -26,6 +26,7 @@ class _HomeScreenState extends State<HomeScreen> {
     WidgetsBinding.instance.addPostFrameCallback((__) async {
       await homeController.getProfile();
       await homeController.getAllYourSites();
+      await homeController.getAllTodaysReportByDate();
     });
   }
 
@@ -37,39 +38,33 @@ class _HomeScreenState extends State<HomeScreen> {
       Color(0xFFC7ECFF), // Light Mint
     ];
 
-    List<Map<String, String>> siteData = [
-      {'name': 'Site A, Bashundhara', 'date': '23 - 30 May'},
-      {'name': 'Site C, Mirpur', 'date': '15 - 22 June'},
-      {'name': 'Site D, Gulshan', 'date': '01 - 08 July'},
-    ];
-
-    List<Map<String, String>> reportData = [
-      {
-        'title': 'Incident Report',
-        'description':
-        'Found broken fence on the northeast side of the site. Found broken fence on the northeast side of the site. Found broken fence on the northeast side of the site.',
-      },
-      {
-        'title': 'Safety Check',
-        'description': 'Found broken fence on the northeast side of the site.',
-      },
-      {
-        'title': 'Safety Check',
-        'description': 'Found broken fence on the northeast side of the site.',
-      },
-      {
-        'title': 'Safety Check',
-        'description': 'Found broken fence on the northeast side of the site.',
-      },
-      {
-        'title': 'Safety Check',
-        'description': 'Found broken fence on the northeast side of the site.',
-      },
-      {
-        'title': 'Maintenance',
-        'description': 'Found broken fence on the northeast side of the site.',
-      },
-    ];
+    // List<Map<String, String>> reportData = [
+    //   {
+    //     'title': 'Incident Report',
+    //     'description':
+    //     'Found broken fence on the northeast side of the site. Found broken fence on the northeast side of the site. Found broken fence on the northeast side of the site.',
+    //   },
+    //   {
+    //     'title': 'Safety Check',
+    //     'description': 'Found broken fence on the northeast side of the site.',
+    //   },
+    //   {
+    //     'title': 'Safety Check',
+    //     'description': 'Found broken fence on the northeast side of the site.',
+    //   },
+    //   {
+    //     'title': 'Safety Check',
+    //     'description': 'Found broken fence on the northeast side of the site.',
+    //   },
+    //   {
+    //     'title': 'Safety Check',
+    //     'description': 'Found broken fence on the northeast side of the site.',
+    //   },
+    //   {
+    //     'title': 'Maintenance',
+    //     'description': 'Found broken fence on the northeast side of the site.',
+    //   },
+    // ];
 
     return Scaffold(
       body: Obx(() {
@@ -256,7 +251,7 @@ class _HomeScreenState extends State<HomeScreen> {
                                     final profileData = homeController
                                         .profileDetails.value;
                                     final userName = profileData?.data
-                                        ?.attributes?.name ?? 'User';
+                                        ?.attributes?.name ?? 'No User Found';
 
                                     return Text(
                                       userName,
@@ -285,7 +280,7 @@ class _HomeScreenState extends State<HomeScreen> {
             ),
             SliverToBoxAdapter(
               child: Padding(
-                padding:  EdgeInsets.symmetric(
+                padding: EdgeInsets.symmetric(
                     horizontal: 16.w, vertical: 12.h),
                 child: Column(
                   children: [
@@ -293,7 +288,8 @@ class _HomeScreenState extends State<HomeScreen> {
                       alignment: Alignment.centerLeft,
                       child: Text(
                         'Your sites',
-                        style: AppTextStyles.headLine6.copyWith(height: 0),
+                        style: AppTextStyles.headLine6.copyWith(height: 0,
+                            color: AppColors.secondaryLight),
                       ),
                     ),
                     SizedBox(
@@ -323,7 +319,7 @@ class _HomeScreenState extends State<HomeScreen> {
                           final color = cardColors[index % cardColors.length];
                           return GestureDetector(
                             onTap: () {
-                              Get.toNamed(Routes.SITE_DETAILS);
+                              Get.toNamed(Routes.SITE_DETAILS,arguments: results[index].siteId?.siteId);
                             },
                             child: Card(
                               color: color,
@@ -331,12 +327,14 @@ class _HomeScreenState extends State<HomeScreen> {
                                 borderRadius: BorderRadius.circular(4.r),
                               ),
                               child: ListTile(
-                                contentPadding: EdgeInsets.symmetric(horizontal: 6.w),
+                                contentPadding: EdgeInsets.symmetric(
+                                    horizontal: 6.w),
                                 title: Padding(
                                   padding: const EdgeInsets.symmetric(
                                       vertical: 4.0, horizontal: 8),
                                   child: Text(
-                                    results[index].siteId?.name ?? 'Unknown Site',
+                                    results[index].siteId?.name ??
+                                        'No site found',
                                     style: AppTextStyles.button.copyWith(
                                       color: AppColors.secondaryDarker,
                                     ),
@@ -346,7 +344,9 @@ class _HomeScreenState extends State<HomeScreen> {
                                   padding: const EdgeInsets.symmetric(
                                       vertical: 4.0, horizontal: 8),
                                   child: Text(
-                                    results[index].siteId?.createdAt.toString().substring(0, 10) ?? '',
+                                    results[index].siteId?.createdAt
+                                        .toString()
+                                        .substring(0, 10) ?? '',
                                     style: AppTextStyles.caption1.copyWith(
                                       color: AppColors.secondaryDark,
                                     ),
@@ -367,7 +367,7 @@ class _HomeScreenState extends State<HomeScreen> {
                         },
                       );
                     }),
-                    SizedBox(height: 10.h),
+                    SizedBox(height: 11.h),
                     Align(
                       alignment: Alignment.topLeft,
                       child: Text(
@@ -381,80 +381,98 @@ class _HomeScreenState extends State<HomeScreen> {
                     SizedBox(
                       height: 12.h,
                     ),
-                    GridView.builder(
-                      padding: EdgeInsets.symmetric(vertical: 0.h),
-                      shrinkWrap: true,
-                      physics: NeverScrollableScrollPhysics(),
-                      gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                        crossAxisCount: 2,
-                        crossAxisSpacing: 10.0,
-                        mainAxisSpacing: 10.0,
-                        childAspectRatio: 1.3,
-                      ),
-                      itemCount: reportData.length,
-                      itemBuilder: (context, index) {
-                        return Container(
-                          padding: EdgeInsets.all(14.w),
-                          decoration: BoxDecoration(
-                            color: AppColors.grayDarker,
-                            borderRadius: BorderRadius.circular(4.r),
+                    Obx(() {
+                      final todaysReport = homeController.getAllReportByDate.value;
+                      if (todaysReport?.data?.attributes?.results == null ||
+                          todaysReport!.data!.attributes!.results!.isEmpty) {
+                        return Center(
+                          child: Text(
+                            'Nothing Reported Today',
+                            style: AppTextStyles.caption1.copyWith(
+                              color: AppColors.grayNormal,
+                            ),
                           ),
-                          child: Column(
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                            mainAxisSize: MainAxisSize.min,
-                            children: [
-                              // Top section with title and description
-                              Flexible(
-                                flex: 3,
-                                child: Column(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  mainAxisSize: MainAxisSize.min,
-                                  children: [
-                                    Text(
-                                      reportData[index]['title']!,
-                                      style: AppTextStyles.button.copyWith(
-                                        color: Colors.white,
-                                      ),
-                                      maxLines: 1,
-                                      overflow: TextOverflow.ellipsis,
-                                    ),
-                                    SizedBox(height: 6.h),
-                                    Flexible(
-                                      child: Text(
-                                        reportData[index]['description']!,
-                                        maxLines: 3,
+                        );
+                      }
+                      final reportData = todaysReport.data!.attributes!.results!;
+                      return GridView.builder(
+                        padding: EdgeInsets.symmetric(vertical: 0.h),
+                        shrinkWrap: true,
+                        physics: NeverScrollableScrollPhysics(),
+                        gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                          crossAxisCount: 2,
+                          crossAxisSpacing: 10.0,
+                          mainAxisSpacing: 10.0,
+                          childAspectRatio: 1.3,
+                        ),
+                        itemCount: reportData.length,
+                        itemBuilder: (context, index) {
+                          return Container(
+                            padding: EdgeInsets.all(14.w),
+                            decoration: BoxDecoration(
+                              color: AppColors.grayDarker,
+                              borderRadius: BorderRadius.circular(4.r),
+                            ),
+                            child: Column(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              mainAxisSize: MainAxisSize.min,
+                              children: [
+                                // Top section with title and description
+                                Flexible(
+                                  flex: 3,
+                                  child: Column(
+                                    crossAxisAlignment: CrossAxisAlignment
+                                        .start,
+                                    mainAxisSize: MainAxisSize.min,
+                                    children: [
+                                      Text(
+                                        reportData[index].reportId!.title!,
+                                        style: AppTextStyles.button.copyWith(
+                                          color: Colors.white,
+                                        ),
+                                        maxLines: 1,
                                         overflow: TextOverflow.ellipsis,
-                                        style: AppTextStyles.caption1.copyWith(
-                                          color: AppColors.grayNormal,
-                                          fontSize: 13.sp,
-                                          height: 1.4.h,
+                                      ),
+                                      SizedBox(height: 6.h),
+                                      Flexible(
+                                        child: Text(
+                                          reportData[index].reportId!.description!,
+                                          maxLines: 3,
+                                          overflow: TextOverflow.ellipsis,
+                                          style: AppTextStyles.caption1
+                                              .copyWith(
+                                            color: AppColors.grayNormal,
+                                            fontSize: 13.sp,
+                                            height: 1.4.h,
+                                          ),
                                         ),
                                       ),
-                                    ),
-                                  ],
+                                    ],
+                                  ),
                                 ),
-                              ),
-                              // Bottom section with View Reports button
-                              Align(
-                                alignment: Alignment.topLeft,
-                                child: GestureDetector(
-                                  onTap: () {
-                                    Get.toNamed(Routes.DETAILS_REPORT);
-                                  },
-                                  child: Text(
-                                    'View Reports',
-                                    style: AppTextStyles.caption1.copyWith(
-                                      color: AppColors.primaryNormal,
-                                      height: 1.3,
+                                // Bottom section with View Reports button
+                                Align(
+                                  alignment: Alignment.topLeft,
+                                  child: GestureDetector(
+                                    onTap: () {
+                                      Get.toNamed(Routes.DETAILS_REPORT);
+                                    },
+                                    child: Text(
+                                      'View Reports',
+                                      style: AppTextStyles.caption1.copyWith(
+                                        color: AppColors.primaryNormal,
+                                        height: 1.3,
+                                      ),
                                     ),
                                   ),
                                 ),
-                              ),
-                            ],
-                          ),
-                        );
-                      },
-                    ),
+                              ],
+                            ),
+                          );
+                        },
+
+                      );
+                    }),
                     SizedBox(height: 32.h),
                     PrimaryButton(
                       width: double.infinity,

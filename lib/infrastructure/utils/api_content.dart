@@ -55,4 +55,7 @@ class ApiConstants {
   static String getCameraByCameraID({String? id,String? limit}) =>  '/camera/paginate?_id=$id&limit=$limit';
 
 
+  ///-----------------------------------Report-----------------------------------------
+
+  static String getAllTodaysReport({String? createdAt,String? role,String? personID, int? limit}) =>  '/customer-report/paginate/customer?createdAt=$createdAt&personId=$personID&role=$role&limit=$limit';
 }
