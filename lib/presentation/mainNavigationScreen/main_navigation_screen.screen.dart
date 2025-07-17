@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 import 'package:get/get.dart';
 import 'package:skt_sikring/infrastructure/utils/app_images.dart';
@@ -61,7 +62,7 @@ class MainNavigationScreenScreen
         unselectedItemColor: AppColors.grayDarker,
         cornerRadius: 0.0,
         elevation: 8.0,
-        height: 90.0,
+        height: 90.h,
       ),
     ));
   }

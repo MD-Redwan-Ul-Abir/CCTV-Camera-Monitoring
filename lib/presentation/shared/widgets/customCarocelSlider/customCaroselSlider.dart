@@ -119,7 +119,7 @@ class _AutoCarouselSliderState extends State<AutoCarouselSlider> {
                   width: double.infinity,
                   decoration: BoxDecoration(
                     image: DecorationImage(
-                      image: AssetImage(widget.images[index]),
+                      image: NetworkImage(widget.images[index]),
                       fit: widget.imageFit,
                     ),
                   ),

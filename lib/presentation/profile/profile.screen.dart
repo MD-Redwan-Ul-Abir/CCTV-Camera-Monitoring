@@ -4,6 +4,7 @@ import 'package:flutter_svg/svg.dart';
 
 import 'package:get/get.dart';
 import 'package:skt_sikring/infrastructure/theme/text_styles.dart';
+import 'package:skt_sikring/presentation/shared/clearDataFromSecureStoreage.dart';
 import 'package:skt_sikring/presentation/shared/widgets/buttons/primary_buttons.dart';
 
 import '../../infrastructure/navigation/routes.dart';
@@ -22,7 +23,7 @@ class ProfileScreen extends GetView<ProfileController> {
   @override
   Widget build(BuildContext context) {
     final controller = Get.put(ProfileController());
-    final imageController = Get.find<imagePickerController>();
+    final imageController = Get.put(imagePickerController());
     //final imageController = Get.lazyPut(()=>imagePickerController());
 
 
@@ -471,6 +472,7 @@ class ProfileScreen extends GetView<ProfileController> {
                         height: 48.h,
                         child: ElevatedButton(
                           onPressed: () {
+                            clearStoredUserData();
                             clearStoredUserData();
                             Navigator.of(context).pop();
                             _handleDeleteAccount();

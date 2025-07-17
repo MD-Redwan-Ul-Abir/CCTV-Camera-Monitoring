@@ -60,6 +60,7 @@ dependencies:
   flutter_secure_storage: ^9.2.4
   mime_type: ^1.0.1
   http: ^1.4.0
+  gif: ^2.3.0
 
   path_provider: any
 dev_dependencies:

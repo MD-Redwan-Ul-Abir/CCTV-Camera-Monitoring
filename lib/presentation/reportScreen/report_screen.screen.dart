@@ -27,9 +27,9 @@ class ReportScreen extends GetView<ReportScreenController> {
       {
         'categoryTitle': 'Ap',
         'sites': [
-          {'name': 'Site A, Bashundhara', 'date': '23 - 30 May'},
-          {'name': 'Site C, Mirpur', 'date': '15 - 22 June'},
-          {'name': 'Site D, Gulshan', 'date': '01 - 08 July'},
+          // {'name': 'Site A, Bashundhara', 'date': '23 - 30 May'},
+          // {'name': 'Site C, Mirpur', 'date': '15 - 22 June'},
+          // {'name': 'Site D, Gulshan', 'date': '01 - 08 July'},
         ],
       },
       {
@@ -205,7 +205,7 @@ class ReportScreen extends GetView<ReportScreenController> {
         child: Center(
           child: Text(
             'No reports found',
-            style: AppTextStyles.headLine6.copyWith(
+            style: AppTextStyles.paragraph.copyWith(
               color: AppColors.primaryLight.withOpacity(0.7),
             ),
           ),

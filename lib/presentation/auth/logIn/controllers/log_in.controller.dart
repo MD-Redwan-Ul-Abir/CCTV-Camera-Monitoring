@@ -8,6 +8,7 @@ import '../../../../infrastructure/navigation/routes.dart';
 import '../../../../infrastructure/utils/api_client.dart';
 import '../../../../infrastructure/utils/api_content.dart';
 import '../../../../infrastructure/utils/secure_storage_helper.dart';
+import '../../../shared/widgets/customSnakBar.dart';
 import '../model/logInModel.dart';
 
 class LogInController extends GetxController with GetSingleTickerProviderStateMixin {
@@ -106,7 +107,11 @@ class LogInController extends GetxController with GetSingleTickerProviderStateMi
         } catch (e) {
           isLoading.value = false;
           update();
-          Get.snackbar("Log In Failed!", "Failed with status code: ${response.statusCode}");
+          CustomSnackbar.show(
+            title: "Log In Failed!",
+            message:response.body["message"],
+          );
+
         }
         return false;
       }

@@ -17,7 +17,8 @@ class ResetPasswordScreen extends GetView<ResetPasswordController> {
 
   @override
   Widget build(BuildContext context) {
-    final ResetPasswordController resetPasswordController = Get.find<ResetPasswordController>();
+    final ResetPasswordController resetPasswordController =
+        Get.find<ResetPasswordController>();
     return Scaffold(
       appBar: AppBar(
         backgroundColor: AppColors.secondaryDark,
@@ -29,8 +30,8 @@ class ResetPasswordScreen extends GetView<ResetPasswordController> {
               icon: SvgPicture.asset(
                 AppImages.backIcon,
                 color: AppColors.primaryLight,
-                  height: 24.h,
-                  width: 24.w
+                height: 24.h,
+                width: 24.w,
               ),
               onPressed: () {
                 Get.offAllNamed(Routes.LOG_IN);
@@ -94,21 +95,22 @@ class ResetPasswordScreen extends GetView<ResetPasswordController> {
               return PrimaryButton(
                 isActive: resetPasswordController.isButtonActive.value,
                 width: double.infinity,
-                onPressed: resetPasswordController.isButtonActive.value
-                    ? () async {
-                  // Set loading to true
-                 // controller.isLoading.value = true;
+                onPressed:
+                    resetPasswordController.isButtonActive.value
+                        ? () async {
+                          // Set loading to true
+                          // controller.isLoading.value = true;
 
-                  // Add any async operations here if needed
-                 // await Future.delayed(Duration(milliseconds: 500)); // Optional delay
+                          // Add any async operations here if needed
+                          // await Future.delayed(Duration(milliseconds: 500)); // Optional delay
 
-                  // Navigate
-                 // await Get.offAllNamed(Routes.CUSTOM_SUCCESS_MASSEGE);
-resetPasswordController.resetPassword();
-                  // Reset loading state
-                  // controller.isLoading.value = false;
-                }
-                    : null,
+                          // Navigate
+                          // await Get.offAllNamed(Routes.CUSTOM_SUCCESS_MASSEGE);
+                          resetPasswordController.resetPassword();
+                          // Reset loading state
+                          // controller.isLoading.value = false;
+                        }
+                        : null,
                 text: "Done",
               );
             }),
