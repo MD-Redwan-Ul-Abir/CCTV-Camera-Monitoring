@@ -1,9 +1,11 @@
 import 'package:get/get.dart';
+import 'package:intl/intl.dart';
 import 'package:skt_sikring/infrastructure/utils/log_helper.dart';
 import '../../../infrastructure/navigation/routes.dart';
 import '../../../infrastructure/utils/api_client.dart';
 import '../../../infrastructure/utils/api_content.dart';
 import '../../../infrastructure/utils/secure_storage_helper.dart';
+import '../../shared/networkImageFormating.dart';
 import '../../shared/widgets/customSnakBar.dart';
 import '../model/getAllSiteBySiteIDModel.dart';
 import '../model/getRepostByDateModel.dart';
@@ -26,21 +28,13 @@ class HomeController extends GetxController {
   void updateProfileImage() {
     try {
       final imageUrl = profileDetails.value?.data?.attributes?.profileImage?.imageUrl;
-      if (imageUrl != null && imageUrl.isNotEmpty) {
-        if (imageUrl.startsWith('http')) {
-          profileImageUrl.value = imageUrl;
-        } else {
-          profileImageUrl.value = "${ApiConstants.dummyImageUrl}$imageUrl";
-        }
-      } else {
-        profileImageUrl.value = "";
-        print("No profile image URL available");
-      }
+      profileImageUrl.value = ProfileImageHelper.formatImageUrl(imageUrl);
     } catch (e) {
       print("Error updating profile image: $e");
       profileImageUrl.value = "";
     }
   }
+
 
   Future<void> getProfile() async {
     isLoading.value = true;
@@ -99,12 +93,16 @@ class HomeController extends GetxController {
       isLoading.value = false;
     }
   }
-
+  String getTodayDate() {
+    final now = DateTime.now();
+    final formatter = DateFormat('yyyy-MM-dd');
+    return formatter.format(now);
+  }
   Future<void> getAllTodaysReportByDate() async {
     isLoading.value = true;
     try {
       //createdAt:'2025-07-12',personID: localPersonID,role: role.value,limit: 300
-      final response = await _apiClient.getData(ApiConstants.getAllTodaysReport(createdAt:'2025-07-12',personID: localPersonID,role: role.value,limit: 300),
+      final response = await _apiClient.getData(ApiConstants.getAllTodaysReport(createdAt:getTodayDate(),personID: localPersonID,role: role.value,limit: 300),
         headers: token != null && token!.isNotEmpty  ? {"Authorization": "Bearer $token"} : null,
       );
       if (response.statusCode == 200 || response.statusCode == 201) {

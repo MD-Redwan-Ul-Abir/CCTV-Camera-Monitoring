@@ -16,6 +16,10 @@ class ChangePasswordScreen extends GetView<ChangePasswordController> {
 
   @override
   Widget build(BuildContext context) {
+    final ChangePasswordController changePasswordController = Get.find<
+        ChangePasswordController>();
+    final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
+
     return Scaffold(
       appBar: AppBar(
         backgroundColor: AppColors.secondaryDark,
@@ -32,13 +36,13 @@ class ChangePasswordScreen extends GetView<ChangePasswordController> {
           ),
         ),
         leading: Padding(
-          padding: const EdgeInsets.only(left: 8.0),
+          padding: EdgeInsets.only(left: 8.0.w),
           child: Align(
             alignment: Alignment.centerLeft,
             child: IconButton(
               icon: SvgPicture.asset(
-                AppImages.backIcon,
-                color: AppColors.primaryLight,
+                  AppImages.backIcon,
+                  color: AppColors.primaryLight,
                   height: 24.h,
                   width: 24.w
               ),
@@ -51,39 +55,60 @@ class ChangePasswordScreen extends GetView<ChangePasswordController> {
         centerTitle: true,
       ),
       body: Padding(
-        padding:  EdgeInsets.symmetric(horizontal: 24.w, vertical: 14.h),
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.start,
+        padding: EdgeInsets.symmetric(horizontal: 24.w, vertical: 14.h),
+        child: Form(
+          key: _formKey,
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.start,
 
-          children: [
-            CustomTextFormField(
-              hintText: "Current password",
+            children: [
+              CustomTextFormField(
+                hintText: "Current password",
 
-              keyboardType: 'visiblePassword',
-              prefixSvg: AppImages.password,
-            ),
-            SizedBox(height: 16.h),
-            CustomTextFormField(
-              hintText: "New Password",
+                controller: changePasswordController.currentPasswordController,
+                keyboardType: 'visiblePassword',
+                prefixSvg: AppImages.password,
+              ),
+              SizedBox(height: 16.h),
+              CustomTextFormField(
+                hintText: "New Password",
+                onChanged: (_) => changePasswordController.validatePasswords(),
+                controller: changePasswordController.newPasswordController,
+                keyboardType: 'visiblePassword',
+                prefixSvg: AppImages.password,
+              ),
+              SizedBox(height: 16.h),
+              CustomTextFormField(
+                hintText: "Confirm New Password",
+                onChanged: (_) => changePasswordController.validatePasswords(),
+                controller: changePasswordController.confirmPasswordController,
+                keyboardType: 'visiblePassword',
+                prefixSvg: AppImages.password,
+              ),
+              SizedBox(height: 25.h),
 
-              keyboardType: 'visiblePassword',
-              prefixSvg: AppImages.password,
-            ),
-            SizedBox(height: 16.h),
-            CustomTextFormField(
-              hintText: "Confirm New Password",
-
-              keyboardType: 'visiblePassword',
-              prefixSvg: AppImages.password,
-            ),
-            SizedBox(height: 25.h),
-
-            PrimaryButton(
-              width: double.infinity,
-              onPressed: () {},
-              text: "Done",
-            ),
-          ],
+              Obx(() {
+                if (changePasswordController.isLoading.value) {
+                  return Center(
+                    child: CircularProgressIndicator(
+                      color: AppColors.primaryLight,
+                    ),
+                  );
+                }
+                return PrimaryButton(
+                  width: double.infinity,
+                  isActive: changePasswordController.isButtonActive.value,
+                  onPressed:
+                  changePasswordController.isButtonActive.value
+                      ? () async {
+                    changePasswordController.changePassword();
+                  }
+                      : null,
+                  text: "Done",
+                );
+              }),
+            ],
+          ),
         ),
       ),
     );

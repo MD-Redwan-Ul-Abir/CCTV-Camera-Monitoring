@@ -31,25 +31,7 @@ class _SiteDetailsScreenState extends State<SiteDetailsScreen> {
   }
 
 
-  List<String> _getCarouselImages() {
-    if (siteDetailsController.siteDetails.value?.data?.attributes?.results
-        ?.isNotEmpty == true) {
-      final siteData = siteDetailsController.siteDetails.value!.data!
-          .attributes!.results!.first.siteId;
-      if (siteData?.attachments?.isNotEmpty == true) {
-        return siteData!.attachments!
-            .map((attachment) => attachment.attachment ?? '')
-            .where((url) => url.isNotEmpty)
-            .toList();
-      }
-    }
-    // Return default images if no attachments found
-    return [
-      AppImages.sitePic,
-      AppImages.chatPerson,
-      AppImages.sitePic,
-    ];
-  }
+
 
   @override
   Widget build(BuildContext context) {
@@ -98,7 +80,7 @@ class _SiteDetailsScreenState extends State<SiteDetailsScreen> {
               child: CircularProgressIndicator(color: AppColors.primaryNormal),
             );
           }
-          final siteData = siteDetailsController.siteDetails.value!.data!.attributes!.results;
+
 
           return SingleChildScrollView(
             child: Column(
@@ -107,7 +89,7 @@ class _SiteDetailsScreenState extends State<SiteDetailsScreen> {
 
                 AutoCarouselSlider(
 
-                  images: _getCarouselImages(),
+                  images: siteDetailsController.getCarouselImages(),
                   height: 230.h,
                   autoPlayInterval: Duration(seconds: 5),
                   activeIndicatorColor: AppColors.primaryDark,
@@ -122,7 +104,7 @@ class _SiteDetailsScreenState extends State<SiteDetailsScreen> {
 
                 // Site Information
                 Text(
-                  siteDetailsController.siteDetails.value!.data!.attributes!.results![index].siteId!.name??'',
+                  siteDetailsController.siteDetails.value?.data?.attributes?.results?.first.siteId?.name  ??'',
                   style: AppTextStyles.button.copyWith(
                     color: AppColors.primaryLight,
                     fontWeight: FontWeight.w400,
@@ -133,7 +115,8 @@ class _SiteDetailsScreenState extends State<SiteDetailsScreen> {
                 SizedBox(height: 4.h),
 
                 Text(
-                  "23 - 30 May (40 Hours)",
+                  siteDetailsController.siteDetails.value?.data?.attributes?.results?.first.siteId?.createdAt .toString()
+                      .substring(0, 10)   ??'',
                   style: AppTextStyles.caption1.copyWith(
                     color: AppColors.secondaryLightActive,
                   ),
@@ -163,11 +146,11 @@ class _SiteDetailsScreenState extends State<SiteDetailsScreen> {
                     children: [
                       CircleAvatar(
                         radius: 16.r,
-                        backgroundImage: AssetImage(AppImages.chatPerson),
+                        backgroundImage: NetworkImage(siteDetailsController.profileImageUrl.value),
                       ),
                       SizedBox(width: 12.w),
                       Text(
-                        "Henrik",
+                        siteDetailsController.siteDetails.value?.data?.attributes?.userInfo?.first.personId!.name ??"",
                         style: AppTextStyles.caption1.copyWith(
                           color: AppColors.secondaryLightActive,
                           fontSize: 13.sp,
@@ -199,9 +182,9 @@ class _SiteDetailsScreenState extends State<SiteDetailsScreen> {
                     borderRadius: BorderRadius.circular(4.r),
                   ),
                   child: Padding(
-                    padding: const EdgeInsets.symmetric(vertical: 5.0),
+                    padding:  EdgeInsets.symmetric(vertical: 5.0.h),
                     child: Text(
-                      "Construction Site",
+                      siteDetailsController.siteDetails.value?.data?.attributes?.results?.first.siteId?.type ??"",
                       style: AppTextStyles.caption1.copyWith(
                         color: AppColors.secondaryLightActive,
                         fontSize: 13.sp,

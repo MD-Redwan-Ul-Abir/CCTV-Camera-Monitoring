@@ -418,6 +418,7 @@ class _HomeScreenState extends State<HomeScreen> {
                               mainAxisSize: MainAxisSize.min,
                               children: [
                                 // Top section with title and description
+
                                 Flexible(
                                   flex: 3,
                                   child: Column(
@@ -425,6 +426,7 @@ class _HomeScreenState extends State<HomeScreen> {
                                         .start,
                                     mainAxisSize: MainAxisSize.min,
                                     children: [
+                                      SizedBox(width: double.infinity,),
                                       Text(
                                         reportData[index].reportId!.title!,
                                         style: AppTextStyles.button.copyWith(
@@ -455,7 +457,7 @@ class _HomeScreenState extends State<HomeScreen> {
                                   alignment: Alignment.topLeft,
                                   child: GestureDetector(
                                     onTap: () {
-                                      Get.toNamed(Routes.DETAILS_REPORT);
+                                      Get.toNamed(Routes.DETAILS_REPORT,arguments:reportData[index].reportId!.reportId);
                                     },
                                     child: Text(
                                       'View Reports',

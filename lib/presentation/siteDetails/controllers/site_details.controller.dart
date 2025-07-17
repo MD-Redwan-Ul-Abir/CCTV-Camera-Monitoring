@@ -5,6 +5,7 @@ import '../../../infrastructure/utils/api_client.dart';
 import '../../../infrastructure/utils/api_content.dart';
 import '../../../infrastructure/utils/app_images.dart';
 import '../../../infrastructure/utils/secure_storage_helper.dart';
+import '../../shared/networkImageFormating.dart';
 import '../../shared/widgets/customSnakBar.dart';
 import '../model/siteDetailsModel.dart';
 
@@ -15,6 +16,40 @@ class SiteDetailsController extends GetxController {
   RxString role = "manager".obs;
   String? token;
   Rxn<SiteDetailsModel> siteDetails = Rxn<SiteDetailsModel>();
+  RxString profileImageUrl=''.obs;
+
+
+  List<String> getCarouselImages() {
+    if (siteDetails.value?.data?.attributes?.results
+        ?.isNotEmpty == true) {
+      final siteData =siteDetails.value!.data!
+          .attributes!.results!.first.siteId;
+      if (siteData?.attachments?.isNotEmpty == true) {
+        return siteData!.attachments!
+            .map((attachment) => attachment.attachment ?? '')
+            .where((url) => url.isNotEmpty)
+            .toList();
+      }
+    }
+    // Return default images if no attachments found
+    return [
+      "https://dzinejs.lv/wp-content/plugins/lightbox/images/No-image-found.jpg",
+      "https://dzinejs.lv/wp-content/plugins/lightbox/images/No-image-found.jpg",
+    ];
+  }
+
+  ///-------------------------------Image ReFormating---------------------------
+
+  void updateProfileImage() {
+    try {
+      final imageUrl = siteDetails.value?.data?.attributes?.userInfo?.first.personId!.profileImage!.imageUrl;
+      profileImageUrl.value = ProfileImageHelper.formatImageUrl(imageUrl);
+      print(profileImageUrl.value);
+    } catch (e) {
+      print("Error updating profile image: $e");
+      profileImageUrl.value = "";
+    }
+  }
 
 
 
@@ -29,6 +64,7 @@ class SiteDetailsController extends GetxController {
       );
       if (response.statusCode == 200 || response.statusCode == 201) {
         siteDetails.value = SiteDetailsModel.fromJson(response.body);
+        updateProfileImage();
         CustomSnackbar.show(
           title: "Success",
           message: "Site Data found",

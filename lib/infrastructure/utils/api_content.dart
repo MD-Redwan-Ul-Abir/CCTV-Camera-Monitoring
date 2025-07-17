@@ -57,5 +57,8 @@ class ApiConstants {
 
   ///-----------------------------------Report-----------------------------------------
 
+
+  static String createReport = 'report/create';
   static String getAllTodaysReport({String? createdAt,String? role,String? personID, int? limit}) =>  '/customer-report/paginate/customer?createdAt=$createdAt&personId=$personID&role=$role&limit=$limit';
+  static String getAReportByReportID({String? reportID,}) =>  '/report/$reportID';
 }
