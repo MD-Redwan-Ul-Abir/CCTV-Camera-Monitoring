@@ -1,7 +1,9 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
+import 'package:flutter_vlc_player/flutter_vlc_player.dart';
 import 'package:get/get.dart';
-import 'package:intl/intl.dart';
+
+import '../live_view.screen.dart';
 
 class LiveViewController extends GetxController {
   // Camera list with name and URL
@@ -18,31 +20,65 @@ class LiveViewController extends GetxController {
       'camera': 'camera 03',
       'url': 'rtsp://rtspuser:liVEtv4me@62.79.144.146/Streaming/Channels/103',
     },
-    // {
-    //   'camera': 'camera 04',
-    //   'url': 'rtsp://rtspuser:liVEtv4me@62.79.144.146/Streaming/Channels/104',
-    // },
   ].obs;
 
   // Selected camera index and URL
   RxInt selectedCameraIndex = (-1).obs;
   RxString selectedCameraUrl = ''.obs;
 
-  // Current time for display
-  RxString currentTime = ''.obs;
-  Timer? timeTimer;
+  // VLC Player Controller
+  VlcPlayerController? vlcController;
+
+  // Loading state
+  RxBool isVideoLoading = false.obs;
+
+  // Full screen button visibility
+  RxBool showFullScreenButton = false.obs;
+  Timer? fullScreenTimer;
+
+  // Full screen state
+  RxBool isFullScreen = false.obs;
 
   @override
   void onInit() {
     super.onInit();
-    startTimeTimer();
     checkAndSelectFirstCamera();
   }
 
   @override
   void onClose() {
-    timeTimer?.cancel();
+    fullScreenTimer?.cancel();
+    disposeVlcController();
     super.onClose();
+  }
+
+  // Dispose VLC controller properly
+  void disposeVlcController() {
+    vlcController?.dispose();
+    vlcController = null;
+  }
+
+  // Create new VLC controller
+  void createVlcController(String url) {
+    disposeVlcController();
+
+    vlcController = VlcPlayerController.network(
+      url,
+      autoPlay: true,
+      options: VlcPlayerOptions(
+        rtp: VlcRtpOptions([
+          VlcRtpOptions.rtpOverRtsp(true),
+          ":rtsp-tcp",
+        ]),
+      ),
+    );
+
+    // Listen to player state changes
+    vlcController!.addListener(() {
+      if (vlcController!.value.isInitialized) {
+        isVideoLoading.value = false;
+      }
+    });
   }
 
   // Check if camera list is not empty and auto-select first camera
@@ -50,10 +86,13 @@ class LiveViewController extends GetxController {
     if (cameraList.isNotEmpty) {
       selectedCameraIndex.value = 0;
       selectedCameraUrl.value = cameraList[0]['url']!;
+      isVideoLoading.value = true;
+      createVlcController(selectedCameraUrl.value);
       print('Auto-selected first camera: ${cameraList[0]['camera']} with URL: ${selectedCameraUrl.value}');
     } else {
       selectedCameraIndex.value = -1;
       selectedCameraUrl.value = '';
+      isVideoLoading.value = false;
       print('No cameras available');
     }
   }
@@ -63,15 +102,50 @@ class LiveViewController extends GetxController {
     if (index >= 0 && index < cameraList.length) {
       selectedCameraIndex.value = index;
       selectedCameraUrl.value = cameraList[index]['url']!;
+      isVideoLoading.value = true;
+      createVlcController(selectedCameraUrl.value);
       print('Selected camera: ${cameraList[index]['camera']} with URL: ${selectedCameraUrl.value}');
     }
   }
 
-  // Start time timer for current time display
-  void startTimeTimer() {
-    timeTimer = Timer.periodic(Duration(seconds: 1), (timer) {
-      currentTime.value = DateFormat('HH:mm:ss').format(DateTime.now());
+  // Show full screen icon for 4 seconds
+  void showFullScreenIcon() {
+    showFullScreenButton.value = true;
+
+    // Cancel previous timer if exists
+    fullScreenTimer?.cancel();
+
+    // Start new timer for 4 seconds
+    fullScreenTimer = Timer(Duration(seconds: 4), () {
+      showFullScreenButton.value = false;
     });
+  }
+
+  // Enter full screen mode
+  void enterFullScreen() {
+    if (vlcController != null && hasCameraSelected) {
+      isFullScreen.value = true;
+      showFullScreenButton.value = false;
+
+      // Navigate to full screen player
+      Get.to(() => FullScreenVideoPlayer(
+        vlcController: vlcController!,
+        controller: this,
+      ));
+    }
+  }
+
+  // Exit full screen mode
+  void exitFullScreen() {
+    isFullScreen.value = false;
+    Get.back();
+
+    // Reinitialize VLC controller to fix potential rendering issues
+    if (selectedCameraUrl.value.isNotEmpty) {
+      Future.delayed(Duration(milliseconds: 100), () {
+        createVlcController(selectedCameraUrl.value);
+      });
+    }
   }
 
   // Check if any camera is selected

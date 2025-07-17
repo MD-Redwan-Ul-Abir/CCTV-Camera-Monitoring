@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:flutter_vlc_player/flutter_vlc_player.dart';
@@ -9,8 +10,15 @@ import '../../infrastructure/theme/text_styles.dart';
 import '../../infrastructure/utils/app_images.dart';
 import 'controllers/live_view.controller.dart';
 
-class LiveViewScreen extends GetView<LiveViewController> {
+class LiveViewScreen extends StatefulWidget{
   const LiveViewScreen({super.key});
+
+  @override
+  State<LiveViewScreen> createState() => _LiveViewScreenState();
+}
+
+class _LiveViewScreenState extends State<LiveViewScreen> {
+  final LiveViewController controller = Get.find<LiveViewController>();
 
   @override
   Widget build(BuildContext context) {
@@ -55,118 +63,130 @@ class LiveViewScreen extends GetView<LiveViewController> {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               // Video Player Container
-              // VlcPlayer(
-              //  // placeholder: Center(child: CircularProgressIndicator( color: AppColors.primaryDark,),),
-              //   controller: VlcPlayerController.network(
-              //       "rtsp://rtspuser:liVEtv4me@62.79.144.146/Streaming/Channels/102",
-              //       autoPlay: true,
-              //       options: VlcPlayerOptions(
-              //         rtp: VlcRtpOptions([
-              //           VlcRtpOptions.rtpOverRtsp(true),
-              //           ":rtsp-tcp",
-              //         ]),
-              //       )
-              //   ), aspectRatio: 16/9,
-              // ),
-
-              Obx(() =>
-                  Container(
-                    height: 340.h,
-                    width: double.infinity,
-                    decoration: BoxDecoration(
-                      color: controller.selectedCameraUrl.value.isEmpty
-                          ? AppColors.primaryDark
-                          : Colors.transparent,
-
-                      borderRadius: BorderRadius.circular(4.r),
-                    ),
-                    child: Stack(
-                      children: [
-                        // Video Player Placeholder
+              Obx(() => GestureDetector(
+                onTap: () {
+                  if (controller.hasCameraSelected) {
+                    controller.showFullScreenIcon();
+                  }
+                },
+                child: Container(
+                  width: double.infinity,
+                  decoration: BoxDecoration(
+                    color: controller.selectedCameraUrl.value.isEmpty
+                        ? AppColors.primaryDark
+                        : Colors.black,
+                    borderRadius: BorderRadius.circular(4.r),
+                  ),
+                  child: Stack(
+                    children: [
+                      // Video Player
+                      if (controller.selectedCameraUrl.value.isNotEmpty && controller.vlcController != null)
                         ClipRRect(
                           borderRadius: BorderRadius.circular(4.r),
-                          child: Center(
-                            child:
-                               VlcPlayer(
-                                //placeholder: Center(child: CircularProgressIndicator( color: AppColors.primaryDark,),),
-                                controller: VlcPlayerController.network(
-                                    controller.selectedCameraUrl.value,
-                                    autoPlay: true,
-                                    options: VlcPlayerOptions(
-                                      rtp: VlcRtpOptions([
-                                        VlcRtpOptions.rtpOverRtsp(true),
-                                        ":rtsp-tcp",
-                                      ]),
-                                    )
-                                ), aspectRatio: 16 / 9,
-                              )
-
+                          child: VlcPlayer(
+                            controller: controller.vlcController!,
+                            aspectRatio: 16 / 9,
+                            placeholder: Container(
+                              color: Colors.black,
+                              child: Center(
+                                child: CircularProgressIndicator(
+                                  color: AppColors.primaryDark,
+                                ),
+                              ),
+                            ),
                           ),
                         ),
 
-                        // LIVE indicator (top right)
-                        if (controller.hasCameraSelected)
-                          Positioned(
-                            top: 12.h,
-                            right: 12.w,
-                            child: Container(
-                              padding: EdgeInsets.symmetric(
-                                horizontal: 8.w,
-                                vertical: 4.h,
+                      // Loading Indicator
+                      Obx(() => controller.isVideoLoading.value
+                          ? Container(
+                        width: double.infinity,
+                        height: double.infinity,
+                        decoration: BoxDecoration(
+                          color: Colors.black.withOpacity(0.7),
+                          borderRadius: BorderRadius.circular(4.r),
+                        ),
+                        child: Center(
+                          child: Column(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              CircularProgressIndicator(
+                                color: AppColors.primaryDark,
                               ),
-                              decoration: BoxDecoration(
-                                color: Colors.black38,
-                                borderRadius: BorderRadius.circular(4.r),
-                              ),
-                              child: Row(
-                                mainAxisSize: MainAxisSize.min,
-                                children: [
-                                  Container(
-                                    width: 6.w,
-                                    height: 6.w,
-                                    decoration: BoxDecoration(
-                                      color: AppColors.redNormal,
-                                      shape: BoxShape.circle,
-                                    ),
-                                  ),
-                                  SizedBox(width: 8.w),
-                                  Text(
-                                    'Live',
-                                    style: AppTextStyles.button.copyWith(
-                                      color: AppColors.primaryLight,
-                                    ),
-                                  ),
-                                ],
-                              ),
-                            ),
+                            ],
                           ),
+                        ),
+                      )
+                          : SizedBox.shrink()),
 
-                        // Current time (bottom right)
-                        if (controller.hasCameraSelected)
-                          Positioned(
-                            bottom: 12.h,
-                            right: 12.w,
-                            child: Container(
-                              padding: EdgeInsets.symmetric(
-                                horizontal: 8.w,
-                                vertical: 4.h,
-                              ),
-                              decoration: BoxDecoration(
-                                color: Colors.black38,
-                                borderRadius: BorderRadius.circular(4.r),
-                              ),
-                              child: Obx(() =>
-                                  Text(
-                                    controller.currentTime.value,
-                                    style: AppTextStyles.button.copyWith(
-                                      color: Color(0xFFFFFFFF),
-                                    ),
-                                  )),
+                      // LIVE indicator (top right)
+                      if (controller.hasCameraSelected)
+                        Positioned(
+                          top: 12.h,
+                          right: 12.w,
+                          child: Container(
+                            padding: EdgeInsets.symmetric(
+                              horizontal: 8.w,
+                              vertical: 4.h,
+                            ),
+                            decoration: BoxDecoration(
+                              color: Colors.black38,
+                              borderRadius: BorderRadius.circular(4.r),
+                            ),
+                            child: Row(
+                              mainAxisSize: MainAxisSize.min,
+                              children: [
+                                Container(
+                                  width: 6.w,
+                                  height: 6.w,
+                                  decoration: BoxDecoration(
+                                    color: AppColors.redNormal,
+                                    shape: BoxShape.circle,
+                                  ),
+                                ),
+                                SizedBox(width: 8.w),
+                                Text(
+                                  'Live',
+                                  style: AppTextStyles.button.copyWith(
+                                    color: AppColors.primaryLight,
+                                  ),
+                                ),
+                              ],
                             ),
                           ),
-                      ],
-                    ),
-                  )),
+                        ),
+
+                      // Full Screen Icon (bottom right)
+                      if (controller.hasCameraSelected)
+                        Positioned(
+                          bottom: 12.h,
+                          right: 12.w,
+                          child: Obx(() => AnimatedOpacity(
+                            opacity: controller.showFullScreenButton.value ? 1.0 : 0.0,
+                            duration: Duration(milliseconds: 300),
+                            child: GestureDetector(
+                              onTap: () {
+                                controller.enterFullScreen();
+                              },
+                              child: Container(
+                                padding: EdgeInsets.all(8.w),
+                                decoration: BoxDecoration(
+                                  color: Colors.black38,
+                                  borderRadius: BorderRadius.circular(4.r),
+                                ),
+                                child: Icon(
+                                  Icons.fullscreen,
+                                  color: AppColors.primaryLight,
+                                  size: 20.sp,
+                                ),
+                              ),
+                            ),
+                          )),
+                        ),
+                    ],
+                  ),
+                ),
+              )),
               SizedBox(height: 20.h),
 
               // Site Information
@@ -207,9 +227,8 @@ class LiveViewScreen extends GetView<LiveViewController> {
               ),
               SizedBox(height: 19.h),
 
-              // Camera List - FIXED with proper Obx wrapping
-              Obx(() =>
-              controller.cameraList.isEmpty
+              // Camera List
+              Obx(() => controller.cameraList.isEmpty
                   ? Center(
                 child: Padding(
                   padding: EdgeInsets.symmetric(vertical: 40.h),
@@ -237,8 +256,7 @@ class LiveViewScreen extends GetView<LiveViewController> {
                 itemCount: controller.cameraList.length,
                 itemBuilder: (context, index) {
                   return Obx(() {
-                    bool isSelected = controller.selectedCameraIndex.value ==
-                        index;
+                    bool isSelected = controller.selectedCameraIndex.value == index;
                     return Padding(
                       padding: EdgeInsets.symmetric(vertical: 8.h),
                       child: GestureDetector(
@@ -261,8 +279,9 @@ class LiveViewScreen extends GetView<LiveViewController> {
                             children: [
                               CircleAvatar(
                                 radius: 18.r,
-                                backgroundColor: isSelected ? AppColors
-                                    .primaryDark : AppColors.grayDarker,
+                                backgroundColor: isSelected
+                                    ? AppColors.primaryDark
+                                    : AppColors.grayDarker,
                                 child: Center(
                                   child: SvgPicture.asset(
                                     AppImages.camera2,
@@ -280,9 +299,9 @@ class LiveViewScreen extends GetView<LiveViewController> {
                                     Text(
                                       controller.cameraList[index]['camera']!,
                                       style: AppTextStyles.button.copyWith(
-                                        color: isSelected ? AppColors
-                                            .primaryLight : AppColors
-                                            .secondaryLightActive,
+                                        color: isSelected
+                                            ? AppColors.primaryLight
+                                            : AppColors.secondaryLightActive,
                                         fontWeight: isSelected
                                             ? FontWeight.w600
                                             : FontWeight.w400,
@@ -302,6 +321,130 @@ class LiveViewScreen extends GetView<LiveViewController> {
             ],
           ),
         ),
+      ),
+    );
+  }
+}
+
+// Full Screen Video Player Widget
+class FullScreenVideoPlayer extends StatefulWidget {
+  final VlcPlayerController vlcController;
+  final LiveViewController controller;
+
+  const FullScreenVideoPlayer({
+    Key? key,
+    required this.vlcController,
+    required this.controller,
+  }) : super(key: key);
+
+  @override
+  State<FullScreenVideoPlayer> createState() => _FullScreenVideoPlayerState();
+}
+
+class _FullScreenVideoPlayerState extends State<FullScreenVideoPlayer> {
+  @override
+  void initState() {
+    super.initState();
+    // Set landscape orientation
+    SystemChrome.setPreferredOrientations([
+      DeviceOrientation.landscapeLeft,
+      DeviceOrientation.landscapeRight,
+    ]);
+    // Hide system UI for full screen
+    SystemChrome.setEnabledSystemUIMode(SystemUiMode.immersive);
+  }
+
+  @override
+  void dispose() {
+    // Restore portrait orientation
+    SystemChrome.setPreferredOrientations([
+      DeviceOrientation.portraitUp,
+    ]);
+    // Show system UI
+    SystemChrome.setEnabledSystemUIMode(SystemUiMode.manual, overlays: SystemUiOverlay.values);
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      backgroundColor: Colors.black,
+      body: Stack(
+        children: [
+          // Full Screen Video Player
+          Center(
+            child: VlcPlayer(
+              controller: widget.vlcController,
+              aspectRatio: 16 / 9,
+              placeholder: Container(
+                color: Colors.black,
+                child: Center(
+                  child: CircularProgressIndicator(
+                    color: AppColors.primaryDark,
+                  ),
+                ),
+              ),
+            ),
+          ),
+
+          // Exit Full Screen Button
+          Positioned(
+            top: 40,
+            right: 20,
+            child: GestureDetector(
+              onTap: () {
+                widget.controller.exitFullScreen();
+              },
+              child: Container(
+                padding: EdgeInsets.all(8),
+                decoration: BoxDecoration(
+                  color: Colors.black38,
+                  borderRadius: BorderRadius.circular(4),
+                ),
+                child: Icon(
+                  Icons.fullscreen_exit,
+                  color: Colors.white,
+                  size: 24,
+                ),
+              ),
+            ),
+          ),
+
+          // LIVE indicator
+          Positioned(
+            top: 40,
+            left: 20,
+            child: Container(
+              padding: EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+              decoration: BoxDecoration(
+                color: Colors.black38,
+                borderRadius: BorderRadius.circular(4),
+              ),
+              child: Row(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Container(
+                    width: 6,
+                    height: 6,
+                    decoration: BoxDecoration(
+                      color: AppColors.redNormal,
+                      shape: BoxShape.circle,
+                    ),
+                  ),
+                  SizedBox(width: 8),
+                  Text(
+                    'Live',
+                    style: TextStyle(
+                      color: Colors.white,
+                      fontSize: 12,
+                      fontWeight: FontWeight.w500,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ),
+        ],
       ),
     );
   }

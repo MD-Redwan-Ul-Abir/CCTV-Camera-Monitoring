@@ -166,13 +166,13 @@ class CreateReportController extends GetxController {
     List<String> categories = [
       'alarmPatrol',
       'patrolReport',
-      'Service',
+      'service',
       'emergency_call_out',
     ];
 
     reportTemplateList.value = categories.map((category) {
       return DropdownMenuItem<String>(
-        value: category.toLowerCase().replaceAll(' ', '_'),
+        value: category.replaceAll(' ', '_'),
         child: Text(category),
       );
     }).toList();
