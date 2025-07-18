@@ -79,11 +79,12 @@ class _LiveViewScreenState extends State<LiveViewScreen> {
                   ),
                   child: Stack(
                     children: [
-                      // Video Player
-                      if (controller.selectedCameraUrl.value.isNotEmpty && controller.vlcController != null)
+                      // Video Player - UPDATED with dynamic key
+                      if (controller.vlcController != null)
                         ClipRRect(
                           borderRadius: BorderRadius.circular(4.r),
-                          child: VlcPlayer(
+                          child: Obx(() => VlcPlayer(
+                            key: ValueKey('${controller.selectedCameraUrl.value}_${controller.vlcPlayerKey.value}'), // Dynamic key
                             controller: controller.vlcController!,
                             aspectRatio: 16 / 9,
                             placeholder: Container(
@@ -94,7 +95,7 @@ class _LiveViewScreenState extends State<LiveViewScreen> {
                                 ),
                               ),
                             ),
-                          ),
+                          )),
                         ),
 
                       // Loading Indicator
@@ -356,6 +357,9 @@ class _FullScreenVideoPlayerState extends State<FullScreenVideoPlayer> {
 
   @override
   void dispose() {
+    // Dispose the fullscreen controller
+    widget.vlcController.dispose();
+
     // Restore portrait orientation
     SystemChrome.setPreferredOrientations([
       DeviceOrientation.portraitUp,

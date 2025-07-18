@@ -14,11 +14,11 @@ class LiveViewController extends GetxController {
     },
     {
       'camera': 'camera 02',
-      'url': 'rtsp://rtspuser:liVEtv4me@62.79.144.146/Streaming/Channels/102',
+      'url': 'rtsp://rtspstream:IvYPUxye7TBTyYkuB_B3e@zephyr.rtsp.stream/movie',
     },
     {
       'camera': 'camera 03',
-      'url': 'rtsp://rtspuser:liVEtv4me@62.79.144.146/Streaming/Channels/103',
+      'url': 'rtsp://rtspstream:IvYPUxye7TBTyYkuB_B3e@zephyr.rtsp.stream/traffic',
     },
   ].obs;
 
@@ -38,6 +38,9 @@ class LiveViewController extends GetxController {
 
   // Full screen state
   RxBool isFullScreen = false.obs;
+
+  // Add a key to force widget rebuild
+  RxInt vlcPlayerKey = 0.obs;
 
   @override
   void onInit() {
@@ -60,11 +63,18 @@ class LiveViewController extends GetxController {
 
   // Create new VLC controller
   void createVlcController(String url) {
+    // Force re-creation by disposing any existing controller first
     disposeVlcController();
+
+    isVideoLoading.value = true;
+
+    // Increment key to force widget rebuild
+    vlcPlayerKey.value++;
 
     vlcController = VlcPlayerController.network(
       url,
       autoPlay: true,
+      hwAcc: HwAcc.full, // Force hardware acceleration
       options: VlcPlayerOptions(
         rtp: VlcRtpOptions([
           VlcRtpOptions.rtpOverRtsp(true),
@@ -73,8 +83,11 @@ class LiveViewController extends GetxController {
       ),
     );
 
-    // Listen to player state changes
     vlcController!.addListener(() {
+      if (vlcController!.value.hasError) {
+        print("VLC Error: ${vlcController!.value.errorDescription}");
+      }
+
       if (vlcController!.value.isInitialized) {
         isVideoLoading.value = false;
       }
@@ -123,26 +136,50 @@ class LiveViewController extends GetxController {
 
   // Enter full screen mode
   void enterFullScreen() {
-    if (vlcController != null && hasCameraSelected) {
+    if (hasCameraSelected) {
       isFullScreen.value = true;
       showFullScreenButton.value = false;
 
-      // Navigate to full screen player
+      // Create a new controller for fullscreen
+      final newController = VlcPlayerController.network(
+        selectedCameraUrl.value,
+        autoPlay: true,
+        hwAcc: HwAcc.full,
+        options: VlcPlayerOptions(
+          rtp: VlcRtpOptions([
+            VlcRtpOptions.rtpOverRtsp(true),
+            ":rtsp-tcp",
+          ]),
+        ),
+      );
+
+      newController.addListener(() {
+        if (newController.value.hasError) {
+          print("Fullscreen VLC Error: ${newController.value.errorDescription}");
+        }
+      });
+
+      // Navigate to fullscreen with the new controller
       Get.to(() => FullScreenVideoPlayer(
-        vlcController: vlcController!,
+        vlcController: newController,
         controller: this,
       ));
     }
   }
 
-  // Exit full screen mode
+  // Exit full screen mode - FIXED VERSION
   void exitFullScreen() {
     isFullScreen.value = false;
     Get.back();
 
-    // Reinitialize VLC controller to fix potential rendering issues
+    // Force complete re-initialization of VLC controller
     if (selectedCameraUrl.value.isNotEmpty) {
-      Future.delayed(Duration(milliseconds: 100), () {
+      // Add a small delay to ensure the UI has settled
+      Future.delayed(Duration(milliseconds: 200), () {
+        // Force rebuild by incrementing key first
+        vlcPlayerKey.value++;
+
+        // Then recreate the controller
         createVlcController(selectedCameraUrl.value);
       });
     }

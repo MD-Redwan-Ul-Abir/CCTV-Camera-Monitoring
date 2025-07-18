@@ -62,6 +62,7 @@ dependencies:
   http: ^1.4.0
   gif: ^2.3.0
 
+
   path_provider: any
 dev_dependencies:
   flutter_test:
