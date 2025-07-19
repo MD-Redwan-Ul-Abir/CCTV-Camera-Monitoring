@@ -13,26 +13,31 @@ class PrivacySettingsController extends GetxController {
   RxBool isLoading = false.obs;
   String? token;
   Rxn<PrivacySettingsModel> privacySettings = Rxn<PrivacySettingsModel>();
+  RxList<Attribute> privacyAttributes = <Attribute>[].obs;
+  //Rxn<List<PrivacySettingsModel>> privacySettings = Rxn<List<PrivacySettingsModel>>();
   RxDouble rating = 0.0.obs;
 
   void updateRating(double newRating) {
     rating.value = newRating;
   }
 
-  Future<void> getProfile() async {
+
+
+  Future<void> getPrivacyData() async {
     isLoading.value = true;
     try {
       token = await SecureStorageHelper.getString("accessToken");
-      // String? roleString = await SecureStorageHelper.getString("role");
-      // localPersonID = await SecureStorageHelper.getString("id");
-      // role.value = roleString;
 
 
-      final response = await _apiClient.getData(ApiConstants.getUserInfo,
+      final response = await _apiClient.getData(ApiConstants.getPrivacyData,
         headers: token != null && token!.isNotEmpty  ? {"Authorization": "Bearer $token"} : null,
       );
       if (response.statusCode == 200 || response.statusCode == 201) {
         privacySettings.value = PrivacySettingsModel.fromJson(response.body);
+
+        if (privacySettings.value?.data?.attributes != null) {
+          privacyAttributes.value = privacySettings.value!.data!.attributes!;
+        }
 
       }
       /// -----------------more task to be needed----------------------
@@ -44,7 +49,7 @@ class PrivacySettingsController extends GetxController {
           );
         }
 
-        Get.toNamed(Routes.NO_INTERNET);
+        Get.toNamed(Routes.ERROR_PAGE);
       }
     } catch (e) {
       print("Error getting profile: $e");
@@ -53,5 +58,18 @@ class PrivacySettingsController extends GetxController {
     }
   }
 
+
+
+  Attribute? getAttributeByType(String type) {
+    return privacyAttributes.firstWhereOrNull((attr) => attr.type == type);
+  }
+
+  // Get all attribute details
+  List<String> getAllAttributeDetails() {
+    return privacyAttributes
+        .where((attr) => attr.details != null)
+        .map((attr) => attr.details!)
+        .toList();
+  }
 
 }

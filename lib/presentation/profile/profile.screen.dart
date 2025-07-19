@@ -186,10 +186,14 @@ class ProfileScreen extends GetView<ProfileController> {
                         },
                       ),
                       Spacer(),
+
                       ProfileSettings(
                         text: 'Reviews',
                         leftIcon: AppImages.ratingsIcon,
                         onTap: () {
+                          // Reset rating before navigating
+                          controller.rating.value = 0.0;
+
                           Get.toNamed(
                             Routes.CUSTOM_PRIVACY_POLICY,
                             arguments: {
@@ -197,9 +201,11 @@ class ProfileScreen extends GetView<ProfileController> {
                               'customWidget': Column(
                                 children: [
                                   SizedBox(height: 30.h),
-
-                                  SvgPicture.asset(AppImages.review,   height: 292.h,
-                                    width: 292.w,),
+                                  SvgPicture.asset(
+                                    AppImages.review,
+                                    height: 292.h,
+                                    width: 292.w,
+                                  ),
                                   Text(
                                     'Rating',
                                     style: AppTextStyles.textButton.copyWith(
@@ -235,17 +241,19 @@ class ProfileScreen extends GetView<ProfileController> {
                                   PrimaryButton(
                                     width: double.infinity,
                                     onPressed: () {
+                                      // Reset rating when submitting/going back
+                                      controller.rating.value = 0.0;
                                       Get.back();
                                     },
                                     text: 'Submit',
                                   ),
                                 ],
                               ),
-
                             },
                           );
                         },
                       ),
+
                       Spacer(),
                       ProfileSettings(
                         text: 'Language',
