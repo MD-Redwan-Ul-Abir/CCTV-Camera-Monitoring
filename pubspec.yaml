@@ -61,6 +61,9 @@ dependencies:
   mime_type: ^1.0.1
   http: ^1.4.0
   gif: ^2.3.0
+  connectivity_plus: ^6.1.4
+
+  
 
   path_provider: any
 dev_dependencies:

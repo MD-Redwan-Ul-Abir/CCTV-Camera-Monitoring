@@ -5,13 +5,18 @@ import 'package:skt_sikring/presentation/languageChanging/appConst.dart';
 import 'package:skt_sikring/presentation/languageChanging/di.dart' as di;
 import 'package:skt_sikring/presentation/languageChanging/localizationController.dart';
 import 'package:skt_sikring/presentation/languageChanging/message.dart';
+import 'package:skt_sikring/presentation/shared/widgets/networkStatus/globalNetworkService.dart';
 
 import 'infrastructure/navigation/navigation.dart';
 import 'infrastructure/navigation/routes.dart';
 import 'infrastructure/theme/app_colors.dart';
 
+
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
+
+  // Initialize the global network service first
+  await Get.putAsync<GlobalNetworkService>(() async => GlobalNetworkService());
 
   Map<String, Map<String, String>> languages = await di.init();
 
@@ -36,11 +41,11 @@ class Main extends StatelessWidget {
   final Map<String, Map<String, String>> languages;
 
   const Main(
-    this.initialRoute,
-    this.designSize, {
-    super.key,
-    required this.languages,
-  });
+      this.initialRoute,
+      this.designSize, {
+        super.key,
+        required this.languages,
+      });
 
   @override
   Widget build(BuildContext context) {

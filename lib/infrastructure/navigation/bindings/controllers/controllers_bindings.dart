@@ -12,6 +12,7 @@ export 'package:skt_sikring/infrastructure/navigation/bindings/controllers/live_
 export 'package:skt_sikring/infrastructure/navigation/bindings/controllers/log_in.controller.binding.dart';
 export 'package:skt_sikring/infrastructure/navigation/bindings/controllers/main_navigation_screen.controller.binding.dart';
 export 'package:skt_sikring/infrastructure/navigation/bindings/controllers/message_screen.controller.binding.dart';
+export 'package:skt_sikring/infrastructure/navigation/bindings/controllers/no_internet.controller.binding.dart'; 
 export 'package:skt_sikring/infrastructure/navigation/bindings/controllers/otp_page.controller.binding.dart';
 export 'package:skt_sikring/infrastructure/navigation/bindings/controllers/privacy_settings.controller.binding.dart'; 
 export 'package:skt_sikring/infrastructure/navigation/bindings/controllers/profile.controller.binding.dart';

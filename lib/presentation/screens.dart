@@ -13,6 +13,7 @@ export 'package:skt_sikring/presentation/errorPage/error_page.screen.dart';
 export 'package:skt_sikring/presentation/home/home.screen.dart';
 export 'package:skt_sikring/presentation/liveView/live_view.screen.dart';
 export 'package:skt_sikring/presentation/mainNavigationScreen/main_navigation_screen.screen.dart';
+export 'package:skt_sikring/presentation/noInternet/no_internet.screen.dart';
 export 'package:skt_sikring/presentation/privacySettings/privacy_settings.screen.dart';
 export 'package:skt_sikring/presentation/profile/profile.screen.dart';
 export 'package:skt_sikring/presentation/reportScreen/report_screen.screen.dart';

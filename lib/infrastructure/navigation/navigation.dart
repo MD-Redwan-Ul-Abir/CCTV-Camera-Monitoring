@@ -143,5 +143,10 @@ class Nav {
       page: () => const ErrorPageScreen(),
       binding: ErrorPageControllerBinding(),
     ),
+    GetPage(
+      name: Routes.NO_INTERNET,
+      page: () => const NoInternetScreen(),
+      binding: NoInternetControllerBinding(),
+    ),
   ];
 }

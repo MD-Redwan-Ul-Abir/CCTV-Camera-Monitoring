@@ -11,6 +11,7 @@ class Routes {
   static const CUSTOM_SUCCESS_MASSEGE = '/custom-success-massege';
   static const DETAILS_REPORT = '/details-report';
   static const DETAILS_REPORTS = '/details-reports';
+  static const ERROR_PAGE = '/error-page';
   static const FORGET_PASSWORD = '/forget-password';
   static const HOME = '/home';
   static const LIVE_VIEW = '/live-view';
@@ -26,5 +27,5 @@ class Routes {
   static const SITE_DETAILS = '/site-details';
   static const SPLASH_LANGUAGE = '/splash-language';
   static const SPLASH_SCREEN = '/splash-screen';
-  static const ERROR_PAGE = '/error-page';
+  static const NO_INTERNET = '/no-internet';
 }

@@ -19,6 +19,7 @@ class AppImages {
   static String agreementPaper = "$baseUrlImage/agreementPaper.png";
   static String chatPerson = "$baseUrlImage/chatPerson.png";
   static String sitePic = "$baseUrlImage/sitePic.png";
+  static String noInternet = "$baseUrlImage/noInternet.gif";
 
   // Here All are SVG
 
@@ -28,6 +29,7 @@ class AppImages {
   static String report = "$baseUrlLogo/report.svg";
   static String error400 = "$baseUrlLogo/400ErrorSvg.svg";
   static String error400Gif = "$baseUrlLogo/400ErrorGif.gif";
+
 
 
   static String imageFileIcon = "$baseUrlLogo/imageFile.svg";
