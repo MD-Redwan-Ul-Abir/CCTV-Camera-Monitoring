@@ -83,16 +83,18 @@ class _LiveViewScreenState extends State<LiveViewScreen> {
                       if (controller.vlcController != null)
                         ClipRRect(
                           borderRadius: BorderRadius.circular(4.r),
-                          child: Obx(() => VlcPlayer(
-                            key: ValueKey('${controller.selectedCameraUrl.value}_${controller.vlcPlayerKey.value}'), // Dynamic key
-                            controller: controller.vlcController!,
-                            aspectRatio: 16 / 9,
-                            placeholder: Container(
-                              color: Colors.black,
-                              child: Center(
-                                child: CircularProgressIndicator(
-                                  color: AppColors.primaryDark,
-                                ),
+                          child: Obx(() => InteractiveViewer(
+                            panEnabled: true,
+                            scaleEnabled: true,
+                            minScale: 0.5,
+                            maxScale: 5.0,
+                            child: VlcPlayer(
+                              key: ValueKey('${controller.selectedCameraUrl.value}_${controller.vlcPlayerKey.value}'), // Dynamic key
+                              controller: controller.vlcController!,
+                              aspectRatio: 16 / 9,
+
+                              placeholder: CircularProgressIndicator(
+                                color: AppColors.primaryDark,
                               ),
                             ),
                           )),
@@ -377,15 +379,16 @@ class _FullScreenVideoPlayerState extends State<FullScreenVideoPlayer> {
         children: [
           // Full Screen Video Player
           Center(
-            child: VlcPlayer(
-              controller: widget.vlcController,
-              aspectRatio: 16 / 9,
-              placeholder: Container(
-                color: Colors.black,
-                child: Center(
-                  child: CircularProgressIndicator(
-                    color: AppColors.primaryDark,
-                  ),
+            child: InteractiveViewer(
+              panEnabled: true,
+              scaleEnabled: true,
+              minScale: 0.5,
+              maxScale: 10.0,
+              child: VlcPlayer(
+                controller: widget.vlcController,
+                aspectRatio: 16 / 9,
+                placeholder:CircularProgressIndicator(
+                  color: AppColors.primaryDark,
                 ),
               ),
             ),
