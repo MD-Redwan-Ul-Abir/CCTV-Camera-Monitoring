@@ -1,12 +1,44 @@
-part of 'app_pages.dart';
-// DO NOT EDIT. This is code generated via package:get_cli/get_cli.dart
+// part of 'app_pages.dart';
+// // DO NOT EDIT. This is code generated via package:get_cli/get_cli.dart
+//
+// abstract class Routes {
+//   Routes._();
+//   static const NO_INTERNET = _Paths.NO_INTERNET;
+// }
+//
+// abstract class _Paths {
+//   _Paths._();
+//   static const NO_INTERNET = '/no-internet';
+//
+// }
+class Routes {
+  static Future<String> get initialRoute async {
+    // TODO: implement method
+    return SPLASH_SCREEN;
+  }
 
-abstract class Routes {
-  Routes._();
-  static const NO_INTERNET = _Paths.NO_INTERNET;
-}
-
-abstract class _Paths {
-  _Paths._();
+  static const CHANGE_PASSWORD = '/change-password';
+  static const CONVERSATION_PAGE = '/conversation-page';
+  static const CREATE_REPORT = '/create-report';
+  static const CUSTOM_PRIVACY_POLICY = '/custom-privacy-policy';
+  static const CUSTOM_SUCCESS_MASSEGE = '/custom-success-massege';
+  static const DETAILS_REPORT = '/details-report';
+  static const DETAILS_REPORTS = '/details-reports';
+  static const FORGET_PASSWORD = '/forget-password';
+  static const HOME = '/home';
+  static const LIVE_VIEW = '/live-view';
+  static const LOG_IN = '/log-in';
+  static const MAIN_NAVIGATION_SCREEN = '/main-navigation-screen';
+  static const MESSAGE_SCREEN = '/message-screen';
+  static const OTP_PAGE = '/otp-page';
+  static const PRIVACY_SETTINGS = '/privacy-settings';
+  static const PROFILE = '/profile';
+  static const REPORT_SCREEN = '/report-screen';
+  static const RESET_PASSWORD = '/reset-password';
+  static const SIGN_UP_PAGE = '/sign-up-page';
+  static const SITE_DETAILS = '/site-details';
+  static const SPLASH_LANGUAGE = '/splash-language';
+  static const SPLASH_SCREEN = '/splash-screen';
+  static const ERROR_PAGE = '/error-page';
   static const NO_INTERNET = '/no-internet';
 }

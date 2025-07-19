@@ -49,13 +49,18 @@ class GlobalNetworkService extends GetxService {
     // If we lost connection and we're not already on excluded routes
     if (wasConnected && !nowConnected && _shouldShowNoInternet()) {
       print('Navigating to no internet screen');
-      Get.toNamed(Routes.NO_INTERNET);
+      Future.delayed(Duration(seconds: 1),(){
+        Get.toNamed(Routes.NO_INTERNET);
+      });
+
     }
 
     // If we regained connection and we're on the no internet screen
     if (!wasConnected && nowConnected && Get.currentRoute == Routes.NO_INTERNET) {
       print('Internet restored, going back');
-      Get.back();
+      Future.delayed(Duration(seconds: 1), () {
+        Get.back();
+      });
     }
   }
 
