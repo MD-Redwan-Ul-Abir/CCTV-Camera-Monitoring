@@ -17,13 +17,19 @@ import '../shared/widgets/imagePicker/custom_image_picker.dart';
 import '../shared/widgets/imagePicker/imagePickerController.dart';
 import 'controllers/profile.controller.dart';
 
-class ProfileScreen extends GetView<ProfileController> {
+class ProfileScreen extends StatefulWidget {
   const ProfileScreen({super.key});
 
   @override
+  State<ProfileScreen> createState() => _ProfileScreenState();
+}
+
+class _ProfileScreenState extends State<ProfileScreen> {
+  @override
   Widget build(BuildContext context) {
-    final controller = Get.put(ProfileController());
+    final ProfileController profileController = Get.find<ProfileController>();
     final imageController = Get.put(imagePickerController());
+
     //final imageController = Get.lazyPut(()=>imagePickerController());
 
 
@@ -48,7 +54,7 @@ class ProfileScreen extends GetView<ProfileController> {
         ),
       ),
       body: Padding(
-        padding:  EdgeInsets.symmetric(horizontal: 24.w),
+        padding: EdgeInsets.symmetric(horizontal: 24.w),
         child: SingleChildScrollView(
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
@@ -67,7 +73,8 @@ class ProfileScreen extends GetView<ProfileController> {
                           color: AppColors.grayDarker,
                           child: Obx(() {
                             // Check if an image is selected
-                            if (imageController.selectedLicenseImage.value != null) {
+                            if (imageController.selectedLicenseImage.value !=
+                                null) {
                               return Image.file(
                                 imageController.selectedLicenseImage.value!,
                                 fit: BoxFit.cover,
@@ -87,7 +94,7 @@ class ProfileScreen extends GetView<ProfileController> {
                         right: -10.w,
                         // Negative value to position it like an overlay
                         child: GestureDetector(
-                          onTap: (){
+                          onTap: () {
                             showImagePickerOption(context, imageController);
                           },
                           child: Container(
@@ -131,17 +138,27 @@ class ProfileScreen extends GetView<ProfileController> {
                           SizedBox(
                             height: 6.h,
                           ),
-                          CustomTextFormField(hintText: 'User Name', prefixSvg: AppImages.profile2,),
+                          CustomTextFormField(
+                            hintText: 'User Name', prefixSvg: AppImages
+                              .profile2,),
                           SizedBox(
                             height: 16.h,
-                          ),CustomTextFormField(hintText: 'email', prefixSvg: AppImages.emailIcon,keyboardType: 'email',),
+                          ),
+                          CustomTextFormField(hintText: 'email',
+                            prefixSvg: AppImages.emailIcon,
+                            keyboardType: 'email',),
                           SizedBox(
                             height: 16.h,
-                          ),CustomTextFormField(hintText: 'Address', prefixSvg: AppImages.locationIcon,),
+                          ),
+                          CustomTextFormField(
+                            hintText: 'Address', prefixSvg: AppImages
+                              .locationIcon,),
                           SizedBox(
                             height: 22.h,
                           ),
-                          PrimaryButton(width: double.infinity,onPressed: (){}, text: 'Update')
+                          PrimaryButton(width: double.infinity,
+                              onPressed: () {},
+                              text: 'Update')
                         ],
                       ),
                     },
@@ -192,62 +209,96 @@ class ProfileScreen extends GetView<ProfileController> {
                         leftIcon: AppImages.ratingsIcon,
                         onTap: () {
                           // Reset rating before navigating
-                          controller.rating.value = 0.0;
+                          profileController.rating.value = 0.0;
+                          profileController.commentController.clear();
 
                           Get.toNamed(
                             Routes.CUSTOM_PRIVACY_POLICY,
                             arguments: {
                               'title': 'Reviews',
-                              'customWidget': Column(
-                                children: [
-                                  SizedBox(height: 30.h),
-                                  SvgPicture.asset(
-                                    AppImages.review,
-                                    height: 292.h,
-                                    width: 292.w,
-                                  ),
-                                  Text(
-                                    'Rating',
-                                    style: AppTextStyles.textButton.copyWith(
-                                      fontWeight: FontWeight.w600,
+                              'customWidget': Form(
+                                key: profileController.reviewFormKey,
+                                child: Column(
+                                  children: [
+                                    SizedBox(height: 30.h),
+                                    SvgPicture.asset(
+                                      AppImages.review,
+                                      height: 292.h,
+                                      width: 292.w,
                                     ),
-                                  ),
-                                  SizedBox(height: 10.h),
-                                  Obx(
-                                        () => CustomSvgRatingBar(
-                                      rating: controller.rating.value,
-                                      fullIconPath: AppImages.starIconFullFill,
-                                      halfIconPath: AppImages.starIconHalfFill,
-                                      emptyIconPath: AppImages.ratingsIcon,
-                                      onRatingChanged: (newRating) {
-                                        controller.updateRating(newRating);
+                                    Text(
+                                      'Rating',
+                                      style: AppTextStyles.textButton.copyWith(
+                                        fontWeight: FontWeight.w600,
+                                      ),
+                                    ),
+                                    SizedBox(height: 10.h),
+                                    Obx(
+                                          () =>
+                                          CustomSvgRatingBar(
+                                            rating: profileController.rating
+                                                .value,
+                                            fullIconPath: AppImages
+                                                .starIconFullFill,
+                                            halfIconPath: AppImages
+                                                .starIconHalfFill,
+                                            emptyIconPath: AppImages
+                                                .ratingsIcon,
+                                            onRatingChanged: (newRating) {
+                                              profileController.updateRating(
+                                                  newRating);
+                                            },
+                                          ),
+                                    ),
+                                    SizedBox(height: 30.h),
+                                    Align(
+                                      alignment: Alignment.topLeft,
+                                      child: Text(
+                                        'Comment (optional)',
+                                        style: AppTextStyles.button,
+                                      ),
+                                    ),
+                                    SizedBox(height: 10.h),
+                                    CustomTextFormField(
+                                      controller: profileController
+                                          .commentController,
+                                      hintText: 'Write your opinion',
+                                      keyboardType: 'multiline',
+
+                                      validator: (value) {
+                                        // Since comment is optional, we can return null for validation
+                                        // But you can add validation if needed
+                                        if (value != null && value
+                                            .trim()
+                                            .length > 500) {
+                                          return 'Comment should not exceed 500 characters';
+                                        }
+                                        return null;
                                       },
                                     ),
-                                  ),
-                                  SizedBox(height: 30.h),
-                                  Align(
-                                    alignment: Alignment.topLeft,
-                                    child: Text(
-                                      'Comment (optional)',
-                                      style: AppTextStyles.button,
-                                    ),
-                                  ),
-                                  SizedBox(height: 10.h),
-                                  CustomTextFormField(
-                                    hintText: 'Write your opinion',
-                                    keyboardType: 'multiline',
-                                  ),
-                                  SizedBox(height: 25.h),
-                                  PrimaryButton(
-                                    width: double.infinity,
-                                    onPressed: () {
-                                      // Reset rating when submitting/going back
-                                      controller.rating.value = 0.0;
-                                      Get.back();
-                                    },
-                                    text: 'Submit',
-                                  ),
-                                ],
+                                    SizedBox(height: 25.h),
+
+                                    Obx(() {
+                                      if(profileController.isLoading.value==true){
+                                       return Center(
+                                         child: CircularProgressIndicator(
+                                            color: AppColors.primaryLight,
+                                          ),
+                                       );
+                                      }
+                                      return PrimaryButton(
+                                        width: double.infinity,
+
+                                        onPressed: () async {
+                                          await profileController
+                                              .submitReview();
+                                        },
+                                        text: 'Submit',
+                                      );
+                                    }),
+
+                                  ],
+                                ),
                               ),
                             },
                           );
@@ -283,7 +334,6 @@ class ProfileScreen extends GetView<ProfileController> {
     );
   }
 
-
   void _showLanguageDropdown(BuildContext context) {
     showDialog(
       context: context,
@@ -294,7 +344,7 @@ class ProfileScreen extends GetView<ProfileController> {
             borderRadius: BorderRadius.circular(16.r),
           ),
           child: Container(
-            padding: EdgeInsets.symmetric(horizontal: 20,vertical: 5),
+            padding: EdgeInsets.symmetric(horizontal: 20, vertical: 5),
             child: Column(
               mainAxisSize: MainAxisSize.min,
               crossAxisAlignment: CrossAxisAlignment.start,
@@ -311,26 +361,26 @@ class ProfileScreen extends GetView<ProfileController> {
 
                 // English Option
                 _buildLanguageOption(
-                  context,
-                  'English',
-                  'en',
-                      () {
-                    _selectLanguage('English');
-                    Navigator.of(context).pop();
-                  },
+                    context,
+                    'English',
+                    'en',
+                        () {
+                      _selectLanguage('English');
+                      Navigator.of(context).pop();
+                    },
                     AppImages.English
                 ),
                 //Divider(color: AppColors.grayDarker, height: 1.h),
 
                 // Spanish Option
                 _buildLanguageOption(
-                  context,
-                  'Dansk',
-                  'da',
-                      () {
-                    _selectLanguage('Danish');
-                    Navigator.of(context).pop();
-                  },
+                    context,
+                    'Dansk',
+                    'da',
+                        () {
+                      _selectLanguage('Danish');
+                      Navigator.of(context).pop();
+                    },
                     AppImages.Danish
 
                 ),
@@ -338,14 +388,14 @@ class ProfileScreen extends GetView<ProfileController> {
 
                 // French Option
                 _buildLanguageOption(
-                  context,
-                  'Svenska',
-                  'sv',
-                      () {
-                    _selectLanguage('Swedish');
-                    Navigator.of(context).pop();
-                  },
-                  AppImages.swedish
+                    context,
+                    'Svenska',
+                    'sv',
+                        () {
+                      _selectLanguage('Swedish');
+                      Navigator.of(context).pop();
+                    },
+                    AppImages.swedish
 
 
                 ),
@@ -357,7 +407,8 @@ class ProfileScreen extends GetView<ProfileController> {
     );
   }
 
-  Widget _buildLanguageOption(BuildContext context, String language, String code, VoidCallback onTap, String svgPath) {
+  Widget _buildLanguageOption(BuildContext context, String language,
+      String code, VoidCallback onTap, String svgPath) {
     return InkWell(
       onTap: onTap,
       child: Container(
@@ -408,9 +459,7 @@ class ProfileScreen extends GetView<ProfileController> {
     } else {
       Get.updateLocale(Locale('en', 'US'));
     }
-
   }
-
 
   void _showDeleteAccountDialog(BuildContext context) {
     showDialog(
@@ -431,9 +480,9 @@ class ProfileScreen extends GetView<ProfileController> {
                 Text(
                   'Are you sure you want to log out of your account?',
                   style: AppTextStyles.button.copyWith(
-                    fontWeight: FontWeight.w400,
-                    color: AppColors.secondaryDarker,
-                    fontSize: 16.sp
+                      fontWeight: FontWeight.w400,
+                      color: AppColors.secondaryDarker,
+                      fontSize: 16.sp
                   ),
                   textAlign: TextAlign.center,
                 ),
@@ -514,11 +563,31 @@ class ProfileScreen extends GetView<ProfileController> {
   Future<void> clearStoredUserData() async {
     try {
       final keysToDelete = [
-        "id", "userCustomId", "email", "name", "canMessage", "role", "address",
-        "fcmToken", "profileImageUrl", "profileImageId", "status", "subscriptionType",
-        "isEmailVerified", "isDeleted", "isResetPassword", "isGoogleVerified",
-        "isAppleVerified", "authProvider", "failedLoginAttempts", "stripeCustomerId",
-        "conversationRestrictWith", "createdAt", "updatedAt", "accessToken", "refreshToken"
+        "id",
+        "userCustomId",
+        "email",
+        "name",
+        "canMessage",
+        "role",
+        "address",
+        "fcmToken",
+        "profileImageUrl",
+        "profileImageId",
+        "status",
+        "subscriptionType",
+        "isEmailVerified",
+        "isDeleted",
+        "isResetPassword",
+        "isGoogleVerified",
+        "isAppleVerified",
+        "authProvider",
+        "failedLoginAttempts",
+        "stripeCustomerId",
+        "conversationRestrictWith",
+        "createdAt",
+        "updatedAt",
+        "accessToken",
+        "refreshToken"
       ];
 
       for (String key in keysToDelete) {

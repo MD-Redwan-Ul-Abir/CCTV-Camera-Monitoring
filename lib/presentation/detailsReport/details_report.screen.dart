@@ -83,12 +83,12 @@ class _DetailsReportScreenState extends State<DetailsReportScreen> {
                       ?.map((attachment) => attachment.attachment ?? '')
                       .where((url) => url.isNotEmpty)
                       .toList() ?? [],
-
                   height: 220.h,
                   autoPlayInterval: Duration(seconds: 5),
                   activeIndicatorColor: AppColors.primaryDark,
                   inactiveIndicatorColor: AppColors.grayDarker,
                   borderRadius: BorderRadius.circular(4.r),
+                  defaultAssetImage: AppImages.noImage, // Add this line
                   onPageChanged: (index) {
                     //print('Page changed to $index');
                   },

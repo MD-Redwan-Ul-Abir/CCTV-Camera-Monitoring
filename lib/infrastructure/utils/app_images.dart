@@ -11,6 +11,7 @@ class AppImages {
   static String placeHolderBMW = "$baseUrlImage/bmw.png";
   static String success = "$baseUrlImage/success.png";
   static String person = "$baseUrlImage/person.jpg";
+  static String noImage = "$baseUrlImage/noImage.jpg";
   static String carSadan = "$baseUrlImage/sadan.png";
   static String carSUV = "$baseUrlImage/suv.png";
   static String person2 = "$baseUrlImage/person2.png";
