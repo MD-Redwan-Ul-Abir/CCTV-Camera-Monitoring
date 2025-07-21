@@ -94,11 +94,15 @@ class HomeController extends GetxController {
       isLoading.value = false;
     }
   }
+
+
   String getTodayDate() {
     final now = DateTime.now();
     final formatter = DateFormat('yyyy-MM-dd');
     return formatter.format(now);
   }
+
+
   Future<void> getAllTodaysReportByDate() async {
     isLoading.value = true;
     try {
