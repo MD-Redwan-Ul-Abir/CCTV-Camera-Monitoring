@@ -67,5 +67,7 @@ class ApiConstants {
 
   static String getPrivacyData = '/settings/all';
   static String postReviewAndRatings = '/review/create';
+  static String updateUserProfile = '/user/profile';
+  static String updateProfilePicture = '/user/profile-image';
 
 }

@@ -70,13 +70,22 @@ class ApiClient extends GetxService {
           }
           break;
         case 'PUT':
-          response = await _client
-              .put(
-            Uri.parse(url),
-            headers: finalHeaders,
-            body: _encodeBody(body, finalHeaders['Content-Type']),
-          )
-              .timeout(_timeout);
+          if (files != null && files.isNotEmpty) {
+            response = await _putMultipart(
+              url,
+              body,
+              files,
+              finalHeaders,
+            );
+          } else {
+            response = await _client
+                .put(
+              Uri.parse(url),
+              headers: finalHeaders,
+              body: _encodeBody(body, finalHeaders['Content-Type']),
+            )
+                .timeout(_timeout);
+          }
           break;
         case 'PATCH':
           if (files != null && files.isNotEmpty) {
@@ -115,6 +124,39 @@ class ApiClient extends GetxService {
     }
   }
 
+  Future<http.Response> _putMultipart(
+      String url,
+      Map<String, dynamic>? fields,
+      List<MultipartBody> files,
+      Map<String, String> headers,
+      ) async {
+    var request = http.MultipartRequest('PUT', Uri.parse(url));
+
+    // Convert all field values to strings while preserving their original values
+    if (fields != null) {
+      request.fields.addAll(_convertToStringMap(fields));
+    }
+
+    // Remove content-type from headers for multipart (http package handles it)
+    final multipartHeaders = Map<String, String>.from(headers);
+    multipartHeaders.remove('Content-Type');
+    request.headers.addAll(multipartHeaders);
+
+    for (var file in files) {
+      String? mimeType = mime(file.file.path);
+      request.files.add(
+        http.MultipartFile(
+          file.key,
+          file.file.readAsBytes().asStream(),
+          file.file.lengthSync(),
+          filename: file.file.path.split('/').last,
+          contentType: mimeType != null ? MediaType.parse(mimeType) : null,
+        ),
+      );
+    }
+    http.StreamedResponse response = await request.send();
+    return await http.Response.fromStream(response);
+  }
   /// Properly encode body based on content type
   String? _encodeBody(Map<String, dynamic>? body, String? contentType) {
     if (body == null) return null;

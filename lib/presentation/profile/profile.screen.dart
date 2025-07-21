@@ -4,6 +4,7 @@ import 'package:flutter_svg/svg.dart';
 
 import 'package:get/get.dart';
 import 'package:skt_sikring/infrastructure/theme/text_styles.dart';
+import 'package:skt_sikring/infrastructure/utils/log_helper.dart';
 import 'package:skt_sikring/presentation/shared/clearDataFromSecureStoreage.dart';
 import 'package:skt_sikring/presentation/shared/widgets/buttons/primary_buttons.dart';
 
@@ -25,13 +26,11 @@ class ProfileScreen extends StatefulWidget {
 }
 
 class _ProfileScreenState extends State<ProfileScreen> {
+  final ProfileController profileController = Get.find<ProfileController>();
+
   @override
   Widget build(BuildContext context) {
-    final ProfileController profileController = Get.find<ProfileController>();
-    final imageController = Get.put(imagePickerController());
-
     //final imageController = Get.lazyPut(()=>imagePickerController());
-
 
     return Scaffold(
       appBar: PreferredSize(
@@ -71,18 +70,44 @@ class _ProfileScreenState extends State<ProfileScreen> {
                           width: 100.r,
                           height: 100.r,
                           color: AppColors.grayDarker,
+                          // Replace this part in your profile.screen.dart:
                           child: Obx(() {
-                            // Check if an image is selected
-                            if (imageController.selectedLicenseImage.value !=
-                                null) {
-                              return Image.file(
-                                imageController.selectedLicenseImage.value!,
+                            if (profileController
+                                .imageController
+                                .selectedImages
+                                .isNotEmpty) {
+                              profileController.updateProfilePicture();
+
+
+
+                                return Image.file(
+                                  profileController
+                                      .imageController
+                                      .selectedImages
+                                      .first,
+                                  fit: BoxFit.cover,
+                                );
+
+                            }
+                            // Show network image as default
+                            else {
+                              return Image.network(
+                                profileController
+                                    .homeController
+                                    .profileImageUrl
+                                    .value,
                                 fit: BoxFit.cover,
-                              );
-                            } else {
-                              return Image.asset(
-                                AppImages.person,
-                                fit: BoxFit.cover,
+                                errorBuilder: (context, error, stackTrace) {
+                                  // Show a placeholder if network image fails
+                                  return Container(
+                                    color: AppColors.grayDarker,
+                                    child: Icon(
+                                      Icons.person,
+                                      size: 50.r,
+                                      color: AppColors.primaryLight,
+                                    ),
+                                  );
+                                },
                               );
                             }
                           }),
@@ -95,7 +120,12 @@ class _ProfileScreenState extends State<ProfileScreen> {
                         // Negative value to position it like an overlay
                         child: GestureDetector(
                           onTap: () {
-                            showImagePickerOption(context, imageController);
+                            showImagePickerOption(
+                              context,
+                              profileController.imageController,
+                            );
+                            // profileController.selectedImage.value= profileController.imageController.selectedImages.first.path;
+                            // LoggerHelper.error(profileController.selectedImage.value);
                           },
                           child: Container(
                             width: 48.r,
@@ -123,7 +153,12 @@ class _ProfileScreenState extends State<ProfileScreen> {
                 ],
               ),
               SizedBox(height: 20.h),
-              Text('Aurelia Lark', style: AppTextStyles.paragraph3),
+              Obx(() {
+                return Text(
+                  profileController.name.value,
+                  style: AppTextStyles.paragraph3,
+                );
+              }),
               SizedBox(height: 20.h),
               PrimaryButton(
                 backgroundColor: AppColors.primaryDarker,
@@ -133,33 +168,55 @@ class _ProfileScreenState extends State<ProfileScreen> {
                     Routes.CUSTOM_PRIVACY_POLICY,
                     arguments: {
                       'title': 'Edit Profile',
-                      'customWidget': Column(
-                        children: [
-                          SizedBox(
-                            height: 6.h,
-                          ),
-                          CustomTextFormField(
-                            hintText: 'User Name', prefixSvg: AppImages
-                              .profile2,),
-                          SizedBox(
-                            height: 16.h,
-                          ),
-                          CustomTextFormField(hintText: 'email',
-                            prefixSvg: AppImages.emailIcon,
-                            keyboardType: 'email',),
-                          SizedBox(
-                            height: 16.h,
-                          ),
-                          CustomTextFormField(
-                            hintText: 'Address', prefixSvg: AppImages
-                              .locationIcon,),
-                          SizedBox(
-                            height: 22.h,
-                          ),
-                          PrimaryButton(width: double.infinity,
-                              onPressed: () {},
-                              text: 'Update')
-                        ],
+                      'customWidget': Form(
+                        key: profileController.editProfileFormKey,
+                        child: Column(
+                          children: [
+                            SizedBox(height: 6.h),
+                            Obx(() {
+                              return CustomTextFormField(
+                                hintText: profileController.name.value,
+                                controller:
+                                    profileController.userNameController,
+                                prefixSvg: AppImages.profile2,
+                              );
+                            }),
+                            SizedBox(height: 16.h),
+                            Obx(() {
+                              return CustomTextFormField(
+                                hintText: profileController.email.value ?? "",
+                                readOnly: true,
+                                prefixSvg: AppImages.emailIcon,
+                              );
+                            }),
+                            SizedBox(height: 16.h),
+                            Obx(() {
+                              return CustomTextFormField(
+                                hintText: profileController.address.value,
+                                controller: profileController.addressController,
+                                prefixSvg: AppImages.locationIcon,
+                              );
+                            }),
+                            SizedBox(height: 22.h),
+                            Obx(() {
+                              if (profileController.isLoading.value == true) {
+                                return Center(
+                                  child: CircularProgressIndicator(
+                                    color: AppColors.primaryLight,
+                                  ),
+                                );
+                              }
+                              return PrimaryButton(
+                                width: double.infinity,
+
+                                onPressed: () async {
+                                  await profileController.editProfile();
+                                },
+                                text: 'Update',
+                              );
+                            }),
+                          ],
+                        ),
                       ),
                     },
                   );
@@ -234,21 +291,19 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                     ),
                                     SizedBox(height: 10.h),
                                     Obx(
-                                          () =>
-                                          CustomSvgRatingBar(
-                                            rating: profileController.rating
-                                                .value,
-                                            fullIconPath: AppImages
-                                                .starIconFullFill,
-                                            halfIconPath: AppImages
-                                                .starIconHalfFill,
-                                            emptyIconPath: AppImages
-                                                .ratingsIcon,
-                                            onRatingChanged: (newRating) {
-                                              profileController.updateRating(
-                                                  newRating);
-                                            },
-                                          ),
+                                      () => CustomSvgRatingBar(
+                                        rating: profileController.rating.value,
+                                        fullIconPath:
+                                            AppImages.starIconFullFill,
+                                        halfIconPath:
+                                            AppImages.starIconHalfFill,
+                                        emptyIconPath: AppImages.ratingsIcon,
+                                        onRatingChanged: (newRating) {
+                                          profileController.updateRating(
+                                            newRating,
+                                          );
+                                        },
+                                      ),
                                     ),
                                     SizedBox(height: 30.h),
                                     Align(
@@ -260,17 +315,16 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                     ),
                                     SizedBox(height: 10.h),
                                     CustomTextFormField(
-                                      controller: profileController
-                                          .commentController,
+                                      controller:
+                                          profileController.commentController,
                                       hintText: 'Write your opinion',
                                       keyboardType: 'multiline',
 
                                       validator: (value) {
                                         // Since comment is optional, we can return null for validation
                                         // But you can add validation if needed
-                                        if (value != null && value
-                                            .trim()
-                                            .length > 500) {
+                                        if (value != null &&
+                                            value.trim().length > 500) {
                                           return 'Comment should not exceed 500 characters';
                                         }
                                         return null;
@@ -279,12 +333,13 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                     SizedBox(height: 25.h),
 
                                     Obx(() {
-                                      if(profileController.isLoading.value==true){
-                                       return Center(
-                                         child: CircularProgressIndicator(
+                                      if (profileController.isLoading.value ==
+                                          true) {
+                                        return Center(
+                                          child: CircularProgressIndicator(
                                             color: AppColors.primaryLight,
                                           ),
-                                       );
+                                        );
                                       }
                                       return PrimaryButton(
                                         width: double.infinity,
@@ -296,7 +351,6 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                         text: 'Submit',
                                       );
                                     }),
-
                                   ],
                                 ),
                               ),
@@ -360,45 +414,24 @@ class _ProfileScreenState extends State<ProfileScreen> {
                 // SizedBox(height: 20.h),
 
                 // English Option
-                _buildLanguageOption(
-                    context,
-                    'English',
-                    'en',
-                        () {
-                      _selectLanguage('English');
-                      Navigator.of(context).pop();
-                    },
-                    AppImages.English
-                ),
+                _buildLanguageOption(context, 'English', 'en', () {
+                  _selectLanguage('English');
+                  Navigator.of(context).pop();
+                }, AppImages.English),
                 //Divider(color: AppColors.grayDarker, height: 1.h),
 
                 // Spanish Option
-                _buildLanguageOption(
-                    context,
-                    'Dansk',
-                    'da',
-                        () {
-                      _selectLanguage('Danish');
-                      Navigator.of(context).pop();
-                    },
-                    AppImages.Danish
-
-                ),
+                _buildLanguageOption(context, 'Dansk', 'da', () {
+                  _selectLanguage('Danish');
+                  Navigator.of(context).pop();
+                }, AppImages.Danish),
                 // Divider(color: AppColors.grayDarker, height: 1.h),
 
                 // French Option
-                _buildLanguageOption(
-                    context,
-                    'Svenska',
-                    'sv',
-                        () {
-                      _selectLanguage('Swedish');
-                      Navigator.of(context).pop();
-                    },
-                    AppImages.swedish
-
-
-                ),
+                _buildLanguageOption(context, 'Svenska', 'sv', () {
+                  _selectLanguage('Swedish');
+                  Navigator.of(context).pop();
+                }, AppImages.swedish),
               ],
             ),
           ),
@@ -407,8 +440,13 @@ class _ProfileScreenState extends State<ProfileScreen> {
     );
   }
 
-  Widget _buildLanguageOption(BuildContext context, String language,
-      String code, VoidCallback onTap, String svgPath) {
+  Widget _buildLanguageOption(
+    BuildContext context,
+    String language,
+    String code,
+    VoidCallback onTap,
+    String svgPath,
+  ) {
     return InkWell(
       onTap: onTap,
       child: Container(
@@ -416,18 +454,14 @@ class _ProfileScreenState extends State<ProfileScreen> {
         padding: EdgeInsets.symmetric(vertical: 16.h),
         child: Row(
           children: [
-            SvgPicture.asset(
-              svgPath,
-              height: 20.h,
-              width: 20.w,
-            ),
+            SvgPicture.asset(svgPath, height: 20.h, width: 20.w),
             SizedBox(width: 12.w),
             Text(
               language,
               style: AppTextStyles.caption1.copyWith(
-                  color: AppColors.secondaryDarker,
-                  fontSize: 15.sp,
-                  fontWeight: FontWeight.w500
+                color: AppColors.secondaryDarker,
+                fontSize: 15.sp,
+                fontWeight: FontWeight.w500,
               ),
             ),
             Spacer(),
@@ -480,9 +514,9 @@ class _ProfileScreenState extends State<ProfileScreen> {
                 Text(
                   'Are you sure you want to log out of your account?',
                   style: AppTextStyles.button.copyWith(
-                      fontWeight: FontWeight.w400,
-                      color: AppColors.secondaryDarker,
-                      fontSize: 16.sp
+                    fontWeight: FontWeight.w400,
+                    color: AppColors.secondaryDarker,
+                    fontSize: 16.sp,
                   ),
                   textAlign: TextAlign.center,
                 ),
@@ -587,7 +621,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
         "createdAt",
         "updatedAt",
         "accessToken",
-        "refreshToken"
+        "refreshToken",
       ];
 
       for (String key in keysToDelete) {

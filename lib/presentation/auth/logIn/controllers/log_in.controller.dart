@@ -2,12 +2,14 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:skt_sikring/infrastructure/theme/app_colors.dart';
+import 'package:skt_sikring/infrastructure/utils/log_helper.dart';
 import 'package:skt_sikring/presentation/home/controllers/home.controller.dart';
 
 import '../../../../infrastructure/navigation/routes.dart';
 import '../../../../infrastructure/utils/api_client.dart';
 import '../../../../infrastructure/utils/api_content.dart';
 import '../../../../infrastructure/utils/secure_storage_helper.dart';
+import '../../../shared/networkImageFormating.dart';
 import '../../../shared/widgets/customSnakBar.dart';
 import '../model/logInModel.dart';
 
@@ -29,6 +31,7 @@ class LogInController extends GetxController with GetSingleTickerProviderStateMi
   final emailError = ''.obs;
   final passwordError = ''.obs;
   var message;
+  RxString profileImageUrl = "".obs;
 
 
   // void dosposeController () {
@@ -46,7 +49,15 @@ class LogInController extends GetxController with GetSingleTickerProviderStateMi
     emailController.clear();
     passwordController.clear();
   }
-
+  void updateProfileImage(String initialImageUrl) {
+    try {
+      final imageUrl = initialImageUrl;
+      profileImageUrl.value = ProfileImageHelper.formatImageUrl(imageUrl);
+    } catch (e) {
+      print("Error updating profile image: $e");
+      profileImageUrl.value = "";
+    }
+  }
   Future<bool> login() async {
     isLoading.value = true;
     update();
@@ -63,7 +74,7 @@ class LogInController extends GetxController with GetSingleTickerProviderStateMi
         loginResponse.value = LogInModel.fromJson(response.body);
         message = loginResponse.value?.message;
         isLoading.value = false;
-        update();
+
         // print("-----------------------------storing data started-------------------------------------");
         // var storedData = await getStoredUserData();
         // print("------------------------------storing complete and viewed------------------------------------");
@@ -169,7 +180,10 @@ class LogInController extends GetxController with GetSingleTickerProviderStateMi
 
       // Store profile image URL
       if (user.profileImage?.imageUrl != null && user.profileImage!.imageUrl!.isNotEmpty) {
-        await SecureStorageHelper.setString("profileImageUrl", user.profileImage!.imageUrl!);
+        updateProfileImage(user.profileImage!.imageUrl!);
+        await SecureStorageHelper.setString("profileImageUrl", profileImageUrl.value);
+
+         // LoggerHelper.error(profileImageUrl.value);
       }
 
       if (user.profileImage?.id != null && user.profileImage!.id!.isNotEmpty) {

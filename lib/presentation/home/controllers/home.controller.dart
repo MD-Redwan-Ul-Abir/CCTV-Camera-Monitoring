@@ -29,6 +29,7 @@ class HomeController extends GetxController {
     try {
       final imageUrl = profileDetails.value?.data?.attributes?.profileImage?.imageUrl;
       profileImageUrl.value = ProfileImageHelper.formatImageUrl(imageUrl);
+      SecureStorageHelper.setString("profileImageUrl", profileImageUrl.value);
     } catch (e) {
       print("Error updating profile image: $e");
       profileImageUrl.value = "";

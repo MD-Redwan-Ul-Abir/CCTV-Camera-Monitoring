@@ -33,14 +33,15 @@ class CustomTextFormField extends StatefulWidget {
   final double? dropdownWidth;
   final GlobalKey<FormState>? formKey;
   final bool isEnabled;
+  final bool readOnly; // Added readOnly property
   final ValueChanged<String?>? onSaved, onFieldSubmitted;
   final FormFieldValidator<String>? validator;
   final VoidCallback? onTapSuffix;
   final FocusNode? focusNode;
   final bool autofocus;
   final String? suffixIcon;
+  final Color? cursorColor;
   final bool? showFocusedBorder;
-
 
   const CustomTextFormField({
     super.key,
@@ -64,6 +65,7 @@ class CustomTextFormField extends StatefulWidget {
     this.filledstatus,
     this.formKey,
     this.isEnabled = true,
+    this.readOnly = false, // Default value for readOnly
     this.onSaved,
     this.validator,
     this.onTapSuffix,
@@ -75,7 +77,9 @@ class CustomTextFormField extends StatefulWidget {
     this.prefixIconHeight,
     this.prefixIconWeight,
     this.sufixIconHeight,
-    this.sufixIconWeight, this.dropdownHintTextColor,
+    this.sufixIconWeight,
+    this.dropdownHintTextColor,
+    this.cursorColor,
   });
 
   @override
@@ -114,11 +118,11 @@ class _CustomTextFormFieldState extends State<CustomTextFormField> {
   Widget build(BuildContext context) {
     if (widget.dropDownItems != null && widget.dropDownItems!.isNotEmpty) {
       return IgnorePointer(
-        ignoring: !widget.isEnabled,
+        ignoring: !widget.isEnabled || widget.readOnly, // Updated to consider readOnly
         child: DropdownButtonFormField<String>(
           value: widget.selectedValue,
           items: widget.dropDownItems,
-          onChanged: widget.isEnabled ? widget.onChanged : null,
+          onChanged: widget.isEnabled && !widget.readOnly ? widget.onChanged : null, // Updated
           decoration: _inputDecoration(context),
           style: AppTextStyles.button,
           dropdownColor: AppColors.grayDarker,
@@ -132,7 +136,6 @@ class _CustomTextFormFieldState extends State<CustomTextFormField> {
               color: widget.dropdownIconColor ?? AppColors.primaryLight, // Set the color
             ),
           ),
-
         ),
       );
     }
@@ -142,8 +145,10 @@ class _CustomTextFormFieldState extends State<CustomTextFormField> {
       autofocus: widget.autofocus,
       focusNode: widget.focusNode,
       enabled: widget.isEnabled,
-      onChanged: widget.isEnabled ? widget.onChanged : null,
+      readOnly: widget.readOnly, // Added readOnly property
+      onChanged: widget.isEnabled && !widget.readOnly ? widget.onChanged : null, // Updated
       onSaved: widget.onSaved,
+      cursorColor: widget.cursorColor ?? AppColors.primaryNormal,
       onFieldSubmitted: widget.onFieldSubmitted,
       validator: (value) {
         final customError = widget.validator?.call(value);
@@ -175,8 +180,6 @@ class _CustomTextFormFieldState extends State<CustomTextFormField> {
           return null;
         }
 
-
-
         return null;
       },
       maxLength: widget.maxlength,
@@ -194,7 +197,6 @@ class _CustomTextFormFieldState extends State<CustomTextFormField> {
     bool isDropdownWithSelection = widget.dropDownItems != null &&
         widget.dropDownItems!.isNotEmpty &&
         widget.selectedValue != null;
-
 
     return InputDecoration(
       hintText: widget.hintText,
@@ -221,7 +223,7 @@ class _CustomTextFormFieldState extends State<CustomTextFormField> {
         borderSide: BorderSide(color: AppColors.primaryDarker, width: 1.5),
       ),
       prefixIcon: _buildPrefixIcon(context),
-      suffixIcon: _isPasswordField
+      suffixIcon: _isPasswordField && !widget.readOnly // Don't show password toggle for readOnly fields
           ? IconButton(
         icon: widget.suffixSvg != null && _obscureText
             ? _buildSuffixIcon(context)!
@@ -267,13 +269,16 @@ class _CustomTextFormFieldState extends State<CustomTextFormField> {
 
   Widget? _buildSuffixIcon(BuildContext context) {
     if (widget.suffixSvg is String) {
-      return Padding(
-        padding: EdgeInsets.all(12.sp),
-        child: SvgPicture.asset(
-          widget.suffixSvg!,
-          height: widget.sufixIconHeight?.toDouble() ?? 24.h,
-          width: widget.sufixIconWeight?.toDouble() ?? 24.h,
-          fit: BoxFit.cover,
+      return GestureDetector(
+        onTap: widget.onTapSuffix, // Handle suffix icon tap
+        child: Padding(
+          padding: EdgeInsets.all(12.sp),
+          child: SvgPicture.asset(
+            widget.suffixSvg!,
+            height: widget.sufixIconHeight?.toDouble() ?? 24.h,
+            width: widget.sufixIconWeight?.toDouble() ?? 24.h,
+            fit: BoxFit.cover,
+          ),
         ),
       );
     } else if (widget.suffixSvg != null) {
