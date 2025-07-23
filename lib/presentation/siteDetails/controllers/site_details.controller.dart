@@ -3,7 +3,7 @@ import 'package:get/get.dart';
 import '../../../infrastructure/navigation/routes.dart';
 import '../../../infrastructure/utils/api_client.dart';
 import '../../../infrastructure/utils/api_content.dart';
-import '../../../infrastructure/utils/app_images.dart';
+
 import '../../../infrastructure/utils/secure_storage_helper.dart';
 import '../../shared/networkImageFormating.dart';
 import '../../shared/widgets/customSnakBar.dart';

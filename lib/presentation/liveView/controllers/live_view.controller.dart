@@ -62,62 +62,62 @@ class LiveViewController extends GetxController {
     checkAndSelectFirstCamera();
   }
 
-  Future<void> getAllCamera() async {
-    isLoading.value = true;
-    try {
-      final response = await _apiClient.getData(
-        ApiConstants.getAllSiteByPersonID(
-            personID: localPersonID,
-            role: role.value,
-            limit: 300
-        ),
-      );
-
-      if (response.statusCode == 200 || response.statusCode == 201) {
-        // Parse the JSON response
-        final cameraResponse = CameraListBySiteIdModel.fromJson(
-            json.decode(response.body)
-        );
-
-        // Extract the list of cameras and update your RxList
-        if (cameraResponse.data?.attributes != null) {
-          // Convert API response to your camera list format
-          List<Map<String, String>> apiCameraList = [];
-
-          for (var attribute in cameraResponse.data!.attributes!) {
-            if (attribute.cameraId?.cameraName != null &&
-                attribute.cameraId?.rtspUrl != null) {
-              apiCameraList.add({
-                'camera': attribute.cameraId!.cameraName!,
-                'url': attribute.cameraId!.rtspUrl!,
-              });
-            }
-          }
-
-          // Update your existing camera list with API data
-          cameraList.value = apiCameraList;
-
-          // Also store the full model list if needed elsewhere
-          productSubCategoryList.clear();
-          productSubCategoryList.add(cameraResponse);
-
-          // Auto-select first camera after loading
-          checkAndSelectFirstCamera();
-        }
-      }
-      else if (response.statusCode == 400) {
-        CustomSnackbar.show(
-          title: "Oops!",
-          message: "Session Expired",
-        );
-        Get.toNamed(Routes.ERROR_PAGE);
-      }
-    } catch (e) {
-      print("Error getting cameras: $e");
-    } finally {
-      isLoading.value = false;
-    }
-  }
+  // Future<void> getAllCamera() async {
+  //   isLoading.value = true;
+  //   try {
+  //     final response = await _apiClient.getData(
+  //       ApiConstants.getAllSiteByPersonID(
+  //           personID: localPersonID,
+  //           role: role.value,
+  //           limit: 300
+  //       ),
+  //     );
+  //
+  //     if (response.statusCode == 200 || response.statusCode == 201) {
+  //       // Parse the JSON response
+  //       final cameraResponse = CameraListBySiteIdModel.fromJson(
+  //           json.decode(response.body)
+  //       );
+  //
+  //       // Extract the list of cameras and update your RxList
+  //       if (cameraResponse.data?.attributes != null) {
+  //         // Convert API response to your camera list format
+  //         List<Map<String, String>> apiCameraList = [];
+  //
+  //         for (var attribute in cameraResponse.data!.attributes!) {
+  //           if (attribute.cameraId?.cameraName != null &&
+  //               attribute.cameraId?.rtspUrl != null) {
+  //             apiCameraList.add({
+  //               'camera': attribute.cameraId!.cameraName!,
+  //               'url': attribute.cameraId!.rtspUrl!,
+  //             });
+  //           }
+  //         }
+  //
+  //         // Update your existing camera list with API data
+  //         cameraList.value = apiCameraList;
+  //
+  //         // Also store the full model list if needed elsewhere
+  //         productSubCategoryList.clear();
+  //         productSubCategoryList.add(cameraResponse);
+  //
+  //         // Auto-select first camera after loading
+  //         checkAndSelectFirstCamera();
+  //       }
+  //     }
+  //     else if (response.statusCode == 400) {
+  //       CustomSnackbar.show(
+  //         title: "Oops!",
+  //         message: "Session Expired",
+  //       );
+  //       Get.toNamed(Routes.ERROR_PAGE);
+  //     }
+  //   } catch (e) {
+  //     print("Error getting cameras: $e");
+  //   } finally {
+  //     isLoading.value = false;
+  //   }
+  // }
 
   @override
   void onClose() {

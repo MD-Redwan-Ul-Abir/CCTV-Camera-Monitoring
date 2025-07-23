@@ -1,7 +1,12 @@
 import 'dart:io';
+import 'dart:typed_data';
+import 'dart:ui' as ui;
+import 'package:flutter/services.dart';
 import 'package:path/path.dart' as path;
 import 'package:get/get.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:skt_sikring/infrastructure/utils/log_helper.dart';
+import 'package:flutter/material.dart';
 
 class imagePickerController extends GetxController {
   // Selected license image file
@@ -28,21 +33,145 @@ class imagePickerController extends GetxController {
   // Video bytes (if needed for upload)
   Rx<List<int>> videoBytes = Rx<List<int>>([]);
 
-  /// Sets license image
-  void setLicenseImage(File image) {
-    selectedLicenseImage.value = image;
-    profileImagePath.value = image.path;
-    imageBytes.value = image.readAsBytesSync();
-    update();
-    print('Image path: ${profileImagePath.value}');
+  /// Sets license image with compression
+  Future<void> setLicenseImage(File image) async {
+    try {
+      File? compressedImage = await compressImageNative(image);
+      File finalImage = compressedImage ?? image;
+
+      selectedLicenseImage.value = finalImage;
+      profileImagePath.value = finalImage.path;
+      imageBytes.value = finalImage.readAsBytesSync();
+      update();
+      print('Image path: ${profileImagePath.value}');
+      print('Image size: ${finalImage.lengthSync()} bytes');
+    } catch (e) {
+      print('Error setting license image: $e');
+      // Fallback to original image
+      selectedLicenseImage.value = image;
+      profileImagePath.value = image.path;
+      imageBytes.value = image.readAsBytesSync();
+      update();
+    }
   }
 
-  /// Adds image to the list
-  void addImage(File image) {
+  /// Adds image to the list with native compression
+  Future<void> addImage(File image) async {
     if (selectedImages.length < 3) {
-      selectedImages.add(image);
-      update();
-      print('Added image: ${image.path}');
+      try {
+        // Try native compression
+        File? compressedImage = await compressImageNative(image);
+
+        if (compressedImage != null) {
+          selectedImages.add(compressedImage);
+          update();
+          print('Added compressed image: ${compressedImage.path}');
+          print('Original size: ${image.lengthSync()} bytes');
+          print('Compressed size: ${compressedImage.lengthSync()} bytes');
+        } else {
+          // Fallback: use original image if compression fails
+          selectedImages.add(image);
+          update();
+          print('Added original image (compression failed): ${image.path}');
+        }
+      } catch (e) {
+        print('Error adding image: $e');
+        // Fallback: add original image
+        selectedImages.add(image);
+        update();
+      }
+    } else {
+      print('Maximum of 3 images allowed');
+    }
+  }
+
+  /// Native image compression using Flutter's built-in capabilities
+  Future<File?> compressImageNative(File imageFile) async {
+    try {
+      LoggerHelper.debug('Starting native compression for: ${imageFile.path}');
+
+      // Read the image file as bytes
+      Uint8List imageBytes = await imageFile.readAsBytes();
+      LoggerHelper.debug('Original image size: ${imageBytes.length} bytes');
+
+      // Decode the image
+      ui.Codec codec = await ui.instantiateImageCodec(
+        imageBytes,
+        targetWidth: 800, // Resize to max width of 800px
+        targetHeight: 600, // Resize to max height of 600px
+      );
+
+      ui.FrameInfo frameInfo = await codec.getNextFrame();
+      ui.Image image = frameInfo.image;
+
+      // Convert to byte data with compression
+      ByteData? byteData = await image.toByteData(
+        format: ui.ImageByteFormat.png, // You can also use ui.ImageByteFormat.rawRgba
+      );
+
+      if (byteData == null) {
+        LoggerHelper.debug('Failed to convert image to byte data');
+        return null;
+      }
+
+      Uint8List compressedBytes = byteData.buffer.asUint8List();
+      LoggerHelper.debug('Compressed image size: ${compressedBytes.length} bytes');
+
+      // Create compressed file path
+      String directory = imageFile.parent.path;
+      String fileName = path.basenameWithoutExtension(imageFile.path);
+      String extension = path.extension(imageFile.path);
+      String compressedPath = '$directory/compressed_${DateTime.now().millisecondsSinceEpoch}_$fileName$extension';
+
+      // Write compressed bytes to new file
+      File compressedFile = File(compressedPath);
+      await compressedFile.writeAsBytes(compressedBytes);
+
+      LoggerHelper.debug('Compressed image saved to: ${compressedFile.path}');
+      LoggerHelper.debug('Compression ratio: ${((imageBytes.length - compressedBytes.length) / imageBytes.length * 100).toStringAsFixed(1)}%');
+
+      image.dispose(); // Clean up memory
+      return compressedFile;
+
+    } catch (e) {
+      LoggerHelper.debug('Native compression failed: $e');
+      return null;
+    }
+  }
+
+  /// Alternative compression method with JPEG encoding (requires image package)
+  Future<File?> compressImageWithImagePackage(File imageFile) async {
+    try {
+      // This method requires adding the 'image' package to pubspec.yaml
+      // For now, we'll just return null to use the fallback
+      LoggerHelper.debug('Image package compression not implemented');
+      return null;
+    } catch (e) {
+      LoggerHelper.debug('Image package compression failed: $e');
+      return null;
+    }
+  }
+
+  /// Simple file size reduction by reducing quality (basic implementation)
+  Future<File?> reduceImageQuality(File imageFile) async {
+    try {
+      // Read original bytes
+      Uint8List originalBytes = await imageFile.readAsBytes();
+
+      // Create a new file with reduced quality (this is a basic approach)
+      String directory = imageFile.parent.path;
+      String fileName = path.basenameWithoutExtension(imageFile.path);
+      String extension = path.extension(imageFile.path);
+      String reducedPath = '$directory/reduced_${DateTime.now().millisecondsSinceEpoch}_$fileName$extension';
+
+      // For now, just copy the file (you can implement actual quality reduction here)
+      File reducedFile = File(reducedPath);
+      await reducedFile.writeAsBytes(originalBytes);
+
+      return reducedFile;
+    } catch (e) {
+      LoggerHelper.debug('Quality reduction failed: $e');
+      return null;
     }
   }
 
@@ -67,7 +196,12 @@ class imagePickerController extends GetxController {
 
   /// Picks an image from the specified source (camera or gallery)
   Future<void> pickImage(ImageSource source) async {
-    final pickedFile = await ImagePicker().pickImage(source: source);
+    final pickedFile = await ImagePicker().pickImage(
+      source: source,
+      maxWidth: 1920, // Limit image width
+      maxHeight: 1080, // Limit image height
+      imageQuality: 85, // Set quality (0-100)
+    );
     if (pickedFile == null) return;
 
     final File imageFile = File(pickedFile.path);

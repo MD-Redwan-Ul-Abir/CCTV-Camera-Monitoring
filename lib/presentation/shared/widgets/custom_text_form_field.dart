@@ -194,9 +194,9 @@ class _CustomTextFormFieldState extends State<CustomTextFormField> {
 
   InputDecoration _inputDecoration(BuildContext context) {
     // Check if this is a dropdown with a selected value
-    bool isDropdownWithSelection = widget.dropDownItems != null &&
-        widget.dropDownItems!.isNotEmpty &&
-        widget.selectedValue != null;
+    // bool isDropdownWithSelection = widget.dropDownItems != null &&
+    //     widget.dropDownItems!.isNotEmpty &&
+    //     widget.selectedValue != null;
 
     return InputDecoration(
       hintText: widget.hintText,

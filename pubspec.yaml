@@ -62,12 +62,12 @@ dependencies:
   http: ^1.4.0
   gif: ^2.3.0
   connectivity_plus: ^6.1.4
-
-
-  
-
-
   path_provider: any
+  flutter_image_compress: ^2.4.0
+
+
+
+
 dev_dependencies:
   flutter_test:
     sdk: flutter

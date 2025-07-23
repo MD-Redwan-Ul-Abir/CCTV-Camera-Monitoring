@@ -77,8 +77,8 @@ class CustomSnackbar {
     show(
       title: title,
       message: message,
-      backgroundColor: AppColors.greenLight ?? AppColors.primaryLight,
-      textColor: AppColors.greenDark ?? AppColors.redDark,
+      backgroundColor: AppColors.greenLight ,
+      textColor: AppColors.greenDark ,
       duration: duration,
     );
   }
@@ -91,8 +91,8 @@ class CustomSnackbar {
     show(
       title: title,
       message: message,
-      backgroundColor: AppColors.yellowLight ?? AppColors.primaryLight,
-      textColor: AppColors.yellowDark ?? AppColors.redDark,
+      backgroundColor: AppColors.yellowLight ,
+      textColor: AppColors.yellowDark ,
       duration: duration,
     );
   }
@@ -105,8 +105,8 @@ class CustomSnackbar {
     show(
       title: title,
       message: message,
-      backgroundColor: AppColors.greenLightActive ?? AppColors.primaryLight,
-      textColor: AppColors.greenDark ?? AppColors.redDark,
+      backgroundColor: AppColors.greenLightActive ,
+      textColor: AppColors.greenDark ,
       duration: duration,
     );
   }

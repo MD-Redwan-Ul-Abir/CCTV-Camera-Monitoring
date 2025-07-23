@@ -81,6 +81,7 @@ class _LiveViewScreenState extends State<LiveViewScreen> {
                     children: [
                       // Video Player - UPDATED with dynamic key
                       if (controller.vlcController != null)
+
                         ClipRRect(
                           borderRadius: BorderRadius.circular(4.r),
                           child: Obx(() => InteractiveViewer(

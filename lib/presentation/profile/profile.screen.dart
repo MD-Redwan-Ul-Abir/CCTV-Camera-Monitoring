@@ -4,8 +4,6 @@ import 'package:flutter_svg/svg.dart';
 
 import 'package:get/get.dart';
 import 'package:skt_sikring/infrastructure/theme/text_styles.dart';
-import 'package:skt_sikring/infrastructure/utils/log_helper.dart';
-import 'package:skt_sikring/presentation/shared/clearDataFromSecureStoreage.dart';
 import 'package:skt_sikring/presentation/shared/widgets/buttons/primary_buttons.dart';
 
 import '../../infrastructure/navigation/routes.dart';
@@ -15,7 +13,7 @@ import '../../infrastructure/utils/secure_storage_helper.dart';
 import '../shared/widgets/customRatings/customRatings.dart';
 import '../shared/widgets/custom_text_form_field.dart';
 import '../shared/widgets/imagePicker/custom_image_picker.dart';
-import '../shared/widgets/imagePicker/imagePickerController.dart';
+
 import 'controllers/profile.controller.dart';
 
 class ProfileScreen extends StatefulWidget {

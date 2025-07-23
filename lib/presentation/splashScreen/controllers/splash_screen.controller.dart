@@ -1,5 +1,4 @@
 import 'package:get/get.dart';
-import 'package:skt_sikring/presentation/home/controllers/home.controller.dart';
 
 import '../../../infrastructure/navigation/routes.dart';
 import '../../../infrastructure/utils/secure_storage_helper.dart';
@@ -49,7 +48,7 @@ class SplashScreenController extends GetxController {
   Future<Map<String, dynamic>> getStoredUserData() async {
     try {
       return {
-        'accessToken': await SecureStorageHelper.getString("accessToken") ?? '',
+        'accessToken': await SecureStorageHelper.getString("accessToken"),
       };
     } catch (e) {
       print("Error retrieving stored user data: $e");
