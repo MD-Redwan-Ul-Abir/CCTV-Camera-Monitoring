@@ -16,6 +16,7 @@ class HomeController extends GetxController {
   Rxn<ProfileDetailsModel> profileDetails = Rxn<ProfileDetailsModel>();
   Rxn<GetAllSitesBySiteIdModel> getallSiteBySiteID = Rxn<GetAllSitesBySiteIdModel>();
   Rxn<GetReportByIdModel> getAllReportByDate = Rxn<GetReportByIdModel>();
+  RxBool fatchedData=false.obs;
 
 
   RxString profileImageUrl = "".obs;
@@ -112,6 +113,7 @@ class HomeController extends GetxController {
       );
       if (response.statusCode == 200 || response.statusCode == 201) {
         getAllReportByDate.value = GetReportByIdModel.fromJson(response.body);
+        fatchedData.value=true;
 
       }
     /// -----------------more task to be needed----------------------
@@ -131,5 +133,11 @@ class HomeController extends GetxController {
     } finally {
       isLoading.value = false;
     }
+  }
+
+  @override
+  void onClose() {
+    super.onClose();
+    fatchedData.value=true;
   }
 }

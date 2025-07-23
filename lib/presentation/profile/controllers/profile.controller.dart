@@ -149,14 +149,17 @@ class ProfileController extends GetxController {
           backgroundColor: AppColors.primaryNormal,
           colorText: AppColors.primaryLighthover,
         );
+        homeController.fatchedData.value=false;
         if (response.body != null &&
             response.body["data"] != null &&
             response.body["data"]["profileImageUrl"] != null) {
           homeController.profileImageUrl.value = response.body["data"]["profileImageUrl"];
           await SecureStorageHelper.setString("profileImageUrl", response.body["data"]["profileImageUrl"]);
 
-        }
 
+
+        }
+        String imageURL = await SecureStorageHelper.getString("profileImageUrl");
 
         return true;
       } else {
@@ -177,9 +180,10 @@ class ProfileController extends GetxController {
   Future<bool> editProfile() async {
     isLoading.value = true;
     try {
+
       final Map<String, dynamic> updatedUserData = {
-        'name': userNameController.text,
-        'address': addressController.text,
+        'name': userNameController.text.isEmpty ? name.value : userNameController.text,
+        'address': addressController.text.isEmpty ? address.value : addressController.text,
       };
 
       final response = await _apiClient.putData(
@@ -190,8 +194,9 @@ class ProfileController extends GetxController {
       if (response.statusCode == 200 || response.statusCode == 201) {
         isLoading.value = false;
         name.value = userNameController.text;
-        await SecureStorageHelper.setString("name", userNameController.text);
-        await SecureStorageHelper.setString("address", addressController.text);
+        homeController.fatchedData.value=false;
+        await SecureStorageHelper.setString("name", userNameController.text.isEmpty ? name.value : userNameController.text);
+        await SecureStorageHelper.setString("address",  addressController.text.isEmpty ? address.value : addressController.text);
 
         Get.snackbar(
           "Info updated",

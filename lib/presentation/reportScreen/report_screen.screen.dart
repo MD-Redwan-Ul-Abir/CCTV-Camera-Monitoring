@@ -23,50 +23,7 @@ class ReportScreen extends GetView<ReportScreenController> {
     ];
 
     // Restructured data to support multiple categories
-    List<Map<String, dynamic>> categorizedData = [
-      {
-        'categoryTitle': 'Ap',
-        'sites': [
-          // {'name': 'Site A, Bashundhara', 'date': '23 - 30 May'},
-          // {'name': 'Site C, Mirpur', 'date': '15 - 22 June'},
-          // {'name': 'Site D, Gulshan', 'date': '01 - 08 July'},
-        ],
-      },
-      {
-        'categoryTitle': 'Patrol',
-        'sites': [
-          {'name': 'Site B, Dhanmondi', 'date': '10 - 17 April'},
-          {'name': 'Site E, Uttara', 'date': '25 May - 01 June'},
-        ],
-      },
-      {
-        'categoryTitle': 'Service',
-        'sites': [
-          {'name': 'Site G, Banani', 'date': '15 - 22 August'},
-          {'name': 'Site H, Motijheel', 'date': '01 - 08 September'},
-          {'name': 'Site H, Motijheel', 'date': '01 - 08 September'},
-          {'name': 'Site H, Motijheel', 'date': '01 - 08 September'},
-          {'name': 'Site H, Motijheel', 'date': '01 - 08 September'},
-          {'name': 'Site G, Banani', 'date': '15 - 22 August'},
-          {'name': 'Site H, Motijheel', 'date': '01 - 08 September'},
-          {'name': 'Site G, Banani', 'date': '15 - 22 August'},
-          {'name': 'Site H, Motijheel', 'date': '01 - 08 September'},
-          {'name': 'Site G, Banani', 'date': '15 - 22 August'},
-          {'name': 'Site H, Motijheel', 'date': '01 - 08 September'},
-          {'name': 'Site G, Banani', 'date': '15 - 22 August'},
-          {'name': 'Site H, Motijheel', 'date': '01 - 08 September'},
-          {'name': 'Site G, Banani', 'date': '15 - 22 August'},
-          {'name': 'Site H, Motijheel', 'date': '01 - 08 September'},
-        ],
-      },
-      {
-        'categoryTitle': 'Emergency Call',
-        'sites': [
-          {'name': 'Site G, Banani', 'date': '15 - 22 August'},
-          {'name': 'Site H, Motijheel', 'date': '01 - 08 September'},
-        ],
-      },
-    ];
+
 
     return Scaffold(
       appBar: PreferredSize(
@@ -93,14 +50,14 @@ class ReportScreen extends GetView<ReportScreenController> {
           child: Column(
             children: [
               // Filter buttons section
-              Obx(() => _buildFilterButtons(categorizedData)),
+              Obx(() => _buildFilterButtons(controller.categorizedData)),
 
               SizedBox(height: 16.h),
 
               // Reports list section
               Obx(
                 () =>
-                    _buildReportsList(categorizedData, cardColors, controller),
+                    _buildReportsList(controller.categorizedData, cardColors, controller),
               ),
 
               SizedBox(height: 20.h),

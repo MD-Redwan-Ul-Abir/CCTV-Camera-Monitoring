@@ -86,36 +86,79 @@ class imagePickerController extends GetxController {
   }
 
   /// Native image compression using Flutter's built-in capabilities
-  Future<File?> compressImageNative(File imageFile) async {
+  Future<File?> compressImageNative(File imageFile, {int maxWidth = 800, int maxHeight = 600}) async {
     try {
       LoggerHelper.debug('Starting native compression for: ${imageFile.path}');
-
       // Read the image file as bytes
       Uint8List imageBytes = await imageFile.readAsBytes();
       LoggerHelper.debug('Original image size: ${imageBytes.length} bytes');
 
-      // Decode the image
+      // First decode to get original dimensions
+      ui.Codec originalCodec = await ui.instantiateImageCodec(imageBytes);
+      ui.FrameInfo originalFrameInfo = await originalCodec.getNextFrame();
+      ui.Image originalImage = originalFrameInfo.image;
+
+      int originalWidth = originalImage.width;
+      int originalHeight = originalImage.height;
+      LoggerHelper.debug('Original dimensions: ${originalWidth}x${originalHeight}');
+
+      // Calculate new dimensions while preserving aspect ratio
+      double aspectRatio = originalWidth / originalHeight;
+      int targetWidth, targetHeight;
+
+      if (originalWidth > maxWidth || originalHeight > maxHeight) {
+        if (aspectRatio > 1) {
+          // Landscape orientation - width is larger
+          targetWidth = maxWidth;
+          targetHeight = (maxWidth / aspectRatio).round();
+
+          // If calculated height still exceeds maxHeight, adjust based on height
+          if (targetHeight > maxHeight) {
+            targetHeight = maxHeight;
+            targetWidth = (maxHeight * aspectRatio).round();
+          }
+        } else {
+          // Portrait orientation - height is larger
+          targetHeight = maxHeight;
+          targetWidth = (maxHeight * aspectRatio).round();
+
+          // If calculated width still exceeds maxWidth, adjust based on width
+          if (targetWidth > maxWidth) {
+            targetWidth = maxWidth;
+            targetHeight = (maxWidth / aspectRatio).round();
+          }
+        }
+      } else {
+        // Image is already smaller than max dimensions, keep original size
+        targetWidth = originalWidth;
+        targetHeight = originalHeight;
+      }
+
+      LoggerHelper.debug('Target dimensions: ${targetWidth}x${targetHeight}');
+      originalImage.dispose(); // Clean up memory
+
+      // Decode with target dimensions
       ui.Codec codec = await ui.instantiateImageCodec(
         imageBytes,
-        targetWidth: 800, // Resize to max width of 800px
-        targetHeight: 600, // Resize to max height of 600px
+        targetWidth: targetWidth,
+        targetHeight: targetHeight,
       );
-
       ui.FrameInfo frameInfo = await codec.getNextFrame();
       ui.Image image = frameInfo.image;
 
       // Convert to byte data with compression
       ByteData? byteData = await image.toByteData(
-        format: ui.ImageByteFormat.png, // You can also use ui.ImageByteFormat.rawRgba
+        format: ui.ImageByteFormat.png,
       );
 
       if (byteData == null) {
         LoggerHelper.debug('Failed to convert image to byte data');
+        image.dispose();
         return null;
       }
 
       Uint8List compressedBytes = byteData.buffer.asUint8List();
-      LoggerHelper.debug('Compressed image size: ${compressedBytes.length} bytes');
+      LoggerHelper.error('Compressed image size: ${compressedBytes.length} bytes');
 
       // Create compressed file path
       String directory = imageFile.parent.path;
@@ -127,8 +170,9 @@ class imagePickerController extends GetxController {
       File compressedFile = File(compressedPath);
       await compressedFile.writeAsBytes(compressedBytes);
 
-      LoggerHelper.debug('Compressed image saved to: ${compressedFile.path}');
-      LoggerHelper.debug('Compression ratio: ${((imageBytes.length - compressedBytes.length) / imageBytes.length * 100).toStringAsFixed(1)}%');
+      LoggerHelper.error('Compressed image saved to: ${compressedFile.path}');
+      LoggerHelper.error('Compression ratio: ${((imageBytes.length - compressedBytes.length) / imageBytes.length * 100).toStringAsFixed(1)}%');
+      LoggerHelper.error('Aspect ratio preserved: ${(targetWidth / targetHeight).toStringAsFixed(3)} vs original: ${aspectRatio.toStringAsFixed(3)}');
 
       image.dispose(); // Clean up memory
       return compressedFile;

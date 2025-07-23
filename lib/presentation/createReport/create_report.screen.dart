@@ -61,7 +61,9 @@ class _CreateReportScreenState extends State<CreateReportScreen> {
                   width: 24.w
               ),
               onPressed: () {
+
                 Get.back();
+
               },
             ),
           ),

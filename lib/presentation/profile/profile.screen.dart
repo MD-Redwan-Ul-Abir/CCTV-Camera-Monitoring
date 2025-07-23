@@ -70,22 +70,28 @@ class _ProfileScreenState extends State<ProfileScreen> {
                           color: AppColors.grayDarker,
                           // Replace this part in your profile.screen.dart:
                           child: Obx(() {
+                            if(profileController.isLoading.value){
+
+                              return Center(
+                                child: CircularProgressIndicator(color: AppColors.primaryNormal),
+                              );
+
+                            }else
+
                             if (profileController
                                 .imageController
                                 .selectedImages
                                 .isNotEmpty) {
                               profileController.updateProfilePicture();
+                              profileController.imageController.removeImage(0);
 
-
-
-                                return Image.file(
-                                  profileController
-                                      .imageController
-                                      .selectedImages
-                                      .first,
-                                  fit: BoxFit.cover,
-                                );
-
+                              return Image.network(
+                                profileController
+                                    .homeController
+                                    .profileImageUrl
+                                    .value,
+                                fit: BoxFit.cover,
+                              );
                             }
                             // Show network image as default
                             else {

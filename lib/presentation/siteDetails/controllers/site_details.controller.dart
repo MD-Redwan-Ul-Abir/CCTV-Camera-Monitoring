@@ -65,10 +65,10 @@ class SiteDetailsController extends GetxController {
       if (response.statusCode == 200 || response.statusCode == 201) {
         siteDetails.value = SiteDetailsModel.fromJson(response.body);
         updateProfileImage();
-        CustomSnackbar.show(
-          title: "Success",
-          message: "Site Data found",
-        );
+        // CustomSnackbar.show(
+        //   title: "Success",
+        //   message: "Site Data found",
+        // );
       }
       /// -----------------more task to be needed----------------------
       else if(response.statusCode == 400){

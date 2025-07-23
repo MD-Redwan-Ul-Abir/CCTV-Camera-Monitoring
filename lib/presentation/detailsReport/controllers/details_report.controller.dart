@@ -43,10 +43,10 @@ class DetailsReportController extends GetxController {
       if (response.statusCode == 200 || response.statusCode == 201) {
         detailsReport.value = DetailsReportModel.fromJson(response.body);
         updateProfileImage();
-        CustomSnackbar.show(
-          title: "Success",
-          message: "Site Data found",
-        );
+        // CustomSnackbar.show(
+        //   title: "Success",
+        //   message: "Site Data found",
+        // );
       }
       /// -----------------more task to be needed----------------------
       else if(response.statusCode == 400){
@@ -54,7 +54,7 @@ class DetailsReportController extends GetxController {
 
           CustomSnackbar.show(
             title: "Error!",
-            message: "Report Could not be fached",
+            message: "Report Could not be faced",
           );
         }
 

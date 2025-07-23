@@ -23,11 +23,14 @@ class _HomeScreenState extends State<HomeScreen> {
   @override
   void initState() {
     super.initState();
-    WidgetsBinding.instance.addPostFrameCallback((__) async {
-      await homeController.getProfile();
-      await homeController.getAllYourSites();
-      await homeController.getAllTodaysReportByDate();
-    });
+    if(homeController.fatchedData==false){
+      WidgetsBinding.instance.addPostFrameCallback((__) async {
+        await homeController.getProfile();
+        await homeController.getAllYourSites();
+        await homeController.getAllTodaysReportByDate();
+      });
+    }
+
   }
 
   @override

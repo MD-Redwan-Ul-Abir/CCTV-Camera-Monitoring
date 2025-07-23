@@ -89,6 +89,7 @@ class CreateReportController extends GetxController {
       if (response.statusCode == 200 || response.statusCode == 201) {
         isLoading.value = false;
 
+        homeController.fatchedData.value=false;
         // Clear form after successful submission
         titleController.clear();
         descriptionController.clear();

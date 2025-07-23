@@ -94,8 +94,10 @@ class _LiveViewScreenState extends State<LiveViewScreen> {
                               controller: controller.vlcController!,
                               aspectRatio: 16 / 9,
 
-                              placeholder: CircularProgressIndicator(
-                                color: AppColors.primaryDark,
+                              placeholder: Center(
+                                child: CircularProgressIndicator(
+                                  color: AppColors.primaryDark,
+                                ),
                               ),
                             ),
                           )),
