@@ -1,4 +1,5 @@
 import 'package:get/get.dart';
+import 'package:skt_sikring/infrastructure/utils/log_helper.dart';
 
 import '../../../app/routes/app_routes.dart';
 import '../../../infrastructure/utils/api_client.dart';
@@ -75,6 +76,7 @@ class ReportScreenController extends GetxController {
   var totalPages = 1.obs;
   final ApiClient _apiClient = Get.find();
   RxList<Result> allSelectedReport = <Result>[].obs;
+  Rxn<ReportModel> allReports = Rxn<ReportModel>();
 
 
   String get reportID {
@@ -135,23 +137,19 @@ class ReportScreenController extends GetxController {
       );
 
       if (response.statusCode == 200 || response.statusCode == 201) {
-        final reportModel = reportModelFromJson(response.body);
+        allReports.value = ReportModel.fromJson(response.body);
 
-        if (reportModel.data?.attributes?.results != null) {
-          allSelectedReport.value = reportModel.data!.attributes!.results!;
-          updateTotalPages(reportModel.data?.attributes?.totalPages ?? 1);
-        } else {
-          allSelectedReport.clear();
-        }
-      } else if (response.statusCode == 400) {
-        if (!Get.isSnackbarOpen) {
-          CustomSnackbar.show(
-            title: "Error!",
-            message: "Report could not be fetched",
-          );
-        }
-        Get.toNamed(Routes.ERROR_PAGE);
-      }
+       //final reportModel = reportModelFromJson(response.body);
+
+
+        final reportModel = allReports.value.data.attributes;
+
+        allSelectedReport.value = reportModel?.data!.attributes!.results!;
+        updateTotalPages(reportModel.data?.attributes?.totalPages ?? 1);
+        LoggerHelper.error(allSelectedReport.first.role);
+
+      //   Get.toNamed(Routes.ERROR_PAGE);
+       }
     } catch (e) {
       print("Error getting reports: $e");
       allSelectedReport.clear();
