@@ -55,14 +55,14 @@ class ApiConstants {
   static String getCameraByCameraID({String? id,String? limit}) =>  '/camera/paginate?_id=$id&limit=$limit';
 
 
-  ///-----------------------------------Report-----------------------------------------
+  ///-----------------------------------Report & Camera-----------------------------------------
 
 
   static String createReport = 'report/create';
   static String getAllTodaysReport({String? createdAt,String? role,String? personID, int? limit}) =>  '/customer-report/paginate/customer?createdAt=$createdAt&personId=$personID&role=$role&limit=$limit';
   static String getAReportByReportID({String? reportID,}) =>  '/report/$reportID';
   static String getReportsBySelection({String? reportType,String? personID,int? limit,int? page}) =>  '/customer-report/paginate?reportType=$reportType&personId=$personID&page=$page&limit=$limit';
-  ///----------------------------------------------reportType=alarmPatrol&personId=685a20efcb3b476c53324c05&limit=5&page=3
+  static String getCameraBySiteIdandPersonId({String? siteId,String? personId}) =>  '/camera-person/live-view/?siteId=$siteId&personId=$personId';
 
 
   ///-------------------------------Profile info Get------------------------------------
@@ -71,5 +71,7 @@ class ApiConstants {
   static String postReviewAndRatings = '/review/create';
   static String updateUserProfile = '/user/profile';
   static String updateProfilePicture = '/user/profile-image';
+
+
 
 }

@@ -52,73 +52,7 @@ class MessageScreen extends GetView<MessageScreenController> {
             crossAxisAlignment: CrossAxisAlignment.center,
             mainAxisAlignment: MainAxisAlignment.start,
             children: [
-              Align(
-                alignment: Alignment.topLeft,
-                child: Text(
-                  'Announcement',
-                  style: AppTextStyles.headLine6.copyWith(height: 1.5),
-                ),
-              ),
-              SizedBox(
-                height: 10.h,
-              ),
-              ListView.builder(
-                shrinkWrap: true,
-                physics: NeverScrollableScrollPhysics(),
-                itemCount: siteData.length,
-                itemBuilder: (context, index) {
-                  return Card(
-                    color: AppColors.grayDarker,
-                    elevation: 2,
-                    margin: EdgeInsets.only(bottom: 16.h),
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(4.r),
-                    ),
-                    child: Padding(
-                      padding: EdgeInsets.all(16.w),
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                            children: [
-                              Text(
-                                siteData[index]['Company name']!,
-                                style: AppTextStyles.paragraph3.copyWith(
-                                  //fontWeight: FontWeight.bold,
-                                  color: AppColors.primaryLight
-                                ),
-                              ),
-                              Text(
-                                siteData[index]['date']!,
-                                style: AppTextStyles.caption1.copyWith(
-                                  color: AppColors.secondaryLightActive,
-                                ),
-                              ),
-                            ],
-                          ),
-                          SizedBox(height: 8.h),
-                          Text(
-                            siteData[index]['topic']!,
-                            style: AppTextStyles.caption1.copyWith(
-                              //fontWeight: FontWeight.w600,
-                              color: AppColors.secondaryLightActive,
-                            ),
-                          ),
-                          SizedBox(height: 8.h),
-                          Text(
-                            siteData[index]['description']!,
-                            style: AppTextStyles.caption1.copyWith(
 
-                              color: AppColors.secondaryLightActive,
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                  );
-                },
-              ),
               SizedBox(
                 height: 10.h,
               ),

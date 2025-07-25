@@ -1,7 +1,3 @@
-// To parse this JSON data, do
-//
-//     final cameraListBySiteIdModel = cameraListBySiteIdModelFromJson(jsonString);
-
 import 'dart:convert';
 
 CameraListBySiteIdModel cameraListBySiteIdModelFromJson(String str) => CameraListBySiteIdModel.fromJson(json.decode(str));

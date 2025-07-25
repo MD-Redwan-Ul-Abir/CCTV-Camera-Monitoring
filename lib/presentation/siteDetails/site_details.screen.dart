@@ -199,7 +199,14 @@ class _SiteDetailsScreenState extends State<SiteDetailsScreen> {
                 PrimaryButton(
                   width: double.infinity,
                   onPressed: () {
-                    Get.toNamed(Routes.LIVE_VIEW);
+                    final siteData = siteDetailsController.siteDetails.value?.data?.attributes?.results?.first;
+//     siteDetailsController.siteDetails.value?.data?.attributes?.results?.first.siteId?.name
+                    Get.toNamed(Routes.LIVE_VIEW, arguments: {
+                      'siteId': siteData?.siteId?.siteId,
+                      'siteName': siteData?.siteId?.name, // assuming siteName property exists
+                      'date': DateTime.now().toString(), // or whatever date you want to pass
+
+                    });
                   },
                   text: 'Live View Site',
                 ),

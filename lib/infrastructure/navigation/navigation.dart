@@ -71,6 +71,8 @@ class Nav {
       name: Routes.CUSTOM_SUCCESS_MASSEGE,
       page: () => const CustomSuccessMassegeScreen(),
       binding: CustomSuccessMassegeControllerBinding(),
+      transition: Transition.rightToLeft,
+      transitionDuration: Duration(milliseconds: 300),
     ),
     GetPage(
       name: Routes.DETAILS_REPORT,
@@ -92,6 +94,8 @@ class Nav {
       name: Routes.MESSAGE_SCREEN,
       page: () => const MessageScreen(),
       binding: MessageScreenControllerBinding(),
+      transition: Transition.rightToLeft,
+      transitionDuration: Duration(milliseconds: 300),
     ),
     GetPage(
       name: Routes.REPORT_SCREEN,
@@ -122,16 +126,22 @@ class Nav {
       name: Routes.CHANGE_PASSWORD,
       page: () => const ChangePasswordScreen(),
       binding: ChangePasswordControllerBinding(),
+      transition: Transition.rightToLeft,
+      transitionDuration: Duration(milliseconds: 300),
     ),
     GetPage(
       name: Routes.PRIVACY_SETTINGS,
       page: () => const PrivacySettingsScreen(),
       binding: PrivacySettingsControllerBinding(),
+      transition: Transition.rightToLeft,
+      transitionDuration: Duration(milliseconds: 300),
     ),
     GetPage(
       name: Routes.CUSTOM_PRIVACY_POLICY,
       page: () => const CustomPrivacyPolicyScreen(),
       binding: CustomPrivacyPolicyControllerBinding(),
+      transition: Transition.rightToLeft,
+      transitionDuration: Duration(milliseconds: 300),
     ),
     GetPage(
       name: Routes.CREATE_REPORT,

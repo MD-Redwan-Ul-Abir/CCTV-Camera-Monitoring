@@ -7,6 +7,7 @@ import 'package:get/get.dart';
 import '../../../app/routes/app_routes.dart';
 import '../../../infrastructure/utils/api_client.dart';
 import '../../../infrastructure/utils/api_content.dart';
+import '../../../infrastructure/utils/secure_storage_helper.dart';
 import '../../shared/widgets/customSnakBar.dart';
 import '../live_view.screen.dart';
 import '../model/cameraListModel.dart';
@@ -16,26 +17,34 @@ class LiveViewController extends GetxController {
   RxString profileImageUrl = "".obs;
   RxBool isLoading = false.obs;
 
+  String siteId = '';
+  RxString siteName = ''.obs;
+  String date = '';
 
+  RxString personId = "".obs;
 
-  RxList<Map<String, String>> cameraList = [
-    {
-      'camera': 'camera 01',
-      'url': 'rtsp://rtspuser:liVEtv4me@62.79.144.146/Streaming/Channels/102',
-    },
-    {
-      'camera': 'camera 02',
-      'url': 'rtsp://rtspstream:IvYPUxye7TBTyYkuB_B3e@zephyr.rtsp.stream/movie',
-    },
-    {
-      'camera': 'camera 03',
-      'url': 'rtsp://rtspstream:IvYPUxye7TBTyYkuB_B3e@zephyr.rtsp.stream/traffic',
-    },
-  ].obs;
+  @override
+  void onInit() {
+    super.onInit();
 
+    final arguments = Get.arguments as Map<String, dynamic>?;
+    if (arguments != null) {
+      siteId = arguments['siteId'] ?? '';
+      siteName.value = arguments['siteName'] ?? '';
+      date = arguments['date'] ?? '';
+    }
+
+    // Load cameras after receiving arguments
+    if (siteId.isNotEmpty) {
+      getAllCamera();
+    }
+  }
+
+  RxList<Map<String, String>> cameraList = <Map<String, String>>[].obs;
 
   RxList<CameraListBySiteIdModel> productSubCategoryList =
       <CameraListBySiteIdModel>[].obs;
+
   // Selected camera index and URL
   RxInt selectedCameraIndex = (-1).obs;
   RxString selectedCameraUrl = ''.obs;
@@ -56,68 +65,73 @@ class LiveViewController extends GetxController {
   // Add a key to force widget rebuild
   RxInt vlcPlayerKey = 0.obs;
 
-  @override
-  void onInit() {
-    super.onInit();
-    checkAndSelectFirstCamera();
-  }
+  Future<void> getAllCamera() async {
+    isLoading.value = true;
+    try {
+      personId.value = await SecureStorageHelper.getString("id");
+      final response = await _apiClient.getData(
+        ApiConstants.getCameraBySiteIdandPersonId(
+          personId: personId.value,
+          siteId: siteId,
+        ),
+      );
 
-  // Future<void> getAllCamera() async {
-  //   isLoading.value = true;
-  //   try {
-  //     final response = await _apiClient.getData(
-  //       ApiConstants.getAllSiteByPersonID(
-  //           personID: localPersonID,
-  //           role: role.value,
-  //           limit: 300
-  //       ),
-  //     );
-  //
-  //     if (response.statusCode == 200 || response.statusCode == 201) {
-  //       // Parse the JSON response
-  //       final cameraResponse = CameraListBySiteIdModel.fromJson(
-  //           json.decode(response.body)
-  //       );
-  //
-  //       // Extract the list of cameras and update your RxList
-  //       if (cameraResponse.data?.attributes != null) {
-  //         // Convert API response to your camera list format
-  //         List<Map<String, String>> apiCameraList = [];
-  //
-  //         for (var attribute in cameraResponse.data!.attributes!) {
-  //           if (attribute.cameraId?.cameraName != null &&
-  //               attribute.cameraId?.rtspUrl != null) {
-  //             apiCameraList.add({
-  //               'camera': attribute.cameraId!.cameraName!,
-  //               'url': attribute.cameraId!.rtspUrl!,
-  //             });
-  //           }
-  //         }
-  //
-  //         // Update your existing camera list with API data
-  //         cameraList.value = apiCameraList;
-  //
-  //         // Also store the full model list if needed elsewhere
-  //         productSubCategoryList.clear();
-  //         productSubCategoryList.add(cameraResponse);
-  //
-  //         // Auto-select first camera after loading
-  //         checkAndSelectFirstCamera();
-  //       }
-  //     }
-  //     else if (response.statusCode == 400) {
-  //       CustomSnackbar.show(
-  //         title: "Oops!",
-  //         message: "Session Expired",
-  //       );
-  //       Get.toNamed(Routes.ERROR_PAGE);
-  //     }
-  //   } catch (e) {
-  //     print("Error getting cameras: $e");
-  //   } finally {
-  //     isLoading.value = false;
-  //   }
-  // }
+      if (response.statusCode == 200 || response.statusCode == 201) {
+        // Check if response.body is already a Map or needs to be decoded
+        dynamic responseData;
+        if (response.body is String) {
+          responseData = json.decode(response.body);
+        } else {
+          responseData = response.body;
+        }
+
+        final cameraResponse = CameraListBySiteIdModel.fromJson(responseData);
+
+        // Extract the list of cameras and update your RxList
+        if (cameraResponse.data?.attributes != null) {
+          List<Map<String, String>> apiCameraList = [];
+
+          for (var attribute in cameraResponse.data!.attributes!) {
+            if (attribute.cameraId?.cameraName != null &&
+                attribute.cameraId?.rtspUrl != null) {
+              apiCameraList.add({
+                'camera': attribute.cameraId!.cameraName!,
+                'url': attribute.cameraId!.rtspUrl!,
+              });
+            }
+          }
+
+          // Update your existing camera list with API data
+          cameraList.value = apiCameraList;
+
+          // Also store the full model list if needed elsewhere
+          productSubCategoryList.clear();
+          productSubCategoryList.add(cameraResponse);
+
+          // Debug print to verify cameras are loaded
+          print("Loaded ${apiCameraList.length} cameras:");
+          for (var camera in apiCameraList) {
+            print("Camera: ${camera['camera']}, URL: ${camera['url']}");
+          }
+
+          // Auto-select first camera after loading
+          checkAndSelectFirstCamera();
+        } else {
+          print("No camera attributes found in response");
+        }
+      } else if (response.statusCode == 400) {
+        CustomSnackbar.show(title: "Oops!", message: "Session Expired");
+        Get.toNamed(Routes.ERROR_PAGE);
+      } else {
+        print("API request failed with status code: ${response.statusCode}");
+      }
+    } catch (e) {
+      print("Error getting cameras: $e");
+      print("Stack trace: ${StackTrace.current}");
+    } finally {
+      isLoading.value = false;
+    }
+  }
 
   @override
   void onClose() {
@@ -147,10 +161,7 @@ class LiveViewController extends GetxController {
       autoPlay: true,
       hwAcc: HwAcc.full, // Force hardware acceleration
       options: VlcPlayerOptions(
-        rtp: VlcRtpOptions([
-          VlcRtpOptions.rtpOverRtsp(true),
-          ":rtsp-tcp",
-        ]),
+        rtp: VlcRtpOptions([VlcRtpOptions.rtpOverRtsp(true), ":rtsp-tcp"]),
       ),
     );
 
@@ -172,7 +183,9 @@ class LiveViewController extends GetxController {
       selectedCameraUrl.value = cameraList[0]['url']!;
       isVideoLoading.value = true;
       createVlcController(selectedCameraUrl.value);
-      print('Auto-selected first camera: ${cameraList[0]['camera']} with URL: ${selectedCameraUrl.value}');
+      print(
+        'Auto-selected first camera: ${cameraList[0]['camera']} with URL: ${selectedCameraUrl.value}',
+      );
     } else {
       selectedCameraIndex.value = -1;
       selectedCameraUrl.value = '';
@@ -188,7 +201,9 @@ class LiveViewController extends GetxController {
       selectedCameraUrl.value = cameraList[index]['url']!;
       isVideoLoading.value = true;
       createVlcController(selectedCameraUrl.value);
-      print('Selected camera: ${cameraList[index]['camera']} with URL: ${selectedCameraUrl.value}');
+      print(
+        'Selected camera: ${cameraList[index]['camera']} with URL: ${selectedCameraUrl.value}',
+      );
     }
   }
 
@@ -217,24 +232,25 @@ class LiveViewController extends GetxController {
         autoPlay: true,
         hwAcc: HwAcc.full,
         options: VlcPlayerOptions(
-          rtp: VlcRtpOptions([
-            VlcRtpOptions.rtpOverRtsp(true),
-            ":rtsp-tcp",
-          ]),
+          rtp: VlcRtpOptions([VlcRtpOptions.rtpOverRtsp(true), ":rtsp-tcp"]),
         ),
       );
 
       newController.addListener(() {
         if (newController.value.hasError) {
-          print("Fullscreen VLC Error: ${newController.value.errorDescription}");
+          print(
+            "Fullscreen VLC Error: ${newController.value.errorDescription}",
+          );
         }
       });
 
       // Navigate to fullscreen with the new controller
-      Get.to(() => FullScreenVideoPlayer(
-        vlcController: newController,
-        controller: this,
-      ));
+      Get.to(
+        () => FullScreenVideoPlayer(
+          vlcController: newController,
+          controller: this,
+        ),
+      );
     }
   }
 
@@ -267,3 +283,4 @@ class LiveViewController extends GetxController {
     return 'No camera selected';
   }
 }
+

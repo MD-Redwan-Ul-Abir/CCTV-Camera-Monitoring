@@ -169,8 +169,8 @@ class ReportScreen extends GetView<ReportScreenController> {
                 ),
                 subtitle: Padding(
                   padding: EdgeInsets.symmetric(vertical: 4.h, horizontal: 8.w),
-                  child: Text(
-                    report.createdAt!.toLocal().toString(),
+                 child:  Text(
+                    report.createdAt!.toLocal().toString().substring(0, 10),
                     style: AppTextStyles.caption1.copyWith(
                       color: AppColors.secondaryDark,
                     ),
