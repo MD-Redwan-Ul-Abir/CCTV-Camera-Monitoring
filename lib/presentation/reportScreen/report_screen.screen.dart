@@ -3,6 +3,7 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/svg.dart';
 
 import 'package:get/get.dart';
+import 'package:skt_sikring/presentation/reportScreen/model/reportModel.dart';
 
 import '../../infrastructure/navigation/routes.dart';
 import '../../infrastructure/theme/app_colors.dart';
@@ -21,9 +22,6 @@ class ReportScreen extends GetView<ReportScreenController> {
       AppColors.yellowLightActive,
       Color(0xFFC7ECFF), // Light Mint
     ];
-
-    // Restructured data to support multiple categories
-
 
     return Scaffold(
       appBar: PreferredSize(
@@ -50,15 +48,20 @@ class ReportScreen extends GetView<ReportScreenController> {
           child: Column(
             children: [
               // Filter buttons section
-              Obx(() => _buildFilterButtons(controller.categorizedData)),
+              Obx(() => _buildFilterButtons(controller.availableCategories)),
 
               SizedBox(height: 16.h),
 
               // Reports list section
-              Obx(
-                () =>
-                    _buildReportsList(controller.categorizedData, cardColors, controller),
-              ),
+              Obx(() {
+                if (controller.isLoading.value) {
+                  return Center(
+                    child: CircularProgressIndicator(color: AppColors.primaryNormal),
+                  );
+                }
+                return _buildReportsList(
+                    controller.allSelectedReport, cardColors, controller);
+              }),
 
               SizedBox(height: 20.h),
 
@@ -82,81 +85,45 @@ class ReportScreen extends GetView<ReportScreenController> {
     );
   }
 
-  Widget _buildFilterButtons(List<Map<String, dynamic>> categorizedData) {
-    List<String> categories =
-        categorizedData.map((e) => e['categoryTitle'] as String).toList();
-
+  Widget _buildFilterButtons(List<String> categories) {
     return Wrap(
       spacing: 18.w,
       runSpacing: 12.h,
-      children:
-          categories.map((category) {
-            bool isSelected = controller.selectedCategory.value == category;
-            return GestureDetector(
-              onTap: () {
-                controller.setSelectedCategory(category);
-              },
-              child: Container(
-                padding: EdgeInsets.symmetric(horizontal: 26.w, vertical: 8.h),
-                decoration: BoxDecoration(
-                  color:
-                      isSelected
-                          ? AppColors.primaryNormal
-                          : AppColors.primaryLight.withOpacity(0.3),
-                  borderRadius: BorderRadius.circular(20.r),
-                ),
-                child: Text(
-                  category,
-                  style: AppTextStyles.button.copyWith(
-                    color:
-                        isSelected
-                            ? AppColors.primaryLight
-                            : AppColors.primaryLight,
-                    fontWeight: isSelected ? FontWeight.w600 : FontWeight.w400,
-                  ),
-                ),
+      children: categories.map((category) {
+        bool isSelected = controller.selectedCategory.value == category;
+        return GestureDetector(
+          onTap: () {
+            controller.setSelectedCategory(category);
+          },
+          child: Container(
+            padding: EdgeInsets.symmetric(horizontal: 26.w, vertical: 8.h),
+            decoration: BoxDecoration(
+              color: isSelected
+                  ? AppColors.primaryNormal
+                  : AppColors.primaryLight.withOpacity(0.3),
+              borderRadius: BorderRadius.circular(20.r),
+            ),
+            child: Text(
+              category,
+              style: AppTextStyles.button.copyWith(
+                color: isSelected
+                    ? AppColors.primaryLight
+                    : AppColors.primaryLight,
+                fontWeight: isSelected ? FontWeight.w600 : FontWeight.w400,
               ),
-            );
-          }).toList(),
+            ),
+          ),
+        );
+      }).toList(),
     );
   }
 
   Widget _buildReportsList(
-    List<Map<String, dynamic>> categorizedData,
+    List<Result> reports,
     List<Color> cardColors,
     ReportScreenController controller,
   ) {
-    // Filter data based on selected category
-    List<Map<String, String>> filteredSites = [];
-
-    if (controller.selectedCategory.value.isNotEmpty) {
-      var selectedCategoryData = categorizedData.firstWhere(
-        (category) =>
-            category['categoryTitle'] == controller.selectedCategory.value,
-        orElse: () => {'sites': []},
-      );
-      filteredSites = List<Map<String, String>>.from(
-        selectedCategoryData['sites'] ?? [],
-      );
-    }
-
-    // Apply pagination
-    int itemsPerPage = 5;
-    int totalPagesCalculated = (filteredSites.length / itemsPerPage).ceil();
-
-    // Update total pages if different
-    if (controller.totalPages.value != totalPagesCalculated) {
-      Future.microtask(() => controller.updateTotalPages(totalPagesCalculated));
-    }
-
-    int startIndex = (controller.currentPage.value - 1) * itemsPerPage;
-    int endIndex = (startIndex + itemsPerPage).clamp(0, filteredSites.length);
-    List<Map<String, String>> paginatedSites = filteredSites.sublist(
-      startIndex,
-      endIndex,
-    );
-
-    if (paginatedSites.isEmpty) {
+    if (reports.isEmpty) {
       return Container(
         height: 200.h,
         child: Center(
@@ -173,14 +140,14 @@ class ReportScreen extends GetView<ReportScreenController> {
     return ListView.builder(
       shrinkWrap: true,
       physics: NeverScrollableScrollPhysics(),
-      itemCount: paginatedSites.length,
+      itemCount: reports.length,
       itemBuilder: (context, index) {
-        final site = paginatedSites[index];
+        final report = reports[index];
         final color = cardColors[index % cardColors.length];
 
         return GestureDetector(
           onTap: () {
-            Get.toNamed(Routes.DETAILS_REPORT);
+            Get.toNamed(Routes.DETAILS_REPORT, arguments: report.reportId?.reportId! );
           },
           child: Padding(
             padding: EdgeInsets.symmetric(vertical: 4.h),
@@ -194,7 +161,7 @@ class ReportScreen extends GetView<ReportScreenController> {
                 title: Padding(
                   padding: EdgeInsets.symmetric(vertical: 4.h, horizontal: 8.w),
                   child: Text(
-                    site['name']!,
+                    report.reportId!.title!,
                     style: AppTextStyles.button.copyWith(
                       color: AppColors.secondaryDarker,
                     ),
@@ -203,7 +170,7 @@ class ReportScreen extends GetView<ReportScreenController> {
                 subtitle: Padding(
                   padding: EdgeInsets.symmetric(vertical: 4.h, horizontal: 8.w),
                   child: Text(
-                    site['date']!,
+                    report.createdAt!.toLocal().toString(),
                     style: AppTextStyles.caption1.copyWith(
                       color: AppColors.secondaryDark,
                     ),
@@ -234,26 +201,23 @@ class ReportScreen extends GetView<ReportScreenController> {
       children: [
         // Previous button
         GestureDetector(
-          onTap:
-              controller.currentPage.value > 1
-                  ? () => controller.goToPreviousPage()
-                  : null,
+          onTap: controller.currentPage.value > 1
+              ? () => controller.goToPreviousPage()
+              : null,
           child: Container(
             width: 32.w,
             height: 32.h,
             decoration: BoxDecoration(
-              color:
-                  controller.currentPage.value > 1
-                      ? AppColors.primaryLight.withOpacity(0.3)
-                      : AppColors.primaryLight.withOpacity(0.1),
+              color: controller.currentPage.value > 1
+                  ? AppColors.primaryLight.withOpacity(0.3)
+                  : AppColors.primaryLight.withOpacity(0.1),
               borderRadius: BorderRadius.circular(16.r),
             ),
             child: Icon(
               Icons.chevron_left,
-              color:
-                  controller.currentPage.value > 1
-                      ? AppColors.primaryLight
-                      : AppColors.primaryLight.withOpacity(0.5),
+              color: controller.currentPage.value > 1
+                  ? AppColors.primaryLight
+                  : AppColors.primaryLight.withOpacity(0.5),
               size: 20.sp,
             ),
           ),
@@ -273,20 +237,18 @@ class ReportScreen extends GetView<ReportScreenController> {
               width: 32.w,
               height: 32.h,
               decoration: BoxDecoration(
-                color:
-                    isCurrentPage
-                        ? AppColors.primaryNormal
-                        :Colors.transparent,
+                color: isCurrentPage
+                    ? AppColors.primaryNormal
+                    : Colors.transparent,
                 borderRadius: BorderRadius.circular(16.r),
               ),
               child: Center(
                 child: Text(
                   pageNumber.toString(),
                   style: AppTextStyles.button.copyWith(
-                    color:
-                        isCurrentPage
-                            ? AppColors.primaryLight
-                            : Color(0xFFFFFFFF).withOpacity(0.6),
+                    color: isCurrentPage
+                        ? AppColors.primaryLight
+                        : Color(0xFFFFFFFF).withOpacity(0.6),
                     fontWeight:
                         isCurrentPage ? FontWeight.w600 : FontWeight.w400,
                   ),
@@ -300,26 +262,23 @@ class ReportScreen extends GetView<ReportScreenController> {
 
         // Next button
         GestureDetector(
-          onTap:
-              controller.currentPage.value < controller.totalPages.value
-                  ? () => controller.goToNextPage()
-                  : null,
+          onTap: controller.currentPage.value < controller.totalPages.value
+              ? () => controller.goToNextPage()
+              : null,
           child: Container(
             width: 32.w,
             height: 32.h,
             decoration: BoxDecoration(
-              color:
-                  controller.currentPage.value < controller.totalPages.value
-                      ? AppColors.primaryLight.withOpacity(0.3)
-                      : AppColors.primaryLight.withOpacity(0.1),
+              color: controller.currentPage.value < controller.totalPages.value
+                  ? AppColors.primaryLight.withOpacity(0.3)
+                  : AppColors.primaryLight.withOpacity(0.1),
               borderRadius: BorderRadius.circular(16.r),
             ),
             child: Icon(
               Icons.chevron_right,
-              color:
-                  controller.currentPage.value < controller.totalPages.value
-                      ? AppColors.primaryLight
-                      : AppColors.primaryLight.withOpacity(0.5),
+              color: controller.currentPage.value < controller.totalPages.value
+                  ? AppColors.primaryLight
+                  : AppColors.primaryLight.withOpacity(0.5),
               size: 20.sp,
             ),
           ),

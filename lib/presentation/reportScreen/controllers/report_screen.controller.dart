@@ -1,59 +1,12 @@
 import 'package:get/get.dart';
-import 'package:skt_sikring/infrastructure/utils/log_helper.dart';
 
 import '../../../app/routes/app_routes.dart';
 import '../../../infrastructure/utils/api_client.dart';
 import '../../../infrastructure/utils/api_content.dart';
 import '../../../infrastructure/utils/secure_storage_helper.dart';
-import '../../shared/widgets/customSnakBar.dart';
 import '../model/reportModel.dart';
 
 class ReportScreenController extends GetxController {
-  List<Map<String, dynamic>> categorizedData = [
-    {
-      'categoryTitle': 'Alarm Patrol',
-      'sites': [
-        // {'name': 'Site A, Bashundhara', 'date': '23 - 30 May'},
-        // {'name': 'Site C, Mirpur', 'date': '15 - 22 June'},
-        // {'name': 'Site D, Gulshan', 'date': '01 - 08 July'},
-      ],
-    },
-    {
-      'categoryTitle': 'Patrol Report',
-      'sites': [
-        {'name': 'Site B, Dhanmondi', 'date': '10 - 17 April'},
-        {'name': 'Site E, Uttara', 'date': '25 May - 01 June'},
-      ],
-    },
-    {
-      'categoryTitle': 'Service',
-      'sites': [
-        {'name': 'Site G, Banani', 'date': '15 - 22 August'},
-        {'name': 'Site H, Motijheel', 'date': '01 - 08 September'},
-        {'name': 'Site H, Motijheel', 'date': '01 - 08 September'},
-        {'name': 'Site H, Motijheel', 'date': '01 - 08 September'},
-        {'name': 'Site H, Motijheel', 'date': '01 - 08 September'},
-        {'name': 'Site G, Banani', 'date': '15 - 22 August'},
-        {'name': 'Site H, Motijheel', 'date': '01 - 08 September'},
-        {'name': 'Site G, Banani', 'date': '15 - 22 August'},
-        {'name': 'Site H, Motijheel', 'date': '01 - 08 September'},
-        {'name': 'Site G, Banani', 'date': '15 - 22 August'},
-        {'name': 'Site H, Motijheel', 'date': '01 - 08 September'},
-        {'name': 'Site G, Banani', 'date': '15 - 22 August'},
-        {'name': 'Site H, Motijheel', 'date': '01 - 08 September'},
-        {'name': 'Site G, Banani', 'date': '15 - 22 August'},
-        {'name': 'Site H, Motijheel', 'date': '01 - 08 September'},
-      ],
-    },
-    {
-      'categoryTitle': 'Emergency Call Out',
-      'sites': [
-        {'name': 'Site G, Banani', 'date': '15 - 22 August'},
-        {'name': 'Site H, Motijheel', 'date': '01 - 08 September'},
-      ],
-    },
-  ];
-
   static const Map<String, String> categoryMapping = {
     'Alarm Patrol': 'alarmPatrol',
     'Patrol Report': 'patrolReport',
@@ -71,13 +24,11 @@ class ReportScreenController extends GetxController {
 
   var selectedCategory = 'Alarm Patrol'.obs;
 
-
   var currentPage = 1.obs;
   var totalPages = 1.obs;
   final ApiClient _apiClient = Get.find();
   RxList<Result> allSelectedReport = <Result>[].obs;
   Rxn<ReportModel> allReports = Rxn<ReportModel>();
-
 
   String get reportID {
     final args = Get.arguments;
@@ -130,7 +81,11 @@ class ReportScreenController extends GetxController {
       String id = await SecureStorageHelper.getString("id");
 
       final response = await _apiClient.getData(
-        ApiConstants.getReportsBySelection(reportType: backendCategory,personID: id,page: currentPage.value,limit: 5),
+        ApiConstants.getReportsBySelection(
+            reportType: backendCategory,
+            personID: id,
+            page: currentPage.value,
+            limit: 5),
         headers: token != null && token!.isNotEmpty
             ? {"Authorization": "Bearer $token"}
             : null,
@@ -138,18 +93,14 @@ class ReportScreenController extends GetxController {
 
       if (response.statusCode == 200 || response.statusCode == 201) {
         allReports.value = ReportModel.fromJson(response.body);
-
-       //final reportModel = reportModelFromJson(response.body);
-
-
-        final reportModel = allReports.value.data.attributes;
-
-        allSelectedReport.value = reportModel?.data!.attributes!.results!;
-        updateTotalPages(reportModel.data?.attributes?.totalPages ?? 1);
-        LoggerHelper.error(allSelectedReport.first.role);
-
-      //   Get.toNamed(Routes.ERROR_PAGE);
-       }
+        final reportModel = allReports.value;
+        if (reportModel != null &&
+            reportModel.data != null &&
+            reportModel.data!.attributes != null) {
+          allSelectedReport.value = reportModel.data!.attributes!.results!;
+          updateTotalPages(reportModel.data!.attributes!.totalPages!);
+        }
+      }
     } catch (e) {
       print("Error getting reports: $e");
       allSelectedReport.clear();
@@ -168,14 +119,16 @@ class ReportScreenController extends GetxController {
   // Filter reports by current selected category
   List<Result> get filteredReports {
     String backendCategory = getBackendCategoryValue(selectedCategory.value);
-    return allSelectedReport.where((report) =>
-    report.reportType == backendCategory).toList();
+    return allSelectedReport
+        .where((report) => report.reportType == backendCategory)
+        .toList();
   }
 
   // Get reports by specific backend category
   List<Result> getReportsByBackendType(String backendReportType) {
-    return allSelectedReport.where((report) =>
-    report.reportType == backendReportType).toList();
+    return allSelectedReport
+        .where((report) => report.reportType == backendReportType)
+        .toList();
   }
 
   // Get reports by UI category name
@@ -195,18 +148,21 @@ class ReportScreenController extends GetxController {
   void goToPage(int page) {
     if (page >= 1 && page <= totalPages.value) {
       currentPage.value = page;
+      getCategoricalReport();
     }
   }
 
   void goToNextPage() {
     if (currentPage.value < totalPages.value) {
       currentPage.value++;
+      getCategoricalReport();
     }
   }
 
   void goToPreviousPage() {
     if (currentPage.value > 1) {
       currentPage.value--;
+      getCategoricalReport();
     }
   }
 
