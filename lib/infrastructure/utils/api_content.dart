@@ -37,6 +37,7 @@ class ApiConstants {
   static String baseUrl = "https://sheakh6733.sobhoy.com/api/v1";
   static String imageBaseUrl = "https://sheakh6733.sobhoy.com" ;
   static String dummyImageUrl = "https://sheakh6733.sobhoy.com";
+  static String socketUrl = "https://sheakh6733.sobhoy.com";
 
   ///-------------------------------------Auth------------------------------------
 
