@@ -5,7 +5,7 @@ export 'package:skt_sikring/presentation/auth/logIn/log_in.screen.dart';
 export 'package:skt_sikring/presentation/auth/otpPage/otp_page.screen.dart';
 export 'package:skt_sikring/presentation/auth/resetPassword/reset_password.screen.dart';
 export 'package:skt_sikring/presentation/changePassword/change_password.screen.dart';
-export 'package:skt_sikring/presentation/conversationPage/conversation_page.screen.dart';
+export 'package:skt_sikring/presentation/messaging/conversationPage/conversation_page.screen.dart';
 export 'package:skt_sikring/presentation/createReport/create_report.screen.dart';
 export 'package:skt_sikring/presentation/customPrivacyPolicy/custom_privacy_policy.screen.dart';
 export 'package:skt_sikring/presentation/detailsReport/details_report.screen.dart';

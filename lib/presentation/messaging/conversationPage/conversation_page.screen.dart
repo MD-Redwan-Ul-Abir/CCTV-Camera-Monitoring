@@ -4,9 +4,10 @@ import 'package:flutter_svg/svg.dart';
 import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
 
-import '../../infrastructure/theme/app_colors.dart';
-import '../../infrastructure/theme/text_styles.dart';
-import '../../infrastructure/utils/app_images.dart';
+import '../../../infrastructure/theme/app_colors.dart';
+
+import '../../../infrastructure/theme/text_styles.dart';
+import '../../../infrastructure/utils/app_images.dart';
 import 'controllers/conversation_page.controller.dart';
 
 class ConversationPageScreen extends GetView<ConversationPageController> {

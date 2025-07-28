@@ -1,6 +1,6 @@
 import 'package:get/get.dart';
 
-import '../../../../presentation/message/controllers/message_screen.controller.dart';
+import '../../../../presentation/messaging/message/controllers/message_screen.controller.dart';
 
 
 class MessageScreenControllerBinding extends Bindings {

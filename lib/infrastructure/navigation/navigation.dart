@@ -5,7 +5,8 @@ import 'package:get/get.dart';
 import '../../config.dart';
 import '../../presentation/auth/customSuccessMassege/custom_success_massege.screen.dart';
 import '../../presentation/languageChanging/language_screen.dart';
-import '../../presentation/message/message_screen.screen.dart';
+
+import '../../presentation/messaging/message/message_screen.screen.dart';
 import '../../presentation/screens.dart';
 import '../../presentation/shared/widgets/imagePicker/imagePickerController.dart';
 import 'bindings/controllers/controllers_bindings.dart';

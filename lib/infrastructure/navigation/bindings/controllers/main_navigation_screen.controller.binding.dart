@@ -2,6 +2,7 @@ import 'package:get/get.dart';
 import 'package:skt_sikring/presentation/home/controllers/home.controller.dart';
 
 import '../../../../presentation/mainNavigationScreen/controllers/main_navigation_screen.controller.dart';
+import '../../../../presentation/messaging/message/controllers/message_screen.controller.dart';
 import '../../../../presentation/profile/controllers/profile.controller.dart';
 import '../../../../presentation/reportScreen/controllers/report_screen.controller.dart';
 import '../../../../presentation/shared/widgets/imagePicker/imagePickerController.dart';
@@ -24,6 +25,9 @@ class MainNavigationScreenControllerBinding extends Bindings {
     );
     Get.lazyPut<ApiClient>(
           () => ApiClient(),
+    );
+    Get.lazyPut<MessageScreenController>(
+          () => MessageScreenController(),
     );
     // Get.lazyPut<HomeController>(
     //       () => HomeController(),

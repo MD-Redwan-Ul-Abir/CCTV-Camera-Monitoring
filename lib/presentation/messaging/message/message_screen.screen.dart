@@ -2,29 +2,27 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
-import '../../infrastructure/navigation/routes.dart';
-import '../../infrastructure/theme/app_colors.dart';
-import '../../infrastructure/theme/text_styles.dart';
-import '../../infrastructure/utils/app_images.dart';
+import '../../../app/routes/app_routes.dart';
+import '../../../infrastructure/theme/app_colors.dart';
+import '../../../infrastructure/theme/text_styles.dart';
+import '../../../infrastructure/utils/app_images.dart';
+
 import 'controllers/message_screen.controller.dart';
 
-class MessageScreen extends GetView<MessageScreenController> {
+class MessageScreen extends StatefulWidget {
   const MessageScreen({super.key});
 
   @override
+  State<MessageScreen> createState() => _MessageScreenState();
+}
+
+class _MessageScreenState extends State<MessageScreen> {
+  @override
   Widget build(BuildContext context) {
+final MessageScreenController messageScreenController = Get.find<MessageScreenController>();
 
-    List<Map<String, String>> siteData = [
-      {'Company name': 'Henriks Company', 'date': 'Yesterday','topic':'Meeting Schedule','description':'Lets schedule a meeting for next week...'},
-      {'Company name': 'Alices Agency', 'date': 'Today','topic':'Project Update','description':'We need to review the project progress this week.'},
-      {'Company name': 'Bobs Firm', 'date': 'Tomorrow','topic':'Budget Review','description':'Prepare the budget analysis for next months meeting. '},
-    ];
 
-    List<Map<String, String>> messageList = [
-      {'name': 'Mila Tanaka(Admin)', 'time': '9:45 AM','message':'Meeting Schedule','status':'inactive'},
-      {'name': 'Mila Tanaka(Security Employee)', 'time': '10:25 AM','message':'Project Update','status':'inactive'},
-      {'name': 'Bobs', 'time': '3:50 AM','message':'Budget Review','status':'active'},
-    ];
+
 
     return Scaffold(
       appBar: PreferredSize(
@@ -69,9 +67,9 @@ class MessageScreen extends GetView<MessageScreenController> {
               ListView.builder(
                 shrinkWrap: true,
                 physics: NeverScrollableScrollPhysics(),
-                itemCount: messageList.length,
+                itemCount: messageScreenController.messageList.length,
                 itemBuilder: (context, index) {
-                  final dotColor = messageList[index]['status'] == 'active'? AppColors.greenNormal: AppColors.redNormal;
+                  final dotColor = messageScreenController.messageList[index]['status'] == 'active'? AppColors.greenNormal: AppColors.redNormal;
 
                   return Card(
                     color: AppColors.secondaryDark,
@@ -113,7 +111,7 @@ class MessageScreen extends GetView<MessageScreenController> {
                                           maxWidth: MediaQuery.of(context).size.width * 0.5,
                                         ),
                                         child: Text(
-                                          messageList[index]['name']!,
+                                          messageScreenController.messageList[index]['name']!,
                                           style: AppTextStyles.button.copyWith(
                                               color: AppColors.primaryLight
                                           ),
@@ -123,7 +121,7 @@ class MessageScreen extends GetView<MessageScreenController> {
                                       ),
                                       SizedBox(height: 8.h),
                                       Text(
-                                        messageList[index]['message']!,
+                                        messageScreenController.messageList[index]['message']!,
                                         style: AppTextStyles.caption1.copyWith(
                                           color: Color(0xFFBAB8B9),
                                         ),
@@ -135,7 +133,7 @@ class MessageScreen extends GetView<MessageScreenController> {
                                   crossAxisAlignment: CrossAxisAlignment.end,
                                   children: [
                                     Text(
-                                      messageList[index]['time']!,
+                                      messageScreenController.messageList[index]['time']!,
                                       style: GoogleFonts.plusJakartaSans(
                                           fontSize: 15.sp,
                                           fontWeight: FontWeight.w400,

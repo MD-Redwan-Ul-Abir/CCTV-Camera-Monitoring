@@ -6,7 +6,8 @@ import 'package:skt_sikring/infrastructure/utils/app_images.dart';
 
 import '../../infrastructure/theme/app_colors.dart';
 import '../home/home.screen.dart';
-import '../message/message_screen.screen.dart';
+
+import '../messaging/message/message_screen.screen.dart';
 import '../profile/profile.screen.dart';
 import '../reportScreen/report_screen.screen.dart';
 import '../shared/widgets/bottomNav/custom_nav_bar.dart';
