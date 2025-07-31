@@ -1,4 +1,5 @@
 class ApiConstants {
+  ApiConstants._();
   ///----------------sucure storage constent--------------------
 
   // static const String signInToken = 'sign-in-token';

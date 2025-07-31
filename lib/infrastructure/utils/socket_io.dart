@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'dart:io';
+import 'package:skt_sikring/infrastructure/utils/api_content.dart';
 import 'package:socket_io_client/socket_io_client.dart' as IO;
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -43,6 +44,9 @@ class SocketApi {
   static int get reconnectAttempts => _reconnectAttempts;
 
   /// Initialize socket with enhanced configuration
+  // Add these fixes to your socket_io.dart file
+
+  /// Enhanced initialization with better error handling
   static Future<bool> init({
     String? serverUrl,
     String? token,
@@ -52,13 +56,28 @@ class SocketApi {
     try {
       debugPrint('=============> Socket initialization started');
 
+      // Validate required parameters
+      if (token == null || token.isEmpty) {
+        debugPrint('=============> Error: Token is required for socket connection');
+        return false;
+      }
+
+      final url = serverUrl ?? ApiConstants.socketUrl;
+      if (url.isEmpty) {
+        debugPrint('=============> Error: Socket URL is required');
+        return false;
+      }
+
+      debugPrint('=============> Connecting to: $url');
+      debugPrint('=============> Token provided: ${token.substring(0, 20)}...');
+
       _status = SocketStatus.connecting;
       _currentEvent = eventName ?? '';
 
       // Create socket if not exists or if URL changed
       if (_socket == null || serverUrl != null) {
         await _createSocket(
-          serverUrl: serverUrl ?? "http://192.168.10.180:3050",
+          serverUrl: url,
           token: token,
           query: query,
         );
@@ -78,7 +97,8 @@ class SocketApi {
     }
   }
 
-  /// Create socket instance with configuration
+  /// Enhanced socket creation with better configuration
+  /// Enhanced socket creation with token in headers
   static Future<void> _createSocket({
     required String serverUrl,
     String? token,
@@ -87,24 +107,38 @@ class SocketApi {
     // Cleanup existing socket
     await _cleanup(disposeSocket: true);
 
+    // Prepare query parameters (without token)
     final queryParams = <String, dynamic>{};
-    if (token != null) queryParams['token'] = token;
     if (query != null) queryParams.addAll(query);
+
+    // Prepare headers with token
+    final headers = <String, dynamic>{};
+    if (token != null) {
+      headers['Authorization'] = 'Bearer $token';
+      // Or use custom header:
+      // headers['x-auth-token'] = token;
+    }
+
+    debugPrint('=============> Creating socket with headers: ${headers.keys}');
+    debugPrint('=============> Query params: $queryParams');
 
     _socket = IO.io(
       serverUrl,
       IO.OptionBuilder()
-          .setTransports(['websocket'])
+          .setTransports(['websocket', 'polling'])
           .disableAutoConnect()
-          .setTimeout(connectionTimeout.inMilliseconds)
-          .setReconnectionDelay(reconnectDelay.inMilliseconds)
-          .setQuery(queryParams)
+          .setTimeout(15000)
+          .setReconnectionDelay(3000)
+          .setReconnectionDelayMax(10000)
+          .setReconnectionDelayMax(3)
+          .enableForceNew()
+          .setQuery(queryParams)           // Query without token
+          .setExtraHeaders(headers)        // Token in headers
           .build(),
     );
 
     _setupSocketListeners();
   }
-
   /// Setup core socket event listeners
   static void _setupSocketListeners() {
     if (_socket == null) return;
@@ -146,40 +180,105 @@ class SocketApi {
       _reconnectAttempts = 0;
     });
   }
-
-  /// Connect with timeout handling
+  /// Enhanced connection with better timeout handling
   static Future<bool> _connectWithTimeout() async {
     final completer = Completer<bool>();
     Timer? timeoutTimer;
+    bool hasCompleted = false;
 
-    void onConnected() {
-      timeoutTimer?.cancel();
-      if (!completer.isCompleted) completer.complete(true);
+    void complete(bool result) {
+      if (!hasCompleted) {
+        hasCompleted = true;
+        timeoutTimer?.cancel();
+        if (!completer.isCompleted) {
+          completer.complete(result);
+        }
+      }
     }
 
-    void onError() {
-      timeoutTimer?.cancel();
-      if (!completer.isCompleted) completer.complete(false);
+    void onConnected() {
+      debugPrint('===============> Socket Connected Successfully');
+      complete(true);
+    }
+
+    void onError(dynamic error) {
+      debugPrint('===============> Socket Connection Error: $error');
+      complete(false);
+    }
+
+    void onTimeout() {
+      debugPrint('===============> Socket Connection Timeout (15s)');
+      complete(false);
     }
 
     // Setup one-time listeners
     _socket!.onConnect((_) => onConnected());
-    _socket!.onConnectError((_) => onError());
+    _socket!.onConnectError((error) => onError(error));
+    _socket!.onError((error) => onError(error));
 
-    // Set timeout
-    timeoutTimer = Timer(connectionTimeout, () {
-      if (!completer.isCompleted) {
-        debugPrint('===============> Socket Connection Timeout');
-        completer.complete(false);
-      }
-    });
+    // Set timeout (15 seconds)
+    timeoutTimer = Timer(const Duration(seconds: 15), onTimeout);
 
-    // Attempt connection
-    _socket!.connect();
+    try {
+      // Attempt connection
+      debugPrint('===============> Attempting socket connection...');
+      _socket!.connect();
+    } catch (e) {
+      debugPrint('===============> Socket connect() error: $e');
+      complete(false);
+    }
 
     return await completer.future;
   }
 
+  /// Add network connectivity check
+  static Future<bool> checkNetworkConnectivity() async {
+    try {
+      final result = await InternetAddress.lookup('google.com');
+      return result.isNotEmpty && result[0].rawAddress.isNotEmpty;
+    } on SocketException catch (_) {
+      return false;
+    }
+  }
+
+  /// Enhanced initialization with network check
+  static Future<bool> initWithNetworkCheck({
+    String? serverUrl,
+    String? token,
+    String? eventName,
+    Map<String, dynamic>? query,
+  }) async {
+    // Check network connectivity first
+    bool hasNetwork = await checkNetworkConnectivity();
+    if (!hasNetwork) {
+      debugPrint('=============> No network connectivity detected');
+      _status = SocketStatus.error;
+      return false;
+    }
+
+    return await init(
+      serverUrl: serverUrl,
+      token: token,
+      eventName: eventName,
+      query: query,
+    );
+  }
+
+  /// Add method to get detailed connection status
+  static Map<String, dynamic> getDetailedStatus() {
+    return {
+      'status': _status.toString(),
+      'isConnected': isConnected,
+      'socketConnected': _socket?.connected ?? false,
+      'socketId': _socket?.id,
+      'currentEvent': _currentEvent,
+      'reconnectAttempts': _reconnectAttempts,
+      'maxReconnectAttempts': maxReconnectAttempts,
+      'activeHandlers': _eventHandlers.keys.toList(),
+      'hasSocket': _socket != null,
+      'timestamp': DateTime.now().toIso8601String(),
+    };
+  }
   /// Smart reconnection with exponential backoff
   static void _scheduleReconnect() {
     if (_reconnectTimer?.isActive == true) return;

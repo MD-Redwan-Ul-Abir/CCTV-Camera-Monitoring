@@ -93,7 +93,7 @@ class ConversationPageScreen extends GetView<ConversationPageController> {
         children: [
           Expanded(
             child: Container(
-              height: 1,
+              height: 1.h,
               color: Color(0xFF3A3A3A),
             ),
           ),
@@ -206,6 +206,7 @@ class ConversationPageScreen extends GetView<ConversationPageController> {
                   //   fontWeight: FontWeight.w400,
                   //   color: Color(0xFFBAB8B9),
                   // ),
+
                   hintStyle: AppTextStyles.button.copyWith(
                     letterSpacing: 0
                   ),
