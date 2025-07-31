@@ -17,9 +17,10 @@ class DetailsReportController extends GetxController {
   String? token;
 
 
+
   void updateProfileImage() {
     try {
-      final imageUrl = detailsReport.value?.data?.attributes?.attachments?.first.attachment;
+      final imageUrl = detailsReport.value?.data?.attributes!.person!.first.personId!.profileImage!.imageUrl;
       profileImageUrl.value = ProfileImageHelper.formatImageUrl(imageUrl);
       print(profileImageUrl.value);
     } catch (e) {

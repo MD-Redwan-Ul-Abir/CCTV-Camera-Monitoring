@@ -1,32 +1,20 @@
-import 'package:skt_sikring/infrastructure/utils/api_content.dart';
-import 'package:flutter/cupertino.dart';
-import 'package:get/get.dart';
-import 'package:skt_sikring/infrastructure/utils/log_helper.dart';
-import 'package:skt_sikring/infrastructure/utils/secure_storage_helper.dart';
-import '../../../../infrastructure/utils/socket_io.dart';
+import 'package:get/get_rx/src/rx_types/rx_types.dart';
 import 'package:socket_io_client/socket_io_client.dart' as IO;
 
-import '../../../auth/otpPage/model/otpModel.dart';
-import '../model/conversationListModel.dart';
+import '../../infrastructure/utils/api_content.dart';
+import '../../infrastructure/utils/log_helper.dart';
+import '../../infrastructure/utils/secure_storage_helper.dart';
 
-class MessageScreenController extends GetxController {
-  final ScrollController scrollController = ScrollController();
-  RxList<AllConversationList> chatItemList = <AllConversationList>[].obs;
 
-  IO.Socket? _socket;
-  RxString receiveAbleId = ''.obs;
-  String? myID;
+class SocketHelper {
+  // SocketHelper._();
 
   final RxBool isSocketConnected = false.obs;
   final RxString socketStatus = 'disconnected'.obs;
   final RxBool isConnecting = false.obs;
-
-  @override
-  Future<void> onInit() async {
-    super.onInit();
-    await initSocket();
-
-  }
+  IO.Socket? _socket;
+  RxString receiveAbleId = ''.obs;
+  String? myID;
 
   initSocket() async {
     LoggerHelper.error('''
@@ -54,9 +42,6 @@ class MessageScreenController extends GetxController {
         LoggerHelper.info('====Connected to server=====');
         isSocketConnected.value = true;
         socketStatus.value = 'connected';
-
-        // Call getUserList immediately after connection
-        getUserList();
       });
 
       // Setup listeners before connecting
@@ -83,30 +68,18 @@ class MessageScreenController extends GetxController {
   }
 
 
-  void getUserList() {
-    var data = {"page": 1, "limit": 10};
+  void emit(String emitText,Map<String,dynamic> body) {
+    var data = body;
 
     _socket?.emitWithAck(
-      'get-all-conversations-with-pagination',
+      emitText,
       data,
       ack: (response) {
         LoggerHelper.warn(response.toString());
 
-        // Clear existing list and add new data
-        if (response != null && response is List) {
-          chatItemList.clear();
-          for (var item in response) {
-            chatItemList.add(AllConversationList.fromJson(item));
-          }
-        } else if (response != null &&
-            response is Map &&
-            response['data'] != null) {
-          // If response is wrapped in an object
-          chatItemList.clear();
-          var dataList = response['data']['results'] as List;
-          for (var item in dataList) {
-            chatItemList.add(AllConversationList.fromJson(item));
-          }
+
+        if (response != null  ) {
+          return response;
         }
       },
     );

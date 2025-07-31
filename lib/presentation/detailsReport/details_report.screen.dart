@@ -253,9 +253,7 @@ class _DetailsReportScreenState extends State<DetailsReportScreen> {
 
                               color: AppColors.grayDarker,
                               child: Image.network(
-                                detailsReportController.detailsReport.value!
-                                    .data!.attributes!.person!.first.personId!
-                                    .profileImage!.imageUrl ?? "",
+                                detailsReportController.profileImageUrl.value ?? "",
                                 fit: BoxFit.cover,
                               ),
                             ),
