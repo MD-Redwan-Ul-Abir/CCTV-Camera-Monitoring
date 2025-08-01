@@ -20,95 +20,159 @@ class MessageScreenController extends GetxController {
   final RxBool isSocketConnected = false.obs;
   final RxString socketStatus = 'disconnected'.obs;
   final RxBool isConnecting = false.obs;
+  final RxBool isLoading = true.obs; // Add loading state
 
   @override
-  Future<void> onInit() async {
+  void onInit() {
     super.onInit();
-    await initSocket();
-
+    connectAndFetchData();
+     // Fetch data after connection
   }
 
-  initSocket() async {
-    LoggerHelper.error('''
-    Side den vai ami call hocci........
-    ''');
+  void connectAndFetchData() async {
+    if (isConnecting.value) return;
 
-    String token = await SecureStorageHelper.getString('accessToken');
-    myID = await SecureStorageHelper.getString('id');
-    print(myID);
+    isLoading.value = true;
+    isConnecting.value = true;
 
     try {
-      Map<String, dynamic> options = {
-        'transports': ['websocket'],
-        'autoConnect': false,
-      };
+      String token = await SecureStorageHelper.getString('accessToken');
+      myID = await SecureStorageHelper.getString('id');
+      print(myID);
 
-      // Add token to headers if provided
-      if (token.isNotEmpty) {
-        options['extraHeaders'] = {'token': token};
-      }
+      // Configure socket
+      _socket = IO.io(
+        ApiConstants.socketUrl,
+        <String, dynamic>{
+          'transports': ['websocket'],
+          'autoConnect': true,
+          'extraHeaders': {'token': token},
+        },
+      );
 
-      _socket = IO.io(ApiConstants.socketUrl, options);
-
+      // Setup listeners
       _socket?.onConnect((_) {
-        LoggerHelper.info('====Connected to server=====');
+        LoggerHelper.info('==== Connected to server ====');
+        isLoading.value=false;
         isSocketConnected.value = true;
         socketStatus.value = 'connected';
-
-        // Call getUserList immediately after connection
+        isConnecting.value = false;
         getUserList();
+
       });
 
-      // Setup listeners before connecting
-      if (_socket?.connected != true) {
-        isConnecting.value = true;
-        _socket?.connect();
-
-      }
-      _socket?.on('related-user-online-status::685a211bcb3b476c53324c1b', ((
-          data,
-          ) {
-        LoggerHelper.info(data);
-      }));
       _socket?.onDisconnect((_) {
-        LoggerHelper.info('====Disconnected from server====');
+        LoggerHelper.info('==== Disconnected from server ====');
         isSocketConnected.value = false;
         socketStatus.value = 'disconnected';
         isConnecting.value = false;
+        isLoading.value = false;
       });
+
+      _socket?.onConnectError((error) {
+        LoggerHelper.error('Socket connection error: $error');
+        isSocketConnected.value = false;
+        socketStatus.value = 'error';
+        isConnecting.value = false;
+        isLoading.value = false;
+      });
+
+      // Connect to the socket
+      _socket?.connect();
+
+      _socket?.on('new-message-received::687b8a28debdfb0089188e6d', (data) {
+        LoggerHelper.error('New message received: $data');
+        // Refresh the conversation list when new message arrives
+        getUserList();
+      });
+
+      _socket?.on('related-user-online-status::$myID', (data) {
+        LoggerHelper.info('New message received: $data');
+        // Refresh the conversation list when new message arrives
+        getUserList();
+      });
+
+
+
+
+
     } catch (e) {
-      print('Socket connection error: $e');
+      LoggerHelper.error('Error in connectAndFetchData: $e');
       isConnecting.value = false;
+      isLoading.value = false;
     }
   }
 
 
-  void getUserList() {
+  Future<void> getUserList() async {
+    // Only proceed if socket is connected
+    if (!isSocketConnected.value || _socket?.connected != true) {
+      LoggerHelper.warn('Socket not connected, cannot get user list');
+      isLoading.value = false;
+      return;
+    }
+
     var data = {"page": 1, "limit": 10};
+
+    // Add a small delay before making the request
+    await Future.delayed(Duration(milliseconds: 100));
 
     _socket?.emitWithAck(
       'get-all-conversations-with-pagination',
       data,
-      ack: (response) {
+      ack: (response) async {
         LoggerHelper.warn(response.toString());
 
-        // Clear existing list and add new data
-        if (response != null && response is List) {
-          chatItemList.clear();
-          for (var item in response) {
-            chatItemList.add(AllConversationList.fromJson(item));
+        // Add delay before processing response
+        await Future.delayed(Duration(milliseconds: 50));
+
+        isLoading.value = false; // Set loading to false when data is received
+
+        try {
+          // Clear existing list and add new data
+          if (response != null && response is Map && response['success'] == true) {
+            // Handle the specific response structure from your logs
+            var responseData = response['data'];
+            if (responseData != null && responseData['results'] != null) {
+              chatItemList.clear();
+              var dataList = responseData['results'] as List;
+              for (var item in dataList) {
+                chatItemList.add(AllConversationList.fromJson(item));
+              }
+            } else {
+              chatItemList.clear();
+            }
+          } else if (response != null && response is List) {
+            // Handle direct list response
+            chatItemList.clear();
+            for (var item in response) {
+              chatItemList.add(AllConversationList.fromJson(item));
+            }
+          } else {
+            // Handle empty or null response
+            chatItemList.clear();
           }
-        } else if (response != null &&
-            response is Map &&
-            response['data'] != null) {
-          // If response is wrapped in an object
-          chatItemList.clear();
-          var dataList = response['data']['results'] as List;
-          for (var item in dataList) {
-            chatItemList.add(AllConversationList.fromJson(item));
-          }
+        } catch (e) {
+          LoggerHelper.error('Error parsing user list response: $e');
+          isLoading.value = false;
         }
       },
     );
+  }
+
+  // Method to retry connection
+  void retryConnection() {
+    if (!isSocketConnected.value && !isConnecting.value) {
+      connectAndFetchData();
+    }
+  }
+
+  @override
+  void onClose() {
+    _socket?.disconnect();
+    _socket?.dispose();
+    LoggerHelper.error('=========================================Socket closed================================================');
+    scrollController.dispose();
+    super.onClose();
   }
 }
