@@ -26,7 +26,8 @@ class MessageScreenController extends GetxController {
   void onInit() {
     super.onInit();
     connectAndFetchData();
-     // Fetch data after connection
+    // getUserList();
+    // Fetch data after connection
   }
 
   void connectAndFetchData() async {
@@ -40,25 +41,20 @@ class MessageScreenController extends GetxController {
       myID = await SecureStorageHelper.getString('id');
       print(myID);
 
-      // Configure socket
-      _socket = IO.io(
-        ApiConstants.socketUrl,
-        <String, dynamic>{
-          'transports': ['websocket'],
-          'autoConnect': true,
-          'extraHeaders': {'token': token},
-        },
-      );
+      //Configure socket
+      _socket = IO.io(ApiConstants.socketUrl, <String, dynamic>{
+        'transports': ['websocket'],
+        'autoConnect': false,
+        'extraHeaders': {'token': token},
+      });
+      _socket?.connect();
 
       // Setup listeners
       _socket?.onConnect((_) {
-        LoggerHelper.info('==== Connected to server ====');
-        isLoading.value=false;
-        isSocketConnected.value = true;
-        socketStatus.value = 'connected';
-        isConnecting.value = false;
-        getUserList();
 
+         LoggerHelper.info('==== Connected to server ====');
+
+        getUserList();
       });
 
       _socket?.onDisconnect((_) {
@@ -78,9 +74,14 @@ class MessageScreenController extends GetxController {
       });
 
       // Connect to the socket
-      _socket?.connect();
 
-      _socket?.on('new-message-received::687b8a28debdfb0089188e6d', (data) {
+
+      // _socket?.on('new-message-received::687b8a28debdfb0089188e6d', (data) {
+      //   LoggerHelper.error('New message received: $data');
+      //   // Refresh the conversation list when new message arrives
+      //   getUserList();
+      // });
+      _socket?.on('conversation-list-updated::$myID', (data) {
         LoggerHelper.error('New message received: $data');
         // Refresh the conversation list when new message arrives
         getUserList();
@@ -91,11 +92,6 @@ class MessageScreenController extends GetxController {
         // Refresh the conversation list when new message arrives
         getUserList();
       });
-
-
-
-
-
     } catch (e) {
       LoggerHelper.error('Error in connectAndFetchData: $e');
       isConnecting.value = false;
@@ -103,38 +99,40 @@ class MessageScreenController extends GetxController {
     }
   }
 
-
   Future<void> getUserList() async {
     // Only proceed if socket is connected
-    if (!isSocketConnected.value || _socket?.connected != true) {
-      LoggerHelper.warn('Socket not connected, cannot get user list');
-      isLoading.value = false;
-      return;
-    }
-
-    var data = {"page": 1, "limit": 10};
+    // if (!isSocketConnected.value || _socket?.connected != true) {
+    //   LoggerHelper.warn('Socket not connected, cannot get user list');
+    //   isLoading.value = false;
+    //   return;
+    // }
+    // isLoading.value = false;
+    // var data = {"page": 1, "limit": 10};
 
     // Add a small delay before making the request
-    await Future.delayed(Duration(milliseconds: 100));
+    // await Future.delayed(Duration(milliseconds: 100));
 
     _socket?.emitWithAck(
       'get-all-conversations-with-pagination',
-      data,
+      {"page": 1, "limit": 10},
       ack: (response) async {
         LoggerHelper.warn(response.toString());
 
         // Add delay before processing response
-        await Future.delayed(Duration(milliseconds: 50));
+        // await Future.delayed(Duration(milliseconds: 50));
 
-        isLoading.value = false; // Set loading to false when data is received
+        // isLoading.value = false; // Set loading to false when data is received
 
         try {
           // Clear existing list and add new data
-          if (response != null && response is Map && response['success'] == true) {
+          if (response != null &&
+              response is Map &&
+              response['success'] == true) {
             // Handle the specific response structure from your logs
             var responseData = response['data'];
             if (responseData != null && responseData['results'] != null) {
               chatItemList.clear();
+              isLoading.value = false;
               var dataList = responseData['results'] as List;
               for (var item in dataList) {
                 chatItemList.add(AllConversationList.fromJson(item));
@@ -171,7 +169,9 @@ class MessageScreenController extends GetxController {
   void onClose() {
     _socket?.disconnect();
     _socket?.dispose();
-    LoggerHelper.error('=========================================Socket closed================================================');
+    LoggerHelper.error(
+      '=========================================Socket closed================================================',
+    );
     scrollController.dispose();
     super.onClose();
   }

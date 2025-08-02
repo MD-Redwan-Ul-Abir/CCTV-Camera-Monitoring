@@ -11,13 +11,15 @@ import '../model/getAllSiteBySiteIDModel.dart';
 import '../model/getRepostByDateModel.dart';
 import '../model/profileDetails.dart';
 
+import 'package:socket_io_client/socket_io_client.dart' as IO;
+
 class HomeController extends GetxController {
   final ApiClient _apiClient = Get.find();
   Rxn<ProfileDetailsModel> profileDetails = Rxn<ProfileDetailsModel>();
   Rxn<GetAllSitesBySiteIdModel> getallSiteBySiteID = Rxn<GetAllSitesBySiteIdModel>();
   Rxn<GetReportByIdModel> getAllReportByDate = Rxn<GetReportByIdModel>();
   RxBool fatchedData=false.obs;
-
+  IO.Socket? _socket;
 
   RxString profileImageUrl = "".obs;
   RxBool isLoading = false.obs;
@@ -52,8 +54,29 @@ class HomeController extends GetxController {
       );
       if (response.statusCode == 200 || response.statusCode == 201) {
         profileDetails.value = ProfileDetailsModel.fromJson(response.body);
+
+        // _socket = IO.io(
+        //   ApiConstants.socketUrl,
+        //   <String, dynamic>{
+        //     'transports': ['websocket'],
+        //     'autoConnect': false,
+        //     'extraHeaders': {'token': token},
+        //   },
+        // );
         updateProfileImage();
+
+
+        // _socket?.onConnect((_) {
+        //   LoggerHelper.info('==== Connected to server ====');
+        //   isLoading.value=false;
+        //   // isSocketConnected.value = true;
+        //   // socketStatus.value = 'connected';
+        //   // isConnecting.value = false;
+        //   // getUserList();
+        //
+        // });
       }
+
     /// -----------------more task to be needed----------------------
     else if(response.statusCode == 400){
    if(!Get.isSnackbarOpen){

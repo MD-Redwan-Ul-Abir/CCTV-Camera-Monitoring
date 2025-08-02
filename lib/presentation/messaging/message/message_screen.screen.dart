@@ -7,20 +7,36 @@ import '../../../infrastructure/theme/app_colors.dart';
 import '../../../infrastructure/theme/text_styles.dart';
 import '../../../infrastructure/utils/app_images.dart';
 
+import '../../shared/networkImageFormating.dart';
 import 'controllers/message_screen.controller.dart';
 
 class MessageScreen extends StatefulWidget {
   const MessageScreen({super.key});
 
+
   @override
   State<MessageScreen> createState() => _MessageScreenState();
+
+
 }
 
 class _MessageScreenState extends State<MessageScreen> {
+  final MessageScreenController messageScreenController =
+  Get.find<MessageScreenController>();
+
+
   @override
+  void initState() {
+
+    super.initState();
+
+    // if(messageScreenController.isSocketConnected==true){
+    //   messageScreenController.getUserList();
+    // }
+  }
+  @override
+
   Widget build(BuildContext context) {
-    final MessageScreenController messageScreenController =
-    Get.find<MessageScreenController>();
 
     return Scaffold(
 // floatingActionButton: FloatingActionButton(onPressed: (){
@@ -80,7 +96,7 @@ class _MessageScreenState extends State<MessageScreen> {
                   // Main content
                   Obx(() {
                     // Show loading indicator while connecting or loading data
-                   
+
 
                     // Show empty state if no conversations
                     if (messageScreenController.chatItemList.isEmpty) {
@@ -159,8 +175,9 @@ class _MessageScreenState extends State<MessageScreen> {
                                     children: [
                                       ClipRRect(
                                         borderRadius: BorderRadius.circular(50),
-                                        child: Image.asset(
-                                          AppImages.chatPerson,
+                                        child: Image.network(
+
+                                          ProfileImageHelper.formatImageUrl(messageScreenController.chatItemList[index].userId!.profileImage!.imageUrl),
                                           height: 64.h,
                                           width: 64.w,
                                           fit: BoxFit.cover,
