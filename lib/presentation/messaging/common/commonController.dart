@@ -9,5 +9,5 @@ class CommonController extends GetxController{
   RxString conversationId= ''.obs;
   RxString userName= ''.obs;
   RxString profileImage= ''.obs;
-
+RxString token = ''.obs;
 }

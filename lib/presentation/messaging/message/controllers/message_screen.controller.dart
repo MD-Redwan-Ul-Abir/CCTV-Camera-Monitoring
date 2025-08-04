@@ -23,6 +23,7 @@ class MessageScreenController extends GetxController {
   final RxString socketStatus = 'disconnected'.obs;
   final RxBool isConnecting = false.obs;
   final RxBool isLoading = true.obs; // Add loading state
+  RxString token=''.obs;
 
   @override
   void onInit() {
@@ -39,7 +40,7 @@ class MessageScreenController extends GetxController {
     isConnecting.value = true;
 
     try {
-      String token = await SecureStorageHelper.getString('accessToken');
+       token.value = await SecureStorageHelper.getString('accessToken');
       myID?.value = await SecureStorageHelper.getString('id');
       print( myID?.value);
 
@@ -47,7 +48,7 @@ class MessageScreenController extends GetxController {
       _socket = IO.io(ApiConstants.socketUrl, <String, dynamic>{
         'transports': ['websocket'],
         'autoConnect': false,
-        'extraHeaders': {'token': token},
+        'extraHeaders': {'token': token.value},
       });
 
       _socket?.connect();
@@ -170,8 +171,12 @@ class MessageScreenController extends GetxController {
 
   @override
   void onClose() {
-    _socket?.disconnect();
+    _socket?.disconnect(
+
+    );
+
     _socket?.dispose();
+
     LoggerHelper.error(
       '=========================================Socket closed================================================',
     );

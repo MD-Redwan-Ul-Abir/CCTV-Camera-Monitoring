@@ -173,6 +173,7 @@ class _MessageScreenState extends State<MessageScreen> {
                                   chatItem.conversations!.first.conversationId!;
 
                               messageScreenController.commonController.userName.value=  userName;
+                              messageScreenController.commonController.token.value=  messageScreenController.token.value;
 
                               messageScreenController.commonController.profileImage.value=    ProfileImageHelper.formatImageUrl(
                                 messageScreenController

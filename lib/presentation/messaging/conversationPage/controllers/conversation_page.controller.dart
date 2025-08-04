@@ -4,6 +4,7 @@ import 'package:get/get.dart';
 import 'package:socket_io_client/socket_io_client.dart' as IO;
 import 'package:skt_sikring/presentation/messaging/common/commonController.dart';
 
+import '../../../../infrastructure/utils/api_content.dart';
 import '../../../../infrastructure/utils/log_helper.dart';
 import '../model/conversationModel.dart';
 
@@ -30,6 +31,13 @@ class ConversationPageController extends GetxController {
   void onInit() {
     // Get current user ID from commonController or wherever it's stored
     currentUserId.value = commonController.senderId.value;
+    _socket = IO.io(ApiConstants.socketUrl, <String, dynamic>{
+      'transports': ['websocket'],
+      'autoConnect': false,
+      'extraHeaders': {'token': commonController.token.value},
+    });
+
+    _socket?.connect();
 
     joinConversation();
     setupScrollListener();
