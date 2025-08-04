@@ -69,12 +69,12 @@ class _ConversationPageScreenState extends State<ConversationPageScreen> {
             onPressed: () => Get.back(),
           ),
         ),
-        actions: [
-          IconButton(
-            icon: Icon(Icons.refresh, color: AppColors.primaryLight),
-            onPressed: () => conversationController.refreshConversation(),
-          ),
-        ],
+        // actions: [
+        //   IconButton(
+        //     icon: Icon(Icons.refresh, color: AppColors.primaryLight),
+        //     onPressed: () => conversationController.refreshConversation(),
+        //   ),
+        // ],
       ),
       body: Column(
         children: [
@@ -261,8 +261,8 @@ class _ConversationPageScreenState extends State<ConversationPageScreen> {
                 borderRadius: BorderRadius.only(
                   topLeft: Radius.circular(8.r),
                   topRight: Radius.circular(8.r),
-                  bottomLeft: isUser ? Radius.circular(8.r) : Radius.circular(2.r),
-                  bottomRight: isUser ? Radius.circular(2.r) : Radius.circular(8.r),
+                  bottomLeft: isUser ? Radius.circular(8.r) : Radius.circular(20.r),
+                  bottomRight: isUser ? Radius.circular(20.r) : Radius.circular(8.r),
                 ),
               ),
               child: Column(

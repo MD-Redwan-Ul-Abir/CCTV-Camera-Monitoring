@@ -10,6 +10,7 @@ import '../../../infrastructure/utils/app_images.dart';
 
 import '../../shared/networkImageFormating.dart';
 import 'controllers/message_screen.controller.dart';
+import 'model/conversationListModel.dart';
 
 class MessageScreen extends StatefulWidget {
   const MessageScreen({super.key});
@@ -25,7 +26,7 @@ class _MessageScreenState extends State<MessageScreen> {
   @override
   void initState() {
     super.initState();
-
+    messageScreenController.connectAndFetchData();
     // if(messageScreenController.isSocketConnected==true){
     //   messageScreenController.getUserList();
     // }
@@ -89,10 +90,8 @@ class _MessageScreenState extends State<MessageScreen> {
 
                   // Main content
                   Obx(() {
-                    // Show loading indicator while connecting or loading data
-
-                    // Show empty state if no conversations
-                    if (messageScreenController.chatItemList.isEmpty) {
+                    final chatItemList = messageScreenController.chatItemList;
+                    if (chatItemList.isEmpty) {
                       return Center(
                         child: Padding(
                           padding: EdgeInsets.symmetric(vertical: 50.h),
@@ -129,10 +128,9 @@ class _MessageScreenState extends State<MessageScreen> {
                     return ListView.builder(
                       shrinkWrap: true,
                       physics: NeverScrollableScrollPhysics(),
-                      itemCount: messageScreenController.chatItemList.length,
+                      itemCount: chatItemList.length,
                       itemBuilder: (context, index) {
-                        final chatItem =
-                            messageScreenController.chatItemList[index];
+                        final chatItem = chatItemList[index];
 
                         // Extract data from the model
                         final userName =
@@ -172,17 +170,25 @@ class _MessageScreenState extends State<MessageScreen> {
                                       .value =
                                   chatItem.conversations!.first.conversationId!;
 
-                              messageScreenController.commonController.userName.value=  userName;
-                              messageScreenController.commonController.token.value=  messageScreenController.token.value;
+                              messageScreenController
+                                  .commonController
+                                  .userName
+                                  .value = userName;
+                              messageScreenController
+                                  .commonController
+                                  .token
+                                  .value = messageScreenController.token.value;
 
-                              messageScreenController.commonController.profileImage.value=    ProfileImageHelper.formatImageUrl(
+                              messageScreenController
+                                  .commonController
+                                  .profileImage
+                                  .value = ProfileImageHelper.formatImageUrl(
                                 messageScreenController
                                     .chatItemList[index]
                                     .userId!
                                     .profileImage!
                                     .imageUrl,
                               );
-
 
                               Get.toNamed(Routes.CONVERSATION_PAGE);
                             },
@@ -296,5 +302,17 @@ class _MessageScreenState extends State<MessageScreen> {
         }),
       ),
     );
+  }
+
+  @override
+  void dispose() {
+    // messageScreenController.chatItemList = <AllConversationList>[].obs;
+    messageScreenController.socket?.disconnect();
+
+    messageScreenController.socket?.dispose();
+
+    print(messageScreenController.chatItemList);
+
+    super.dispose();
   }
 }

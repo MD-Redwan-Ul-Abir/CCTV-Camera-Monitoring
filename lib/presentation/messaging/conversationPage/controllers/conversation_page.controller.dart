@@ -66,9 +66,20 @@ class ConversationPageController extends GetxController {
       },
     );
 
-    await getAllMessages();
-  }
 
+
+    //implement this function
+    await getAllMessages();
+
+    await newMessageReceived();
+
+  }
+Future<void> newMessageReceived() async{
+  _socket?.on('new-message-received::${commonController.conversationId.value}', (data) {
+    LoggerHelper.error('New message received: $data');
+
+  });
+}
   Future<void> getAllMessages({bool isLoadMore = false}) async {
     if (isLoadMore) {
       isLoadingMore.value = true;

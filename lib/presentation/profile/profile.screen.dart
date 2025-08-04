@@ -569,8 +569,9 @@ class _ProfileScreenState extends State<ProfileScreen> {
                           onPressed: () {
                             clearStoredUserData();
                             clearStoredUserData();
-                            Navigator.of(context).pop();
+                           // Navigator.of(context).pop();
                             _handleDeleteAccount();
+                            
                           },
                           style: ElevatedButton.styleFrom(
                             backgroundColor: AppColors.redDark, // Deep red
