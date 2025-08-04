@@ -53,7 +53,7 @@ class Data {
 }
 
 class Attributes {
-  final Result? result;
+  final messegeList? result;
 
   Attributes({
     this.result,
@@ -64,7 +64,7 @@ class Attributes {
   String toRawJson() => json.encode(toJson());
 
   factory Attributes.fromJson(Map<String, dynamic> json) => Attributes(
-    result: json["result"] == null ? null : Result.fromJson(json["result"]),
+    result: json["result"] == null ? null : messegeList.fromJson(json["result"]),
   );
 
   Map<String, dynamic> toJson() => {
@@ -72,20 +72,20 @@ class Attributes {
   };
 }
 
-class Result {
+class messegeList {
   final User? user;
   final Tokens? tokens;
 
-  Result({
+  messegeList({
     this.user,
     this.tokens,
   });
 
-  factory Result.fromRawJson(String str) => Result.fromJson(json.decode(str));
+  factory messegeList.fromRawJson(String str) => messegeList.fromJson(json.decode(str));
 
   String toRawJson() => json.encode(toJson());
 
-  factory Result.fromJson(Map<String, dynamic> json) => Result(
+  factory messegeList.fromJson(Map<String, dynamic> json) => messegeList(
     user: json["user"] == null ? null : User.fromJson(json["user"]),
     tokens: json["tokens"] == null ? null : Tokens.fromJson(json["tokens"]),
   );

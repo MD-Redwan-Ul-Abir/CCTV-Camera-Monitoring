@@ -5,7 +5,6 @@ import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
 
 import '../../../infrastructure/theme/app_colors.dart';
-
 import '../../../infrastructure/theme/text_styles.dart';
 import '../../../infrastructure/utils/app_images.dart';
 import 'controllers/conversation_page.controller.dart';
@@ -25,22 +24,30 @@ class ConversationPageScreen extends GetView<ConversationPageController> {
           children: [
             ClipRRect(
               borderRadius: BorderRadius.circular(50),
-              child: Image.asset(
-                AppImages.profilePic,
+              child: Image.network(
+                controller.commonController.profileImage.value,
                 height: 32.h,
                 width: 32.w,
                 fit: BoxFit.cover,
+                errorBuilder: (context, error, stackTrace) {
+                  return Container(
+                    height: 32.h,
+                    width: 32.w,
+                    decoration: BoxDecoration(
+                      shape: BoxShape.circle,
+                      color: AppColors.primaryNormal,
+                    ),
+                    child: Icon(
+                      Icons.person,
+                      color: AppColors.primaryLight,
+                      size: 20.sp,
+                    ),
+                  );
+                },
               ),
             ),
             SizedBox(width: 6.w),
-            Text("SGT Sikring", style: AppTextStyles.headLine6),
-            // Spacer(),
-            // SvgPicture.asset(
-            //   AppImages.settingsIcon,
-            //   height: 16.h,
-            //   width: 16.w,
-            //   color: Color(0xFFFFFFFF).withOpacity(0.62),
-            // )
+            Text(controller.commonController.userName.value, style: AppTextStyles.headLine6),
           ],
         ),
         leading: Padding(
@@ -55,32 +62,90 @@ class ConversationPageScreen extends GetView<ConversationPageController> {
             onPressed: () => Get.back(),
           ),
         ),
+        actions: [
+          IconButton(
+            icon: Icon(Icons.refresh, color: AppColors.primaryLight),
+            onPressed: () => controller.refreshConversation(),
+          ),
+        ],
       ),
       body: Column(
         children: [
           // Chat messages area
           Expanded(
-            child: Obx(() => ListView.builder(
-              controller: controller.scrollController,
-              padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 8.h),
-              itemCount: controller.groupedMessages.length,
-              itemBuilder: (context, index) {
-                final item = controller.groupedMessages[index];
+            child: Obx(() {
+              if (controller.isLoading.value && controller.conversationList.isEmpty) {
+                return Center(
+                  child: CircularProgressIndicator(
+                    color: AppColors.primaryNormal,
+                  ),
+                );
+              }
 
-                if (item['type'] == 'date') {
-                  return _buildDateSeparator(item['date']);
-                } else {
-                  return _buildMessageBubble(item);
-                }
-              },
-            )),
+              return Column(
+                children: [
+                  // Load more indicator at the top
+                  if (controller.isLoadingMore.value)
+                    Container(
+                      padding: EdgeInsets.all(16.h),
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          SizedBox(
+                            width: 20.w,
+                            height: 20.h,
+                            child: CircularProgressIndicator(
+                              strokeWidth: 2,
+                              color: AppColors.primaryNormal,
+                            ),
+                          ),
+                          SizedBox(width: 8.w),
+                          Text(
+                            'Loading more messages...',
+                            style: GoogleFonts.plusJakartaSans(
+                              fontSize: 12.sp,
+                              color: AppColors.primaryLight.withOpacity(0.7),
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+
+                  // Messages list
+                  Expanded(
+                    child: controller.groupedMessages.isEmpty
+                        ? Center(
+                      child: Text(
+                        'No messages yet',
+                        style: GoogleFonts.plusJakartaSans(
+                          fontSize: 14.sp,
+                          color: AppColors.primaryLight.withOpacity(0.7),
+                        ),
+                      ),
+                    )
+                        : ListView.builder(
+                      controller: controller.scrollController,
+                      padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 8.h),
+                      itemCount: controller.groupedMessages.length,
+                      itemBuilder: (context, index) {
+                        final item = controller.groupedMessages[index];
+
+                        if (item['type'] == 'date') {
+                          return _buildDateSeparator(item['date']);
+                        } else {
+                          return _buildMessageBubble(item);
+                        }
+                      },
+                    ),
+                  ),
+                ],
+              );
+            }),
           ),
 
           // Message input area
           _buildMessageInput(),
-          SizedBox(
-            height: 20.h,
-          )
+          SizedBox(height: 20.h),
         ],
       ),
     );
@@ -121,6 +186,8 @@ class ConversationPageScreen extends GetView<ConversationPageController> {
 
   Widget _buildMessageBubble(Map<String, dynamic> message) {
     final bool isUser = message['isUser'] ?? false;
+    final String senderName = message['senderName'] ?? '';
+    final String senderImage = message['senderImage'] ?? '';
 
     return Container(
       margin: EdgeInsets.only(bottom: 12.h),
@@ -128,6 +195,50 @@ class ConversationPageScreen extends GetView<ConversationPageController> {
         mainAxisAlignment: isUser ? MainAxisAlignment.end : MainAxisAlignment.start,
         crossAxisAlignment: CrossAxisAlignment.end,
         children: [
+          // Show sender avatar for received messages
+          if (!isUser) ...[
+            ClipRRect(
+              borderRadius: BorderRadius.circular(20.r),
+              child: senderImage.isNotEmpty
+                  ? Image.network(
+                senderImage.startsWith('http')
+                    ? senderImage
+                    : 'https://your-base-url.com${senderImage}', // Add your base URL
+                height: 32.h,
+                width: 32.w,
+                fit: BoxFit.cover,
+                errorBuilder: (context, error, stackTrace) {
+                  return Container(
+                    height: 32.h,
+                    width: 32.w,
+                    decoration: BoxDecoration(
+                      shape: BoxShape.circle,
+                      color: AppColors.primaryNormal,
+                    ),
+                    child: Icon(
+                      Icons.person,
+                      color: AppColors.primaryLight,
+                      size: 16.sp,
+                    ),
+                  );
+                },
+              )
+                  : Container(
+                height: 32.h,
+                width: 32.w,
+                decoration: BoxDecoration(
+                  shape: BoxShape.circle,
+                  color: AppColors.primaryNormal,
+                ),
+                child: Icon(
+                  Icons.person,
+                  color: AppColors.primaryLight,
+                  size: 16.sp,
+                ),
+              ),
+            ),
+            SizedBox(width: 8.w),
+          ],
 
           // Message bubble
           Flexible(
@@ -138,23 +249,55 @@ class ConversationPageScreen extends GetView<ConversationPageController> {
               padding: EdgeInsets.symmetric(horizontal: 14.w, vertical: 10.h),
               decoration: BoxDecoration(
                 color: isUser
-                    ? AppColors.grayDarker // Orange color for user messages
-                    : AppColors.primaryNormal, // Dark gray for received messages
+                    ? AppColors.primaryNormal // Your color for sent messages
+                    : AppColors.grayDarker, // Color for received messages
                 borderRadius: BorderRadius.only(
                   topLeft: Radius.circular(8.r),
                   topRight: Radius.circular(8.r),
-                  bottomLeft: isUser ? Radius.circular(8.r) : Radius.circular(20.r),
-                  bottomRight: isUser ? Radius.circular(20.r) : Radius.circular(8.r),
+                  bottomLeft: isUser ? Radius.circular(8.r) : Radius.circular(2.r),
+                  bottomRight: isUser ? Radius.circular(2.r) : Radius.circular(8.r),
                 ),
               ),
-              child: Text(
-                message['text'] ?? '',
-                style: GoogleFonts.plusJakartaSans(
-                  fontSize: 14.sp,
-                  fontWeight: FontWeight.w400,
-                  color: AppColors.primaryLight,
-                  height: 1.35,
-                ),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  // Show sender name for received messages
+                  if (!isUser && senderName.isNotEmpty) ...[
+                    Text(
+                      senderName,
+                      style: GoogleFonts.plusJakartaSans(
+                        fontSize: 12.sp,
+                        fontWeight: FontWeight.w600,
+                        color: AppColors.primaryNormal,
+                      ),
+                    ),
+                    SizedBox(height: 4.h),
+                  ],
+
+                  // Message text
+                  Text(
+                    message['text'] ?? '',
+                    style: GoogleFonts.plusJakartaSans(
+                      fontSize: 14.sp,
+                      fontWeight: FontWeight.w400,
+                      color: AppColors.primaryLight,
+                      height: 1.35,
+                    ),
+                  ),
+
+                  // Timestamp
+                  if (message['timestamp'] != null) ...[
+                    SizedBox(height: 4.h),
+                    Text(
+                      _formatMessageTime(message['timestamp']),
+                      style: GoogleFonts.plusJakartaSans(
+                        fontSize: 10.sp,
+                        fontWeight: FontWeight.w400,
+                        color: AppColors.primaryLight.withOpacity(0.6),
+                      ),
+                    ),
+                  ],
+                ],
               ),
             ),
           ),
@@ -162,17 +305,27 @@ class ConversationPageScreen extends GetView<ConversationPageController> {
       ),
     );
   }
+
+  String _formatMessageTime(DateTime timestamp) {
+    final now = DateTime.now();
+    final difference = now.difference(timestamp);
+
+    if (difference.inDays > 0) {
+      return '${timestamp.day}/${timestamp.month}/${timestamp.year}';
+    } else if (difference.inHours > 0) {
+      return '${difference.inHours}h ago';
+    } else if (difference.inMinutes > 0) {
+      return '${difference.inMinutes}m ago';
+    } else {
+      return 'Just now';
+    }
+  }
+
   Widget _buildMessageInput() {
     return Container(
       padding: EdgeInsets.all(16.w),
       decoration: BoxDecoration(
         color: AppColors.secondaryDark,
-        // border: Border(
-        //   top: BorderSide(
-        //     color: Color(0xFF3A3A3A),
-        //     width: 1,
-        //   ),
-        // ),
       ),
       child: Container(
         padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 2.h),
@@ -201,15 +354,7 @@ class ConversationPageScreen extends GetView<ConversationPageController> {
                 ),
                 decoration: InputDecoration(
                   hintText: "Type a message",
-                  // hintStyle: GoogleFonts.plusJakartaSans(
-                  //   fontSize: 14.sp,
-                  //   fontWeight: FontWeight.w400,
-                  //   color: Color(0xFFBAB8B9),
-                  // ),
-
-                  hintStyle: AppTextStyles.button.copyWith(
-                    letterSpacing: 0
-                  ),
+                  hintStyle: AppTextStyles.button.copyWith(letterSpacing: 0),
                   border: InputBorder.none,
                   contentPadding: EdgeInsets.zero,
                 ),
@@ -218,10 +363,10 @@ class ConversationPageScreen extends GetView<ConversationPageController> {
                 onSubmitted: (value) => controller.sendMessage(),
               ),
             ),
-            SizedBox(width: 12.w), // Replace Spacer() with fixed spacing
+            SizedBox(width: 12.w),
             GestureDetector(
-                onTap: () => controller.sendMessage(),
-                child: SvgPicture.asset(AppImages.sendIcon)
+              onTap: () => controller.sendMessage(),
+              child: SvgPicture.asset(AppImages.sendIcon),
             )
           ],
         ),

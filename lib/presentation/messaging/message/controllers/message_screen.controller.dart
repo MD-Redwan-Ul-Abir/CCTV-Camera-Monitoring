@@ -3,6 +3,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:get/get.dart';
 import 'package:skt_sikring/infrastructure/utils/log_helper.dart';
 import 'package:skt_sikring/infrastructure/utils/secure_storage_helper.dart';
+import 'package:skt_sikring/presentation/messaging/common/commonController.dart';
 import '../../../../infrastructure/utils/socket_io.dart';
 import 'package:socket_io_client/socket_io_client.dart' as IO;
 
@@ -11,11 +12,12 @@ import '../model/conversationListModel.dart';
 
 class MessageScreenController extends GetxController {
   final ScrollController scrollController = ScrollController();
+  final CommonController commonController = Get.put(CommonController());
   RxList<AllConversationList> chatItemList = <AllConversationList>[].obs;
 
   IO.Socket? _socket;
   RxString receiveAbleId = ''.obs;
-  String? myID;
+  RxString? myID =''.obs;
 
   final RxBool isSocketConnected = false.obs;
   final RxString socketStatus = 'disconnected'.obs;
@@ -38,8 +40,8 @@ class MessageScreenController extends GetxController {
 
     try {
       String token = await SecureStorageHelper.getString('accessToken');
-      myID = await SecureStorageHelper.getString('id');
-      print(myID);
+      myID?.value = await SecureStorageHelper.getString('id');
+      print( myID?.value);
 
       //Configure socket
       _socket = IO.io(ApiConstants.socketUrl, <String, dynamic>{
@@ -47,6 +49,7 @@ class MessageScreenController extends GetxController {
         'autoConnect': false,
         'extraHeaders': {'token': token},
       });
+
       _socket?.connect();
 
       // Setup listeners

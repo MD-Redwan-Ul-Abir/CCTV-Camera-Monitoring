@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
+import 'package:get_storage/get_storage.dart';
 import 'package:google_fonts/google_fonts.dart';
 import '../../../app/routes/app_routes.dart';
 import '../../../infrastructure/theme/app_colors.dart';
@@ -13,38 +14,32 @@ import 'controllers/message_screen.controller.dart';
 class MessageScreen extends StatefulWidget {
   const MessageScreen({super.key});
 
-
   @override
   State<MessageScreen> createState() => _MessageScreenState();
-
-
 }
 
 class _MessageScreenState extends State<MessageScreen> {
   final MessageScreenController messageScreenController =
-  Get.find<MessageScreenController>();
-
+      Get.find<MessageScreenController>();
 
   @override
   void initState() {
-
     super.initState();
 
     // if(messageScreenController.isSocketConnected==true){
     //   messageScreenController.getUserList();
     // }
   }
+
   @override
-
   Widget build(BuildContext context) {
-
     return Scaffold(
-// floatingActionButton: FloatingActionButton(onPressed: (){
-//
-//
-//     messageScreenController.getUserList();
-//
-// }),
+      // floatingActionButton: FloatingActionButton(onPressed: (){
+      //
+      //
+      //     messageScreenController.getUserList();
+      //
+      // }),
       appBar: PreferredSize(
         preferredSize: Size.fromHeight(45.h),
         child: AppBar(
@@ -92,11 +87,9 @@ class _MessageScreenState extends State<MessageScreen> {
 
                   // Connection status indicator
 
-
                   // Main content
                   Obx(() {
                     // Show loading indicator while connecting or loading data
-
 
                     // Show empty state if no conversations
                     if (messageScreenController.chatItemList.isEmpty) {
@@ -105,21 +98,27 @@ class _MessageScreenState extends State<MessageScreen> {
                           padding: EdgeInsets.symmetric(vertical: 50.h),
                           child: Column(
                             children: [
-                              Icon(Icons.chat_bubble_outline,
-                                  size: 64,
-                                  color: Colors.grey),
+                              Icon(
+                                Icons.chat_bubble_outline,
+                                size: 64,
+                                color: Colors.grey,
+                              ),
                               SizedBox(height: 16),
-                              Text('No conversations yet',
-                                  style: TextStyle(
-                                    fontSize: 18,
-                                    color: Colors.grey,
-                                  )),
+                              Text(
+                                'No conversations yet',
+                                style: TextStyle(
+                                  fontSize: 18,
+                                  color: Colors.grey,
+                                ),
+                              ),
                               SizedBox(height: 8),
-                              Text('Start a conversation to see it here',
-                                  style: TextStyle(
-                                    fontSize: 14,
-                                    color: Colors.grey[600],
-                                  )),
+                              Text(
+                                'Start a conversation to see it here',
+                                style: TextStyle(
+                                  fontSize: 14,
+                                  color: Colors.grey[600],
+                                ),
+                              ),
                             ],
                           ),
                         ),
@@ -132,21 +131,26 @@ class _MessageScreenState extends State<MessageScreen> {
                       physics: NeverScrollableScrollPhysics(),
                       itemCount: messageScreenController.chatItemList.length,
                       itemBuilder: (context, index) {
-                        final chatItem = messageScreenController
-                            .chatItemList[index];
+                        final chatItem =
+                            messageScreenController.chatItemList[index];
 
                         // Extract data from the model
-                        final userName = chatItem.userId?.name ??
-                            'Unknown User';
-                        final lastMessage = chatItem.conversations
-                            ?.isNotEmpty == true
-                            ? chatItem.conversations!.first.lastMessage?.text ??
-                            'No messages'
-                            : 'No messages';
+                        final userName =
+                            chatItem.userId?.name ?? 'Unknown User';
+                        final lastMessage =
+                            chatItem.conversations?.isNotEmpty == true
+                                ? chatItem
+                                        .conversations!
+                                        .first
+                                        .lastMessage
+                                        ?.text ??
+                                    'No messages'
+                                : 'No messages';
                         final isOnline = chatItem.isOnline ?? false;
-                        final dotColor = isOnline
-                            ? AppColors.greenNormal
-                            : AppColors.redNormal;
+                        final dotColor =
+                            isOnline
+                                ? AppColors.greenNormal
+                                : AppColors.redNormal;
 
                         return Card(
                           color: AppColors.secondaryDark,
@@ -157,12 +161,35 @@ class _MessageScreenState extends State<MessageScreen> {
                           ),
                           child: InkWell(
                             onTap: () {
+                              messageScreenController
+                                  .commonController
+                                  .senderId
+                                  .value = messageScreenController.myID!.value;
+
+                              messageScreenController
+                                      .commonController
+                                      .conversationId
+                                      .value =
+                                  chatItem.conversations!.first.conversationId!;
+
+                              messageScreenController.commonController.userName.value=  userName;
+
+                              messageScreenController.commonController.profileImage.value=    ProfileImageHelper.formatImageUrl(
+                                messageScreenController
+                                    .chatItemList[index]
+                                    .userId!
+                                    .profileImage!
+                                    .imageUrl,
+                              );
+
+
                               Get.toNamed(Routes.CONVERSATION_PAGE);
                             },
                             borderRadius: BorderRadius.circular(4.r),
                             splashColor: AppColors.grayDarker.withOpacity(0.3),
                             highlightColor: AppColors.grayDarker.withOpacity(
-                                0.3),
+                              0.3,
+                            ),
                             child: Padding(
                               padding: EdgeInsets.symmetric(
                                 horizontal: 6,
@@ -176,8 +203,13 @@ class _MessageScreenState extends State<MessageScreen> {
                                       ClipRRect(
                                         borderRadius: BorderRadius.circular(50),
                                         child: Image.network(
-
-                                          ProfileImageHelper.formatImageUrl(messageScreenController.chatItemList[index].userId!.profileImage!.imageUrl),
+                                          ProfileImageHelper.formatImageUrl(
+                                            messageScreenController
+                                                .chatItemList[index]
+                                                .userId!
+                                                .profileImage!
+                                                .imageUrl,
+                                          ),
                                           height: 64.h,
                                           width: 64.w,
                                           fit: BoxFit.cover,
@@ -186,22 +218,25 @@ class _MessageScreenState extends State<MessageScreen> {
                                       SizedBox(width: 16.w),
                                       Expanded(
                                         child: Column(
-                                          crossAxisAlignment: CrossAxisAlignment
-                                              .start,
+                                          crossAxisAlignment:
+                                              CrossAxisAlignment.start,
                                           children: [
                                             ConstrainedBox(
                                               constraints: BoxConstraints(
-                                                maxWidth: MediaQuery
-                                                    .of(context)
-                                                    .size
-                                                    .width * 0.5,
+                                                maxWidth:
+                                                    MediaQuery.of(
+                                                      context,
+                                                    ).size.width *
+                                                    0.5,
                                               ),
                                               child: Text(
                                                 userName,
                                                 style: AppTextStyles.button
                                                     .copyWith(
-                                                  color: AppColors.primaryLight,
-                                                ),
+                                                      color:
+                                                          AppColors
+                                                              .primaryLight,
+                                                    ),
                                                 maxLines: 2,
                                                 overflow: TextOverflow.ellipsis,
                                               ),
@@ -211,8 +246,8 @@ class _MessageScreenState extends State<MessageScreen> {
                                               lastMessage,
                                               style: AppTextStyles.caption1
                                                   .copyWith(
-                                                color: Color(0xFFBAB8B9),
-                                              ),
+                                                    color: Color(0xFFBAB8B9),
+                                                  ),
                                               maxLines: 1,
                                               overflow: TextOverflow.ellipsis,
                                             ),
@@ -220,8 +255,8 @@ class _MessageScreenState extends State<MessageScreen> {
                                         ),
                                       ),
                                       Column(
-                                        crossAxisAlignment: CrossAxisAlignment
-                                            .end,
+                                        crossAxisAlignment:
+                                            CrossAxisAlignment.end,
                                         children: [
                                           Text(
                                             'Now',
@@ -230,8 +265,9 @@ class _MessageScreenState extends State<MessageScreen> {
                                               fontSize: 15.sp,
                                               fontWeight: FontWeight.w400,
                                               height: 1.35,
-                                              color: Color(0xFFD1DDEB)
-                                                  .withOpacity(0.62),
+                                              color: Color(
+                                                0xFFD1DDEB,
+                                              ).withOpacity(0.62),
                                             ),
                                           ),
                                           SizedBox(height: 12.h),
