@@ -220,16 +220,94 @@ class _ConversationPageScreenState extends State<ConversationPageScreen> {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  // Message text
-                  Text(
-                    message['text'] ?? '',
-                    style: GoogleFonts.plusJakartaSans(
-                      fontSize: 14.sp,
-                      fontWeight: FontWeight.w400,
-                      color: AppColors.primaryLight,
-                      height: 1.35,
+                  // Display attachments (images) if they exist
+                  if (message['attachments'] != null && message['attachments'].isNotEmpty) ...[
+                    ...message['attachments'].map<Widget>((attachment) {
+                      if (attachment != null && attachment.isNotEmpty) {
+                        return Container(
+                          margin: EdgeInsets.only(bottom: 8.h),
+                          child: GestureDetector(
+                            onTap: () => _showFullScreenImage(attachment),
+                            child: ClipRRect(
+                              borderRadius: BorderRadius.circular(8.r),
+                              child: Image.network(
+                                attachment,
+                                height: 200.h,
+                                width: double.infinity,
+                                fit: BoxFit.cover,
+                                loadingBuilder: (context, child, loadingProgress) {
+                                  if (loadingProgress == null) return child;
+                                  return Container(
+                                    height: 200.h,
+                                    width: double.infinity,
+                                    decoration: BoxDecoration(
+                                      color: AppColors.grayDarker,
+                                      borderRadius: BorderRadius.circular(8.r),
+                                    ),
+                                    child: Center(
+                                      child: CircularProgressIndicator(
+                                        color: AppColors.primaryNormal,
+                                        value: loadingProgress.expectedTotalBytes != null
+                                            ? loadingProgress.cumulativeBytesLoaded /
+                                            loadingProgress.expectedTotalBytes!
+                                            : null,
+                                      ),
+                                    ),
+                                  );
+                                },
+                                errorBuilder: (context, error, stackTrace) {
+                                  return Container(
+                                    height: 200.h,
+                                    width: double.infinity,
+                                    decoration: BoxDecoration(
+                                      color: AppColors.grayDarker,
+                                      borderRadius: BorderRadius.circular(8.r),
+                                      border: Border.all(
+                                        color: AppColors.primaryDark,
+                                        width: 1,
+                                      ),
+                                    ),
+                                    child: Column(
+                                      mainAxisAlignment: MainAxisAlignment.center,
+                                      children: [
+                                        Icon(
+                                          Icons.broken_image_outlined,
+                                          color: AppColors.primaryLight.withOpacity(0.6),
+                                          size: 40.sp,
+                                        ),
+                                        SizedBox(height: 8.h),
+                                        Text(
+                                          'Failed to load image',
+                                          style: GoogleFonts.plusJakartaSans(
+                                            fontSize: 12.sp,
+                                            color: AppColors.primaryLight.withOpacity(0.6),
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                                  );
+                                },
+                              ),
+                            ),
+                          ),
+                        );
+                      }
+                      return SizedBox.shrink();
+                    }).toList(),
+                  ],
+
+                  // Message text (only show if there's text content)
+                  if (message['text'] != null && message['text'].toString().isNotEmpty) ...[
+                    Text(
+                      message['text'] ?? '',
+                      style: GoogleFonts.plusJakartaSans(
+                        fontSize: 14.sp,
+                        fontWeight: FontWeight.w400,
+                        color: AppColors.primaryLight,
+                        height: 1.35,
+                      ),
                     ),
-                  ),
+                  ],
 
                   // Timestamp
                   if (message['timestamp'] != null) ...[
@@ -251,6 +329,199 @@ class _ConversationPageScreenState extends State<ConversationPageScreen> {
       ),
     );
   }
+
+  void _showFullScreenImage(String imageUrl) {
+    showDialog(
+      context: context,
+      barrierColor: Colors.black.withOpacity(0.9),
+      builder: (BuildContext context) {
+        return Dialog(
+          backgroundColor: Colors.transparent,
+          insetPadding: EdgeInsets.zero,
+          child: Stack(
+            children: [
+              // Full screen image
+              Center(
+                child: InteractiveViewer(
+                  panEnabled: true,
+                  scaleEnabled: true,
+                  minScale: 0.5,
+                  maxScale: 4.0,
+                  child: Image.network(
+                    imageUrl,
+                    fit: BoxFit.contain,
+                    width: double.infinity,
+                    height: double.infinity,
+                    loadingBuilder: (context, child, loadingProgress) {
+                      if (loadingProgress == null) return child;
+                      return Center(
+                        child: CircularProgressIndicator(
+                          color: AppColors.primaryNormal,
+                          value: loadingProgress.expectedTotalBytes != null
+                              ? loadingProgress.cumulativeBytesLoaded /
+                              loadingProgress.expectedTotalBytes!
+                              : null,
+                        ),
+                      );
+                    },
+                    errorBuilder: (context, error, stackTrace) {
+                      return Center(
+                        child: Column(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            Icon(
+                              Icons.broken_image_outlined,
+                              color: AppColors.primaryLight,
+                              size: 80.sp,
+                            ),
+                            SizedBox(height: 16.h),
+                            Text(
+                              'Failed to load image',
+                              style: GoogleFonts.plusJakartaSans(
+                                fontSize: 16.sp,
+                                color: AppColors.primaryLight,
+                              ),
+                            ),
+                          ],
+                        ),
+                      );
+                    },
+                  ),
+                ),
+              ),
+
+              // Close button
+              Positioned(
+                top: 50.h,
+                right: 20.w,
+                child: GestureDetector(
+                  onTap: () => Navigator.of(context).pop(),
+                  child: Container(
+                    padding: EdgeInsets.all(8.w),
+                    decoration: BoxDecoration(
+                      color: Colors.black.withOpacity(0.5),
+                      shape: BoxShape.circle,
+                    ),
+                    child: Icon(
+                      Icons.close,
+                      color: Colors.white,
+                      size: 24.sp,
+                    ),
+                  ),
+                ),
+              ),
+
+               
+              // Positioned(
+              //   top: 50.h,
+              //   left: 20.w,
+              //   child: GestureDetector(
+              //     onTap: () => _showImageOptions(imageUrl),
+              //     child: Container(
+              //       padding: EdgeInsets.all(8.w),
+              //       decoration: BoxDecoration(
+              //         color: Colors.black.withOpacity(0.5),
+              //         shape: BoxShape.circle,
+              //       ),
+              //       child: Icon(
+              //         Icons.more_vert,
+              //         color: Colors.white,
+              //         size: 24.sp,
+              //       ),
+              //     ),
+              //   ),
+              // ),
+            ],
+          ),
+        );
+      },
+    );
+  }
+
+  // void _showImageOptions(String imageUrl) {
+  //   showModalBottomSheet(
+  //     context: context,
+  //     backgroundColor: AppColors.secondaryDark,
+  //     shape: RoundedRectangleBorder(
+  //       borderRadius: BorderRadius.vertical(top: Radius.circular(20.r)),
+  //     ),
+  //     builder: (BuildContext context) {
+  //       return Container(
+  //         padding: EdgeInsets.all(20.w),
+  //         child: Column(
+  //           mainAxisSize: MainAxisSize.min,
+  //           children: [
+  //             Container(
+  //               width: 40.w,
+  //               height: 4.h,
+  //               decoration: BoxDecoration(
+  //                 color: AppColors.primaryLight.withOpacity(0.3),
+  //                 borderRadius: BorderRadius.circular(2.r),
+  //               ),
+  //             ),
+  //             SizedBox(height: 20.h),
+  //
+  //             // Share option
+  //             ListTile(
+  //               leading: Icon(
+  //                 Icons.share,
+  //                 color: AppColors.primaryLight,
+  //                 size: 24.sp,
+  //               ),
+  //               title: Text(
+  //                 'Share Image',
+  //                 style: GoogleFonts.plusJakartaSans(
+  //                   fontSize: 16.sp,
+  //                   color: AppColors.primaryLight,
+  //                 ),
+  //               ),
+  //               onTap: () {
+  //                 Navigator.pop(context);
+  //                 // Implement share functionality
+  //                 _shareImage(imageUrl);
+  //               },
+  //             ),
+  //
+  //             // Save option
+  //             ListTile(
+  //               leading: Icon(
+  //                 Icons.download,
+  //                 color: AppColors.primaryLight,
+  //                 size: 24.sp,
+  //               ),
+  //               title: Text(
+  //                 'Save Image',
+  //                 style: GoogleFonts.plusJakartaSans(
+  //                   fontSize: 16.sp,
+  //                   color: AppColors.primaryLight,
+  //                 ),
+  //               ),
+  //               onTap: () {
+  //                 Navigator.pop(context);
+  //                 // Implement save functionality
+  //                 _saveImage(imageUrl);
+  //               },
+  //             ),
+  //
+  //             SizedBox(height: 10.h),
+  //           ],
+  //         ),
+  //       );
+  //     },
+  //   );
+  // }
+
+  // void _shareImage(String imageUrl) {
+  //   // Implement share functionality
+  //   // You can use the share_plus package for this
+  //   print('Sharing image: $imageUrl');
+  // }
+  //
+  // void _saveImage(String imageUrl) {
+  //   // Implement save functionality
+  //   // You can use packages like dio and path_provider to download and save images
+  //   print('Saving image: $imageUrl');
+  // }
 
   String _formatMessageTime(DateTime timestamp) {
     final now = DateTime.now();

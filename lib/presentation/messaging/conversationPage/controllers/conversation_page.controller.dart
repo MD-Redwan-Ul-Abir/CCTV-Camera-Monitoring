@@ -1,18 +1,17 @@
 // Controller for the conversation page
 import 'package:flutter/cupertino.dart';
 import 'package:get/get.dart';
-import 'package:socket_io_client/socket_io_client.dart' as IO;
 import 'package:skt_sikring/presentation/messaging/common/commonController.dart';
 
-import '../../../../infrastructure/utils/api_content.dart';
 import '../../../../infrastructure/utils/log_helper.dart';
+import '../../common/socket_controller.dart';
 import '../model/conversationModel.dart';
 
 class ConversationPageController extends GetxController {
   final TextEditingController messageController = TextEditingController();
   final ScrollController scrollController = ScrollController();
-  IO.Socket? _socket;
   final CommonController commonController = Get.put(CommonController());
+  late final SocketController socketController;
 
   // Observable list for conversation messages
   RxList<Result> conversationList = <Result>[].obs;
@@ -33,19 +32,15 @@ class ConversationPageController extends GetxController {
 
   @override
   void onInit() {
-    // Get current user ID from commonController or wherever it's stored
+    super.onInit();
+
+    socketController = Get.find<SocketController>();
     currentUserId.value = commonController.senderId.value;
-    _socket = IO.io(ApiConstants.socketUrl, <String, dynamic>{
-      'transports': ['websocket'],
-      'autoConnect': false,
-      'extraHeaders': {'token': commonController.token.value},
-    });
 
-    _socket?.connect();
-
+    // No need to connect socket here - it should already be connected
+    // Just setup listeners and join conversation
     joinConversation();
     setupScrollListener();
-    super.onInit();
   }
 
   void setupScrollListener() {
@@ -63,7 +58,13 @@ class ConversationPageController extends GetxController {
   Future<void> joinConversation() async {
     isLoading.value = true;
 
-    _socket?.emitWithAck(
+    if (!socketController.isSocketConnected.value) {
+      LoggerHelper.error('Socket not connected. Cannot join conversation.');
+      isLoading.value = false;
+      return;
+    }
+
+    socketController.emitWithAck(
       'join',
       {"conversationId": commonController.conversationId.value},
       ack: (response) async {
@@ -71,26 +72,22 @@ class ConversationPageController extends GetxController {
       },
     );
 
-    //implement this function
     await getAllMessages();
     await newMessageReceived();
   }
 
-
-// Helper method to extract image URL from different possible locations
+  // Helper method to extract image URL from different possible locations
   String _extractImageUrl(Map<String, dynamic> messageData) {
-    // Try different possible locations for the image URL
     if (messageData['image'] != null && messageData['image']['imageUrl'] != null) {
       return messageData['image']['imageUrl'];
     }
     if (messageData['senderImage'] != null) {
       return messageData['senderImage'];
     }
-    // Return default image or empty string
     return '/uploads/users/user.png';
   }
 
-// Helper method to safely parse DateTime
+  // Helper method to safely parse DateTime
   DateTime? _parseDateTime(dynamic dateTime) {
     if (dateTime == null) return DateTime.now();
 
@@ -113,7 +110,6 @@ class ConversationPageController extends GetxController {
     _isLoadingMessages = true;
     isLoadingMore.value = true;
 
-    // Store the current scroll extent before loading more messages
     _previousScrollExtent = scrollController.position.maxScrollExtent;
 
     currentPage.value++;
@@ -125,7 +121,15 @@ class ConversationPageController extends GetxController {
       isLoading.value = true;
     }
 
-    _socket?.emitWithAck(
+    if (!socketController.isSocketConnected.value) {
+      LoggerHelper.error('Socket not connected. Cannot get messages.');
+      isLoading.value = false;
+      isLoadingMore.value = false;
+      _isLoadingMessages = false;
+      return;
+    }
+
+    socketController.emitWithAck(
       'get-all-message-by-conversationId',
       {
         "conversationId": commonController.conversationId.value,
@@ -143,10 +147,8 @@ class ConversationPageController extends GetxController {
             var responseData = response['data'];
             if (responseData != null && responseData['results'] != null) {
 
-              // Properly cast the socket response to the correct type
               Map<String, dynamic> responseMap = _convertResponseToStringMap(response);
 
-              // Parse the response using your model
               AllConversationsBetweenTwoUserModel conversationModel =
               AllConversationsBetweenTwoUserModel.fromJson(responseMap);
 
@@ -154,24 +156,19 @@ class ConversationPageController extends GetxController {
                 List<Result> newMessages = conversationModel.data!.results!;
 
                 if (isLoadMore) {
-                  // Add new messages to the beginning of the list (older messages)
                   conversationList.insertAll(0, newMessages.reversed);
 
-                  // Maintain scroll position after loading more messages
                   WidgetsBinding.instance.addPostFrameCallback((_) {
                     _maintainScrollPosition();
                   });
                 } else {
-                  // Replace the list with new messages for initial load
                   conversationList.assignAll(newMessages.reversed);
 
-                  // Scroll to bottom only for initial load
                   WidgetsBinding.instance.addPostFrameCallback((_) {
                     _scrollToBottom(animate: false);
                   });
                 }
 
-                // Check if there are more messages to load
                 int totalPages = conversationModel.data?.totalPages ?? 0;
                 hasMoreData.value = currentPage.value < totalPages;
               }
@@ -200,14 +197,10 @@ class ConversationPageController extends GetxController {
     if (!scrollController.hasClients) return;
 
     try {
-      // Calculate the difference in scroll extent
       double currentScrollExtent = scrollController.position.maxScrollExtent;
       double scrollDifference = currentScrollExtent - _previousScrollExtent;
 
-      // Adjust scroll position to maintain the user's view
       double newScrollPosition = scrollController.position.pixels + scrollDifference;
-
-      // Ensure we don't scroll beyond bounds
       newScrollPosition = newScrollPosition.clamp(0.0, currentScrollExtent);
 
       scrollController.jumpTo(newScrollPosition);
@@ -234,7 +227,6 @@ class ConversationPageController extends GetxController {
     }
   }
 
-  // Helper method to convert Map<dynamic, dynamic> to Map<String, dynamic>
   Map<String, dynamic> _convertResponseToStringMap(dynamic response) {
     if (response is Map<String, dynamic>) {
       return response;
@@ -260,7 +252,6 @@ class ConversationPageController extends GetxController {
     return {};
   }
 
-  // Get messages grouped by date for UI
   List<Map<String, dynamic>> get groupedMessages {
     final List<Map<String, dynamic>> grouped = [];
     String? lastDate;
@@ -277,8 +268,16 @@ class ConversationPageController extends GetxController {
           lastDate = messageDate;
         }
 
-        // Check if message is sent by current user
         bool isCurrentUser = message.senderId?.userId == currentUserId.value;
+
+        // Extract attachment URLs
+        List<String> attachmentUrls = [];
+        if (message.attachments != null && message.attachments!.isNotEmpty) {
+          attachmentUrls = message.attachments!
+              .where((attachment) => attachment.attachment != null && attachment.attachment!.isNotEmpty)
+              .map((attachment) => attachment.attachment!)
+              .toList();
+        }
 
         grouped.add({
           'type': 'message',
@@ -288,6 +287,7 @@ class ConversationPageController extends GetxController {
           'senderName': message.senderId?.name ?? '',
           'senderImage': message.senderId?.profileImage?.imageUrl ?? '',
           'messageId': message.messageId ?? '',
+          'attachments': attachmentUrls, // Add attachments to the message data
         });
       }
     }
@@ -316,11 +316,14 @@ class ConversationPageController extends GetxController {
   void sendMessage() {
     final text = messageController.text.trim();
     if (text.isNotEmpty) {
-      // Clear the input field immediately for better UX
       messageController.clear();
 
-      // Emit the message to the socket with acknowledgment
-      _socket?.emitWithAck('send-new-message', {
+      if (!socketController.isSocketConnected.value) {
+        LoggerHelper.error('Socket not connected. Cannot send message.');
+        return;
+      }
+
+      socketController.emitWithAck('send-new-message', {
         'text': text,
         'conversationId': commonController.conversationId.value,
         'senderId': currentUserId.value,
@@ -334,7 +337,6 @@ class ConversationPageController extends GetxController {
             if (responseData['messageDetails'] != null) {
               Map<String, dynamic> messageDetails = responseData['messageDetails'];
 
-              // Create a Result object from the server response
               Result newMessage = Result(
                 text: messageDetails['text']?.toString() ?? text,
                 senderId: SenderId(
@@ -352,7 +354,6 @@ class ConversationPageController extends GetxController {
                 isDeleted: false,
               );
 
-              // Check if message already exists to avoid duplicates
               bool messageExists = conversationList.any((msg) =>
               msg.messageId == newMessage.messageId ||
                   (msg.text == newMessage.text &&
@@ -361,24 +362,15 @@ class ConversationPageController extends GetxController {
               );
 
               if (!messageExists) {
-                // Add the message to the conversation list
                 conversationList.add(newMessage);
 
-                // Scroll to bottom to show the new message
                 WidgetsBinding.instance.addPostFrameCallback((_) {
                   _scrollToBottom(animate: true);
                 });
               }
             }
           } else {
-            // Handle error case - maybe show a snackbar or retry mechanism
             LoggerHelper.error('Failed to send message: $response');
-            // Optionally, you can show an error message to the user
-            // Get.snackbar(
-            //   'Error',
-            //   'Failed to send message. Please try again.',
-            //   snackPosition: SnackPosition.BOTTOM,
-            // );
           }
         } catch (e) {
           LoggerHelper.error('Error processing message send response: $e');
@@ -387,43 +379,54 @@ class ConversationPageController extends GetxController {
     }
   }
 
-// Updated newMessageReceived method - only handles messages from others
   Future<void> newMessageReceived() async {
-    _socket?.on('new-message-received::${commonController.conversationId.value}', (data) {
+    socketController.on('new-message-received::${commonController.conversationId.value}', (data) {
       LoggerHelper.error('New message received: $data');
 
       try {
-        // Parse the received message data
         if (data != null && data is Map) {
           Map<String, dynamic> messageData = _convertResponseToStringMap(data);
 
-          // Check if it's a message object or wrapped in a 'message' field
           Map<String, dynamic> actualMessage = messageData;
           if (messageData.containsKey('message')) {
             actualMessage = messageData['message'];
           }
 
-          // Create a Result object from the received data
+          // Handle attachments properly
+          List<Attachment> attachments = [];
+          if (actualMessage['attachments'] != null && actualMessage['attachments'] is List) {
+            attachments = (actualMessage['attachments'] as List).map((attachment) {
+              if (attachment is Map<String, dynamic>) {
+                return Attachment.fromJson(attachment);
+              } else if (attachment is String) {
+                // If it's just a string URL, create an Attachment object
+                return Attachment(
+                  attachment: attachment,
+                  attachmentId: null,
+                );
+              }
+              return Attachment();
+            }).toList();
+          }
+
           Result newMessage = Result(
             text: actualMessage['text']?.toString() ?? '',
             senderId: SenderId(
               userId: actualMessage['senderId']?.toString() ?? '',
               name: messageData['senderName']?.toString() ?? messageData['name']?.toString() ?? 'Unknown',
-              profileImage: ProfileImage(
-                imageUrl: _extractImageUrl(messageData),
-              ),
+              // profileImage: ProfileImage(
+              //   imageUrl: extractImageUrl(messageData),
+              // ),
             ),
             createdAt: _parseDateTime(actualMessage['createdAt']),
             updatedAt: _parseDateTime(actualMessage['updatedAt']),
             messageId: actualMessage['_messageId']?.toString() ?? actualMessage['_id']?.toString() ?? '',
             conversationId: actualMessage['conversationId']?.toString() ?? '',
-            attachments: (actualMessage['attachments'] as List?)?.cast<String>() ?? [],
+            attachments: attachments,
             isDeleted: actualMessage['isDeleted'] ?? false,
           );
 
-          // Only process messages from other users (not from current user)
           if (newMessage.senderId?.userId != currentUserId.value) {
-            // Check for duplicates
             bool messageExists = conversationList.any((msg) =>
             msg.messageId == newMessage.messageId ||
                 (msg.text == newMessage.text &&
@@ -432,23 +435,20 @@ class ConversationPageController extends GetxController {
             );
 
             if (!messageExists) {
-              // Add the new message from other user
               conversationList.add(newMessage);
 
-              // Scroll to bottom to show the new message
               WidgetsBinding.instance.addPostFrameCallback((_) {
                 _scrollToBottom(animate: true);
               });
             }
           }
-          // If it's from current user, ignore it as it's already handled in sendMessage ack
         }
       } catch (e) {
         LoggerHelper.error('Error processing new message: $e');
       }
     });
   }
-  // Method to refresh conversation
+
   void refreshConversation() {
     currentPage.value = 1;
     hasMoreData.value = true;
@@ -457,11 +457,20 @@ class ConversationPageController extends GetxController {
     getAllMessages();
   }
 
+  // Method to leave conversation screen
+  void leaveConversationScreen({String? toScreen}) {
+    // Remove specific listeners for this conversation
+    socketController.off('new-message-received::${commonController.conversationId.value}');
+
+    // Notify socket controller about leaving
+    socketController.leaveMessagingFlow('ConversationPage', toScreen: toScreen);
+  }
+
   @override
   void onClose() {
     messageController.dispose();
     scrollController.dispose();
-    _socket?.disconnect();
+    // Don't disconnect socket here - let the socket controller manage it
     super.onClose();
   }
 }

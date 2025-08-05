@@ -62,7 +62,7 @@ class Data {
 
 class Result {
   String? text;
-  List<dynamic>? attachments;
+  List<Attachment>? attachments;
   SenderId? senderId;
   String? conversationId;
   bool? isDeleted;
@@ -85,7 +85,7 @@ class Result {
 
   factory Result.fromJson(Map<String, dynamic> json) => Result(
     text: json["text"],
-    attachments: json["attachments"] == null ? [] : List<dynamic>.from(json["attachments"]!.map((x) => x)),
+    attachments: json["attachments"] == null ? [] : List<Attachment>.from(json["attachments"]!.map((x) => Attachment.fromJson(x))),
     senderId: json["senderId"] == null ? null : SenderId.fromJson(json["senderId"]),
     conversationId: json["conversationId"],
     isDeleted: json["isDeleted"],
@@ -97,7 +97,7 @@ class Result {
 
   Map<String, dynamic> toJson() => {
     "text": text,
-    "attachments": attachments == null ? [] : List<dynamic>.from(attachments!.map((x) => x)),
+    "attachments": attachments == null ? [] : List<dynamic>.from(attachments!.map((x) => x.toJson())),
     "senderId": senderId?.toJson(),
     "conversationId": conversationId,
     "isDeleted": isDeleted,
@@ -105,6 +105,26 @@ class Result {
     "updatedAt": updatedAt?.toIso8601String(),
     "__v": v,
     "_messageId": messageId,
+  };
+}
+
+class Attachment {
+  String? attachment;
+  String? attachmentId;
+
+  Attachment({
+    this.attachment,
+    this.attachmentId,
+  });
+
+  factory Attachment.fromJson(Map<String, dynamic> json) => Attachment(
+    attachment: json["attachment"],
+    attachmentId: json["_attachmentId"],
+  );
+
+  Map<String, dynamic> toJson() => {
+    "attachment": attachment,
+    "_attachmentId": attachmentId,
   };
 }
 
