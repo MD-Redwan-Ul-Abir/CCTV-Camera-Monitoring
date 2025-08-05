@@ -39,7 +39,7 @@ class ConversationPageController extends GetxController {
   // Variables for smooth scrolling
   double _previousScrollExtent = 0.0;
   bool _isLoadingMessages = false;
-  RxString token = ''.obs;
+
 
   @override
   void onInit() {
@@ -451,7 +451,7 @@ class ConversationPageController extends GetxController {
     isSendingMessage.value = true;
 
     try {
-      token.value = await SecureStorageHelper.getString("accessToken");
+
       List<MultipartBody>? files;
 
       if (imageController.selectedImages.isNotEmpty) {
@@ -469,27 +469,28 @@ class ConversationPageController extends GetxController {
       final response = await _apiClient.postData(
         ApiConstants.sendImageInMessage,
         createReport,
-        headers: {"Authorization": "Bearer ${token.value}"},
+        headers: {"Authorization": "Bearer ${commonController.token.value}"},
         files: files,
       );
-      isSendingMessage.value = false;
+
 
       if (response.statusCode == 200 || response.statusCode == 201) {
-        // Clear the input and selected images
+
+
         messageController.clear();
         imageController.selectedImages.clear();
 
         // Show success message
-        Get.snackbar(
-          "Done",
-          "Message sent successfully",
-          backgroundColor: AppColors.primaryNormal,
-          colorText: AppColors.primaryLighthover,
-        );
-
-        // Refresh messages to show the new message with images
-        await Future.delayed(Duration(milliseconds: 500));
-        refreshConversation();
+        // Get.snackbar(
+        //   "Done",
+        //   "Message sent successfully",
+        //   backgroundColor: AppColors.primaryNormal,
+        //   colorText: AppColors.primaryLighthover,
+        // );
+        //
+        // // Refresh messages to show the new message with images
+        // await Future.delayed(Duration(milliseconds: 500));
+         refreshConversation();
 
       } else {
         CustomSnackbar.show(

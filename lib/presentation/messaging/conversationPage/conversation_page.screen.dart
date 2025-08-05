@@ -555,7 +555,7 @@ class _ConversationPageScreenState extends State<ConversationPageScreen> {
                   ? null
                   : () => conversationController.sendMessage(),
               child: conversationController.isSendingMessage.value
-                  ? Container(
+                  ? SizedBox(
                 width: 24.w,
                 height: 24.h,
                 child: CircularProgressIndicator(

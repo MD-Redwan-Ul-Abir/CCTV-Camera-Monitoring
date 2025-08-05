@@ -7,6 +7,7 @@ import 'package:get/get.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:skt_sikring/infrastructure/utils/log_helper.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_image_compress/flutter_image_compress.dart';
 
 class imagePickerController extends GetxController {
   // Selected license image file
@@ -36,7 +37,7 @@ class imagePickerController extends GetxController {
   /// Sets license image with compression
   Future<void> setLicenseImage(File image) async {
     try {
-      File? compressedImage = await compressImageNative(image);
+      File? compressedImage = await compressImageWithImagePackage(image);
       File finalImage = compressedImage ?? image;
 
       selectedLicenseImage.value = finalImage;
@@ -60,7 +61,7 @@ class imagePickerController extends GetxController {
     if (selectedImages.length < 3) {
       try {
         // Try native compression
-        File? compressedImage = await compressImageNative(image);
+        File? compressedImage = await compressImageWithImagePackage(image);
 
         if (compressedImage != null) {
           selectedImages.add(compressedImage);
@@ -183,15 +184,32 @@ class imagePickerController extends GetxController {
     }
   }
 
-  /// Alternative compression method with JPEG encoding (requires image package)
+  /// Alternative compression method with WebP encoding (lossless)
   Future<File?> compressImageWithImagePackage(File imageFile) async {
     try {
-      // This method requires adding the 'image' package to pubspec.yaml
-      // For now, we'll just return null to use the fallback
-      LoggerHelper.debug('Image package compression not implemented');
-      return null;
+      LoggerHelper.debug('Starting WebP lossless compression for: ${imageFile.path}');
+      
+      String directory = imageFile.parent.path;
+      String fileName = path.basenameWithoutExtension(imageFile.path);
+      String targetPath = '$directory/webp_${DateTime.now().millisecondsSinceEpoch}_$fileName.webp';
+
+      final result = await FlutterImageCompress.compressAndGetFile(
+        imageFile.absolute.path,
+        targetPath,
+        quality: 100, // For WebP, 100 is considered lossless
+        format: CompressFormat.webp,
+      );
+
+      if (result == null) {
+        LoggerHelper.debug('WebP compression failed to produce a file.');
+        return null;
+      }
+
+      LoggerHelper.debug('WebP compressed image saved to: ${result.path}');
+      return File(result.path);
+
     } catch (e) {
-      LoggerHelper.debug('Image package compression failed: $e');
+      LoggerHelper.debug('WebP compression failed: $e');
       return null;
     }
   }
@@ -242,9 +260,6 @@ class imagePickerController extends GetxController {
   Future<void> pickImage(ImageSource source) async {
     final pickedFile = await ImagePicker().pickImage(
       source: source,
-      maxWidth: 1920, // Limit image width
-      maxHeight: 1080, // Limit image height
-      imageQuality: 85, // Set quality (0-100)
     );
     if (pickedFile == null) return;
 
