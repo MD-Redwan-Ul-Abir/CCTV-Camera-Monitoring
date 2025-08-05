@@ -74,6 +74,7 @@ class ApiConstants {
   static String updateUserProfile = '/user/profile';
   static String updateProfilePicture = '/user/profile-image';
 
+///-------------------------------Send image in the message section------------------------------------
 
-
+  static String sendImageInMessage = 'message/create';
 }

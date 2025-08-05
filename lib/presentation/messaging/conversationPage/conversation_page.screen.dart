@@ -20,7 +20,6 @@ class ConversationPageScreen extends StatefulWidget {
 
 class _ConversationPageScreenState extends State<ConversationPageScreen> {
   final ConversationPageController conversationController = Get.find<ConversationPageController>();
-  final imagePickerController imageController = Get.find<imagePickerController>();
 
   @override
   Widget build(BuildContext context) {
@@ -152,12 +151,75 @@ class _ConversationPageScreenState extends State<ConversationPageScreen> {
             }),
           ),
 
+          // Selected images preview
+          _buildSelectedImagesPreview(),
+
           // Message input area
           _buildMessageInput(),
           SizedBox(height: 20.h),
         ],
       ),
     );
+  }
+
+  Widget _buildSelectedImagesPreview() {
+    return Obx(() {
+      if (conversationController.imageController.selectedImages.isEmpty) {
+        return SizedBox.shrink();
+      }
+
+      return Container(
+        height: 100.h,
+        margin: EdgeInsets.symmetric(horizontal: 16.w, vertical: 8.h),
+        child: ListView.builder(
+          scrollDirection: Axis.horizontal,
+          itemCount: conversationController.imageController.selectedImages.length,
+          itemBuilder: (context, index) {
+            final image = conversationController.imageController.selectedImages[index];
+            return Container(
+              width: 80.w,
+              height: 80.h,
+              margin: EdgeInsets.only(right: 8.w),
+              child: Stack(
+                children: [
+                  ClipRRect(
+                    borderRadius: BorderRadius.circular(8.r),
+                    child: Image.file(
+                      image,
+                      width: 80.w,
+                      height: 80.h,
+                      fit: BoxFit.cover,
+                    ),
+                  ),
+                  Positioned(
+                    top: 2.h,
+                    right: 2.w,
+                    child: GestureDetector(
+                      onTap: () {
+                        conversationController.imageController.selectedImages.removeAt(index);
+                      },
+                      child: Container(
+                        width: 20.w,
+                        height: 20.h,
+                        decoration: BoxDecoration(
+                          color: Colors.red,
+                          shape: BoxShape.circle,
+                        ),
+                        child: Icon(
+                          Icons.close,
+                          color: Colors.white,
+                          size: 12.sp,
+                        ),
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            );
+          },
+        ),
+      );
+    });
   }
 
   Widget _buildDateSeparator(String date) {
@@ -413,116 +475,12 @@ class _ConversationPageScreenState extends State<ConversationPageScreen> {
                   ),
                 ),
               ),
-              // Positioned(
-              //   top: 50.h,
-              //   left: 20.w,
-              //   child: GestureDetector(
-              //     onTap: () => _showImageOptions(imageUrl),
-              //     child: Container(
-              //       padding: EdgeInsets.all(8.w),
-              //       decoration: BoxDecoration(
-              //         color: Colors.black.withOpacity(0.5),
-              //         shape: BoxShape.circle,
-              //       ),
-              //       child: Icon(
-              //         Icons.more_vert,
-              //         color: Colors.white,
-              //         size: 24.sp,
-              //       ),
-              //     ),
-              //   ),
-              // ),
             ],
           ),
         );
       },
     );
   }
-
-  // void _showImageOptions(String imageUrl) {
-  //   showModalBottomSheet(
-  //     context: context,
-  //     backgroundColor: AppColors.secondaryDark,
-  //     shape: RoundedRectangleBorder(
-  //       borderRadius: BorderRadius.vertical(top: Radius.circular(20.r)),
-  //     ),
-  //     builder: (BuildContext context) {
-  //       return Container(
-  //         padding: EdgeInsets.all(20.w),
-  //         child: Column(
-  //           mainAxisSize: MainAxisSize.min,
-  //           children: [
-  //             Container(
-  //               width: 40.w,
-  //               height: 4.h,
-  //               decoration: BoxDecoration(
-  //                 color: AppColors.primaryLight.withOpacity(0.3),
-  //                 borderRadius: BorderRadius.circular(2.r),
-  //               ),
-  //             ),
-  //             SizedBox(height: 20.h),
-  //
-  //             // Share option
-  //             ListTile(
-  //               leading: Icon(
-  //                 Icons.share,
-  //                 color: AppColors.primaryLight,
-  //                 size: 24.sp,
-  //               ),
-  //               title: Text(
-  //                 'Share Image',
-  //                 style: GoogleFonts.plusJakartaSans(
-  //                   fontSize: 16.sp,
-  //                   color: AppColors.primaryLight,
-  //                 ),
-  //               ),
-  //               onTap: () {
-  //                 Navigator.pop(context);
-  //                 // Implement share functionality
-  //                 _shareImage(imageUrl);
-  //               },
-  //             ),
-  //
-  //             // Save option
-  //             ListTile(
-  //               leading: Icon(
-  //                 Icons.download,
-  //                 color: AppColors.primaryLight,
-  //                 size: 24.sp,
-  //               ),
-  //               title: Text(
-  //                 'Save Image',
-  //                 style: GoogleFonts.plusJakartaSans(
-  //                   fontSize: 16.sp,
-  //                   color: AppColors.primaryLight,
-  //                 ),
-  //               ),
-  //               onTap: () {
-  //                 Navigator.pop(context);
-  //                 // Implement save functionality
-  //                 _saveImage(imageUrl);
-  //               },
-  //             ),
-  //
-  //             SizedBox(height: 10.h),
-  //           ],
-  //         ),
-  //       );
-  //     },
-  //   );
-  // }
-
-  // void _shareImage(String imageUrl) {
-  //   // Implement share functionality
-  //   // You can use the share_plus package for this
-  //   print('Sharing image: $imageUrl');
-  // }
-  //
-  // void _saveImage(String imageUrl) {
-  //   // Implement save functionality
-  //   // You can use packages like dio and path_provider to download and save images
-  //   print('Saving image: $imageUrl');
-  // }
 
   String _formatMessageTime(DateTime timestamp) {
     final now = DateTime.now();
@@ -558,13 +516,15 @@ class _ConversationPageScreenState extends State<ConversationPageScreen> {
         child: Row(
           children: [
             // Attachment icon
-            GestureDetector(onTap: (){
-
-              showImagePickerOption(
-                  context, imageController);
-
-
-            },child: SvgPicture.asset(AppImages.imageFileIcon)),
+            GestureDetector(
+              onTap: () {
+                showImagePickerOption(
+                  context,
+                  conversationController.imageController,
+                );
+              },
+              child: SvgPicture.asset(AppImages.imageFileIcon),
+            ),
             SizedBox(width: 12.w),
 
             // Text input
@@ -588,10 +548,23 @@ class _ConversationPageScreenState extends State<ConversationPageScreen> {
               ),
             ),
             SizedBox(width: 12.w),
-            GestureDetector(
-              onTap: () => conversationController.sendMessage(),
-              child: SvgPicture.asset(AppImages.sendIcon),
-            )
+
+            // Send button with loading state
+            Obx(() => GestureDetector(
+              onTap: conversationController.isSendingMessage.value
+                  ? null
+                  : () => conversationController.sendMessage(),
+              child: conversationController.isSendingMessage.value
+                  ? Container(
+                width: 24.w,
+                height: 24.h,
+                child: CircularProgressIndicator(
+                  strokeWidth: 2,
+                  color: AppColors.primaryNormal,
+                ),
+              )
+                  : SvgPicture.asset(AppImages.sendIcon),
+            )),
           ],
         ),
       ),

@@ -3,7 +3,13 @@ import 'package:flutter/cupertino.dart';
 import 'package:get/get.dart';
 import 'package:skt_sikring/presentation/messaging/common/commonController.dart';
 
+import '../../../../infrastructure/theme/app_colors.dart';
+import '../../../../infrastructure/utils/api_client.dart';
+import '../../../../infrastructure/utils/api_content.dart';
 import '../../../../infrastructure/utils/log_helper.dart';
+import '../../../../infrastructure/utils/secure_storage_helper.dart';
+import '../../../shared/widgets/customSnakBar.dart';
+import '../../../shared/widgets/imagePicker/imagePickerController.dart';
 import '../../common/socket_controller.dart';
 import '../model/conversationModel.dart';
 
@@ -12,6 +18,9 @@ class ConversationPageController extends GetxController {
   final ScrollController scrollController = ScrollController();
   final CommonController commonController = Get.put(CommonController());
   late final SocketController socketController;
+  final ApiClient _apiClient = Get.find<ApiClient>();
+  final imagePickerController imageController =
+  Get.find<imagePickerController>();
 
   // Observable list for conversation messages
   RxList<Result> conversationList = <Result>[].obs;
@@ -21,6 +30,7 @@ class ConversationPageController extends GetxController {
   RxBool isLoading = false.obs;
   RxBool isLoadingMore = false.obs;
   RxBool hasMoreData = true.obs;
+  RxBool isSendingMessage = false.obs; // Add this for loading state
   final int limit = 10;
 
   // Current user ID for message comparison
@@ -29,6 +39,7 @@ class ConversationPageController extends GetxController {
   // Variables for smooth scrolling
   double _previousScrollExtent = 0.0;
   bool _isLoadingMessages = false;
+  RxString token = ''.obs;
 
   @override
   void onInit() {
@@ -41,6 +52,19 @@ class ConversationPageController extends GetxController {
     // Just setup listeners and join conversation
     joinConversation();
     setupScrollListener();
+
+    // Listen to image controller changes
+    setupImageControllerListener();
+  }
+
+  void setupImageControllerListener() {
+    // Listen to changes in selected images
+    ever(imageController.selectedImages, (images) {
+      if (images.isNotEmpty) {
+        // Auto-send images when selected
+        sendImagesWithText();
+      }
+    });
   }
 
   void setupScrollListener() {
@@ -78,7 +102,8 @@ class ConversationPageController extends GetxController {
 
   // Helper method to extract image URL from different possible locations
   String _extractImageUrl(Map<String, dynamic> messageData) {
-    if (messageData['image'] != null && messageData['image']['imageUrl'] != null) {
+    if (messageData['image'] != null &&
+        messageData['image']['imageUrl'] != null) {
       return messageData['image']['imageUrl'];
     }
     if (messageData['senderImage'] != null) {
@@ -134,7 +159,7 @@ class ConversationPageController extends GetxController {
       {
         "conversationId": commonController.conversationId.value,
         "page": currentPage.value,
-        "limit": limit
+        "limit": limit,
       },
       ack: (response) async {
         LoggerHelper.warn(response.toString());
@@ -143,11 +168,11 @@ class ConversationPageController extends GetxController {
           if (response != null &&
               response is Map &&
               response['success'] == true) {
-
             var responseData = response['data'];
             if (responseData != null && responseData['results'] != null) {
-
-              Map<String, dynamic> responseMap = _convertResponseToStringMap(response);
+              Map<String, dynamic> responseMap = _convertResponseToStringMap(
+                response,
+              );
 
               AllConversationsBetweenTwoUserModel conversationModel =
               AllConversationsBetweenTwoUserModel.fromJson(responseMap);
@@ -200,7 +225,8 @@ class ConversationPageController extends GetxController {
       double currentScrollExtent = scrollController.position.maxScrollExtent;
       double scrollDifference = currentScrollExtent - _previousScrollExtent;
 
-      double newScrollPosition = scrollController.position.pixels + scrollDifference;
+      double newScrollPosition =
+          scrollController.position.pixels + scrollDifference;
       newScrollPosition = newScrollPosition.clamp(0.0, currentScrollExtent);
 
       scrollController.jumpTo(newScrollPosition);
@@ -237,12 +263,13 @@ class ConversationPageController extends GetxController {
         if (value is Map) {
           converted[stringKey] = _convertResponseToStringMap(value);
         } else if (value is List) {
-          converted[stringKey] = value.map((item) {
-            if (item is Map) {
-              return _convertResponseToStringMap(item);
-            }
-            return item;
-          }).toList();
+          converted[stringKey] =
+              value.map((item) {
+                if (item is Map) {
+                  return _convertResponseToStringMap(item);
+                }
+                return item;
+              }).toList();
         } else {
           converted[stringKey] = value;
         }
@@ -261,10 +288,7 @@ class ConversationPageController extends GetxController {
         final messageDate = _formatDate(message.createdAt!);
 
         if (lastDate != messageDate) {
-          grouped.add({
-            'type': 'date',
-            'date': messageDate,
-          });
+          grouped.add({'type': 'date', 'date': messageDate});
           lastDate = messageDate;
         }
 
@@ -273,10 +297,15 @@ class ConversationPageController extends GetxController {
         // Extract attachment URLs
         List<String> attachmentUrls = [];
         if (message.attachments != null && message.attachments!.isNotEmpty) {
-          attachmentUrls = message.attachments!
-              .where((attachment) => attachment.attachment != null && attachment.attachment!.isNotEmpty)
-              .map((attachment) => attachment.attachment!)
-              .toList();
+          attachmentUrls =
+              message.attachments!
+                  .where(
+                    (attachment) =>
+                attachment.attachment != null &&
+                    attachment.attachment!.isNotEmpty,
+              )
+                  .map((attachment) => attachment.attachment!)
+                  .toList();
         }
 
         grouped.add({
@@ -313,52 +342,91 @@ class ConversationPageController extends GetxController {
     }
   }
 
+  // Updated sendMessage method to handle both text and images
   void sendMessage() {
     final text = messageController.text.trim();
+    final hasImages = imageController.selectedImages.isNotEmpty;
+
+    // If there are images, send them with text
+    if (hasImages) {
+      sendImagesWithText();
+      return;
+    }
+
+    // If only text, send text message
     if (text.isNotEmpty) {
-      messageController.clear();
+      sendTextMessage(text);
+    }
+  }
 
-      if (!socketController.isSocketConnected.value) {
-        LoggerHelper.error('Socket not connected. Cannot send message.');
-        return;
-      }
+  // Method to send text-only messages
+  void sendTextMessage(String text) {
+    messageController.clear();
 
-      socketController.emitWithAck('send-new-message', {
+    if (!socketController.isSocketConnected.value) {
+      LoggerHelper.error('Socket not connected. Cannot send message.');
+      return;
+    }
+
+    socketController.emitWithAck(
+      'send-new-message',
+      {
         'text': text,
         'conversationId': commonController.conversationId.value,
         'senderId': currentUserId.value,
-      }, ack: (response) {
+      },
+      ack: (response) {
         LoggerHelper.warn('Message sent response: $response');
 
         try {
-          if (response != null && response is Map && response['success'] == true) {
-            Map<String, dynamic> responseData = _convertResponseToStringMap(response);
+          if (response != null &&
+              response is Map &&
+              response['success'] == true) {
+            Map<String, dynamic> responseData = _convertResponseToStringMap(
+              response,
+            );
 
             if (responseData['messageDetails'] != null) {
-              Map<String, dynamic> messageDetails = responseData['messageDetails'];
+              Map<String, dynamic> messageDetails =
+              responseData['messageDetails'];
 
               Result newMessage = Result(
                 text: messageDetails['text']?.toString() ?? text,
                 senderId: SenderId(
-                  userId: messageDetails['senderId']?.toString() ?? currentUserId.value,
-                  name: messageDetails['name']?.toString() ?? commonController.userName.value,
+                  userId:
+                  messageDetails['senderId']?.toString() ??
+                      currentUserId.value,
+                  name:
+                  messageDetails['name']?.toString() ??
+                      commonController.userName.value,
                   profileImage: ProfileImage(
-                    imageUrl: messageDetails['image']?['imageUrl']?.toString() ??
+                    imageUrl:
+                    messageDetails['image']?['imageUrl']?.toString() ??
                         commonController.profileImage.value,
                   ),
                 ),
                 createdAt: _parseDateTime(messageDetails['timestamp']),
                 messageId: messageDetails['messageId']?.toString() ?? '',
-                conversationId: messageDetails['conversationId']?.toString() ?? commonController.conversationId.value,
+                conversationId:
+                messageDetails['conversationId']?.toString() ??
+                    commonController.conversationId.value,
                 attachments: [],
                 isDeleted: false,
               );
 
-              bool messageExists = conversationList.any((msg) =>
-              msg.messageId == newMessage.messageId ||
-                  (msg.text == newMessage.text &&
-                      msg.senderId?.userId == newMessage.senderId?.userId &&
-                      (msg.createdAt?.difference(newMessage.createdAt ?? DateTime.now()).abs().inSeconds ?? 0) < 5)
+              bool messageExists = conversationList.any(
+                    (msg) =>
+                msg.messageId == newMessage.messageId ||
+                    (msg.text == newMessage.text &&
+                        msg.senderId?.userId == newMessage.senderId?.userId &&
+                        (msg.createdAt
+                            ?.difference(
+                          newMessage.createdAt ?? DateTime.now(),
+                        )
+                            .abs()
+                            .inSeconds ??
+                            0) <
+                            5),
               );
 
               if (!messageExists) {
@@ -375,78 +443,174 @@ class ConversationPageController extends GetxController {
         } catch (e) {
           LoggerHelper.error('Error processing message send response: $e');
         }
-      });
+      },
+    );
+  }
+
+  // Updated method to send images with optional text
+  Future<void> sendImagesWithText() async {
+    if (imageController.selectedImages.isEmpty) {
+      // If no images, just send text
+      final text = messageController.text.trim();
+      if (text.isNotEmpty) {
+        sendTextMessage(text);
+      }
+      return;
+    }
+
+    isSendingMessage.value = true;
+
+    try {
+      token.value = await SecureStorageHelper.getString("accessToken");
+      List<MultipartBody>? files;
+
+      if (imageController.selectedImages.isNotEmpty) {
+        files =
+            imageController.selectedImages
+                .map((file) => MultipartBody('attachments', file))
+                .toList();
+      }
+
+      final Map<String, String> createReport = {
+        'conversationId': commonController.conversationId.value,
+        'text': messageController.text.trim(),
+      };
+
+      final response = await _apiClient.postData(
+        ApiConstants.sendImageInMessage,
+        createReport,
+        headers: {"Authorization": "Bearer ${token.value}"},
+        files: files,
+      );
+
+      if (response.statusCode == 200 || response.statusCode == 201) {
+        // Clear the input and selected images
+        messageController.clear();
+        imageController.selectedImages.clear();
+
+        // Show success message
+        Get.snackbar(
+          "Done",
+          "Message sent successfully",
+          backgroundColor: AppColors.primaryNormal,
+          colorText: AppColors.primaryLighthover,
+        );
+
+        // Refresh messages to show the new message with images
+        await Future.delayed(Duration(milliseconds: 500));
+        refreshConversation();
+
+      } else {
+        CustomSnackbar.show(
+          title: "Failed",
+          message: "Sorry, please try again",
+        );
+      }
+    } catch (e) {
+      LoggerHelper.error('Error sending images: $e');
+      CustomSnackbar.show(
+        title: "Error",
+        message: "Failed to send images. Please try again.",
+      );
+    } finally {
+      isSendingMessage.value = false;
     }
   }
 
+  // Keep the original sendImages method for backward compatibility
+  Future<void> sendImages() async {
+    await sendImagesWithText();
+  }
+
   Future<void> newMessageReceived() async {
-    socketController.on('new-message-received::${commonController.conversationId.value}', (data) {
-      LoggerHelper.error('New message received: $data');
+    socketController.on(
+      'new-message-received::${commonController.conversationId.value}',
+          (data) {
+        LoggerHelper.error('New message received: $data');
 
-      try {
-        if (data != null && data is Map) {
-          Map<String, dynamic> messageData = _convertResponseToStringMap(data);
-
-          Map<String, dynamic> actualMessage = messageData;
-          if (messageData.containsKey('message')) {
-            actualMessage = messageData['message'];
-          }
-
-          // Handle attachments properly
-          List<Attachment> attachments = [];
-          if (actualMessage['attachments'] != null && actualMessage['attachments'] is List) {
-            attachments = (actualMessage['attachments'] as List).map((attachment) {
-              if (attachment is Map<String, dynamic>) {
-                return Attachment.fromJson(attachment);
-              } else if (attachment is String) {
-                // If it's just a string URL, create an Attachment object
-                return Attachment(
-                  attachment: attachment,
-                  attachmentId: null,
-                );
-              }
-              return Attachment();
-            }).toList();
-          }
-
-          Result newMessage = Result(
-            text: actualMessage['text']?.toString() ?? '',
-            senderId: SenderId(
-              userId: actualMessage['senderId']?.toString() ?? '',
-              name: messageData['senderName']?.toString() ?? messageData['name']?.toString() ?? 'Unknown',
-              // profileImage: ProfileImage(
-              //   imageUrl: extractImageUrl(messageData),
-              // ),
-            ),
-            createdAt: _parseDateTime(actualMessage['createdAt']),
-            updatedAt: _parseDateTime(actualMessage['updatedAt']),
-            messageId: actualMessage['_messageId']?.toString() ?? actualMessage['_id']?.toString() ?? '',
-            conversationId: actualMessage['conversationId']?.toString() ?? '',
-            attachments: attachments,
-            isDeleted: actualMessage['isDeleted'] ?? false,
-          );
-
-          if (newMessage.senderId?.userId != currentUserId.value) {
-            bool messageExists = conversationList.any((msg) =>
-            msg.messageId == newMessage.messageId ||
-                (msg.text == newMessage.text &&
-                    msg.senderId?.userId == newMessage.senderId?.userId &&
-                    (msg.createdAt?.difference(newMessage.createdAt ?? DateTime.now()).abs().inSeconds ?? 0) < 5)
+        try {
+          if (data != null && data is Map) {
+            Map<String, dynamic> messageData = _convertResponseToStringMap(
+              data,
             );
 
-            if (!messageExists) {
-              conversationList.add(newMessage);
+            Map<String, dynamic> actualMessage = messageData;
+            if (messageData.containsKey('message')) {
+              actualMessage = messageData['message'];
+            }
 
-              WidgetsBinding.instance.addPostFrameCallback((_) {
-                _scrollToBottom(animate: true);
-              });
+            // Handle attachments properly
+            List<Attachment> attachments = [];
+            if (actualMessage['attachments'] != null &&
+                actualMessage['attachments'] is List) {
+              attachments =
+                  (actualMessage['attachments'] as List).map((attachment) {
+                    if (attachment is Map<String, dynamic>) {
+                      return Attachment.fromJson(attachment);
+                    } else if (attachment is String) {
+                      // If it's just a string URL, create an Attachment object
+                      return Attachment(
+                        attachment: attachment,
+                        attachmentId: null,
+                      );
+                    }
+                    return Attachment();
+                  }).toList();
+            }
+
+            Result newMessage = Result(
+              text: actualMessage['text']?.toString() ?? '',
+              senderId: SenderId(
+                userId: actualMessage['senderId']?.toString() ?? '',
+                name:
+                messageData['senderName']?.toString() ??
+                    messageData['name']?.toString() ??
+                    'Unknown',
+                // profileImage: ProfileImage(
+                //   imageUrl: extractImageUrl(messageData),
+                // ),
+              ),
+              createdAt: _parseDateTime(actualMessage['createdAt']),
+              updatedAt: _parseDateTime(actualMessage['updatedAt']),
+              messageId:
+              actualMessage['_messageId']?.toString() ??
+                  actualMessage['_id']?.toString() ??
+                  '',
+              conversationId: actualMessage['conversationId']?.toString() ?? '',
+              attachments: attachments,
+              isDeleted: actualMessage['isDeleted'] ?? false,
+            );
+
+            if (newMessage.senderId?.userId != currentUserId.value) {
+              bool messageExists = conversationList.any(
+                    (msg) =>
+                msg.messageId == newMessage.messageId ||
+                    (msg.text == newMessage.text &&
+                        msg.senderId?.userId == newMessage.senderId?.userId &&
+                        (msg.createdAt
+                            ?.difference(
+                          newMessage.createdAt ?? DateTime.now(),
+                        )
+                            .abs()
+                            .inSeconds ??
+                            0) <
+                            5),
+              );
+
+              if (!messageExists) {
+                conversationList.add(newMessage);
+
+                WidgetsBinding.instance.addPostFrameCallback((_) {
+                  _scrollToBottom(animate: true);
+                });
+              }
             }
           }
+        } catch (e) {
+          LoggerHelper.error('Error processing new message: $e');
         }
-      } catch (e) {
-        LoggerHelper.error('Error processing new message: $e');
-      }
-    });
+      },
+    );
   }
 
   void refreshConversation() {
@@ -460,7 +624,9 @@ class ConversationPageController extends GetxController {
   // Method to leave conversation screen
   void leaveConversationScreen({String? toScreen}) {
     // Remove specific listeners for this conversation
-    socketController.off('new-message-received::${commonController.conversationId.value}');
+    socketController.off(
+      'new-message-received::${commonController.conversationId.value}',
+    );
 
     // Notify socket controller about leaving
     socketController.leaveMessagingFlow('ConversationPage', toScreen: toScreen);
