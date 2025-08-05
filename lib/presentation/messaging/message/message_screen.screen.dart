@@ -310,6 +310,8 @@ class _MessageScreenState extends State<MessageScreen> {
     messageScreenController.socket?.disconnect();
 
     messageScreenController.socket?.dispose();
+    messageScreenController.socket?.clearListeners();
+    messageScreenController.chatItemList.clear();
 
     print(messageScreenController.chatItemList);
 

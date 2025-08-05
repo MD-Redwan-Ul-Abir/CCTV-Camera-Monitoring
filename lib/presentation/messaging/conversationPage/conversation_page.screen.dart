@@ -69,12 +69,6 @@ class _ConversationPageScreenState extends State<ConversationPageScreen> {
             onPressed: () => Get.back(),
           ),
         ),
-        // actions: [
-        //   IconButton(
-        //     icon: Icon(Icons.refresh, color: AppColors.primaryLight),
-        //     onPressed: () => conversationController.refreshConversation(),
-        //   ),
-        // ],
       ),
       body: Column(
         children: [
@@ -91,32 +85,37 @@ class _ConversationPageScreenState extends State<ConversationPageScreen> {
 
               return Column(
                 children: [
-                  // Load more indicator at the top
-                  if (conversationController.isLoadingMore.value)
-                    Container(
-                      padding: EdgeInsets.all(16.h),
+                  // Load more indicator at the top - more subtle and smooth
+                  AnimatedContainer(
+                    duration: Duration(milliseconds: 200),
+                    height: conversationController.isLoadingMore.value ? 40.h : 0,
+                    child: conversationController.isLoadingMore.value
+                        ? Container(
+                      padding: EdgeInsets.symmetric(vertical: 8.h),
                       child: Row(
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
                           SizedBox(
-                            width: 20.w,
-                            height: 20.h,
+                            width: 16.w,
+                            height: 16.h,
                             child: CircularProgressIndicator(
-                              strokeWidth: 2,
+                              strokeWidth: 1.5,
                               color: AppColors.primaryNormal,
                             ),
                           ),
                           SizedBox(width: 8.w),
                           Text(
-                            'Loading more messages...',
+                            'Loading...',
                             style: GoogleFonts.plusJakartaSans(
-                              fontSize: 12.sp,
-                              color: AppColors.primaryLight.withOpacity(0.7),
+                              fontSize: 11.sp,
+                              color: AppColors.primaryLight.withOpacity(0.6),
                             ),
                           ),
                         ],
                       ),
-                    ),
+                    )
+                        : SizedBox.shrink(),
+                  ),
 
                   // Messages list
                   Expanded(
@@ -193,8 +192,6 @@ class _ConversationPageScreenState extends State<ConversationPageScreen> {
 
   Widget _buildMessageBubble(Map<String, dynamic> message) {
     final bool isUser = message['isUser'] ?? false;
-    final String senderName = message['senderName'] ?? '';
-    final String senderImage = message['senderImage'] ?? '';
 
     return Container(
       margin: EdgeInsets.only(bottom: 12.h),
@@ -202,51 +199,6 @@ class _ConversationPageScreenState extends State<ConversationPageScreen> {
         mainAxisAlignment: isUser ? MainAxisAlignment.end : MainAxisAlignment.start,
         crossAxisAlignment: CrossAxisAlignment.end,
         children: [
-          // Show sender avatar for received messages
-          if (!isUser) ...[
-            // ClipRRect(
-            //   borderRadius: BorderRadius.circular(20.r),
-            //   child: senderImage.isNotEmpty
-            //       ? Image.network(
-            //     senderImage.startsWith('http')
-            //         ? senderImage
-            //         : 'https://your-base-url.com${senderImage}', // Add your base URL
-            //     height: 32.h,
-            //     width: 32.w,
-            //     fit: BoxFit.cover,
-            //     errorBuilder: (context, error, stackTrace) {
-            //       return Container(
-            //         height: 32.h,
-            //         width: 32.w,
-            //         decoration: BoxDecoration(
-            //           shape: BoxShape.circle,
-            //           color: AppColors.primaryNormal,
-            //         ),
-            //         child: Icon(
-            //           Icons.person,
-            //           color: AppColors.primaryLight,
-            //           size: 16.sp,
-            //         ),
-            //       );
-            //     },
-            //   )
-            //       : Container(
-            //     height: 32.h,
-            //     width: 32.w,
-            //     decoration: BoxDecoration(
-            //       shape: BoxShape.circle,
-            //       color: AppColors.primaryNormal,
-            //     ),
-            //     child: Icon(
-            //       Icons.person,
-            //       color: AppColors.primaryLight,
-            //       size: 16.sp,
-            //     ),
-            //   ),
-            // ),
-            // SizedBox(width: 8.w),
-          ],
-
           // Message bubble
           Flexible(
             child: Container(
@@ -268,19 +220,6 @@ class _ConversationPageScreenState extends State<ConversationPageScreen> {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  // Show sender name for received messages
-                  // if (!isUser && senderName.isNotEmpty) ...[
-                  //   Text(
-                  //     senderName,
-                  //     style: GoogleFonts.plusJakartaSans(
-                  //       fontSize: 12.sp,
-                  //       fontWeight: FontWeight.w600,
-                  //       color: AppColors.primaryNormal,
-                  //     ),
-                  //   ),
-                  //   SizedBox(height: 4.h),
-                  // ],
-
                   // Message text
                   Text(
                     message['text'] ?? '',

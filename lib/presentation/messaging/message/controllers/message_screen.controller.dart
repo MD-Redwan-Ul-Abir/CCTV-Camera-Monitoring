@@ -28,7 +28,7 @@ class MessageScreenController extends GetxController {
   @override
   void onInit() {
     super.onInit();
-    connectAndFetchData();
+    //connectAndFetchData();
     // getUserList();
     // Fetch data after connection
   }
@@ -40,17 +40,17 @@ class MessageScreenController extends GetxController {
     isConnecting.value = true;
 
     try {
-      String tokens = await SecureStorageHelper.getString('accessToken');
-      token.value = tokens;
-      String userId = await SecureStorageHelper.getString('id');
-      myID?.value = userId;
+      token.value = await SecureStorageHelper.getString('accessToken');
+
+      myID?.value = await SecureStorageHelper.getString('id');
+
       print(myID?.value);
 
       //Configure socket
       socket = IO.io(ApiConstants.socketUrl, <String, dynamic>{
         'transports': ['websocket'],
         'autoConnect': false,
-        'extraHeaders': {'token': tokens},
+        'extraHeaders': {'token': token.value},
       });
 
       socket?.connect();
@@ -105,17 +105,7 @@ class MessageScreenController extends GetxController {
   }
 
   Future<void> getUserList() async {
-    // Only proceed if socket is connected
-    // if (!isSocketConnected.value || _socket?.connected != true) {
-    //   LoggerHelper.warn('Socket not connected, cannot get user list');
-    //   isLoading.value = false;
-    //   return;
-    // }
-    // isLoading.value = false;
-    // var data = {"page": 1, "limit": 10};
 
-    // Add a small delay before making the request
-    // await Future.delayed(Duration(milliseconds: 100));
 
     socket?.emitWithAck(
       'get-all-conversations-with-pagination',
@@ -173,6 +163,7 @@ class MessageScreenController extends GetxController {
   @override
   void onClose() {
     socket?.disconnect();
+    socket?.clearListeners();
 
     socket?.dispose();
 
