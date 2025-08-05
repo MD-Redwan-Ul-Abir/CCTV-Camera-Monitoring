@@ -7,6 +7,8 @@ import 'package:google_fonts/google_fonts.dart';
 import '../../../infrastructure/theme/app_colors.dart';
 import '../../../infrastructure/theme/text_styles.dart';
 import '../../../infrastructure/utils/app_images.dart';
+import '../../shared/widgets/imagePicker/custom_image_picker.dart';
+import '../../shared/widgets/imagePicker/imagePickerController.dart';
 import 'controllers/conversation_page.controller.dart';
 
 class ConversationPageScreen extends StatefulWidget {
@@ -18,6 +20,7 @@ class ConversationPageScreen extends StatefulWidget {
 
 class _ConversationPageScreenState extends State<ConversationPageScreen> {
   final ConversationPageController conversationController = Get.find<ConversationPageController>();
+  final imagePickerController imageController = Get.find<imagePickerController>();
 
   @override
   Widget build(BuildContext context) {
@@ -555,7 +558,13 @@ class _ConversationPageScreenState extends State<ConversationPageScreen> {
         child: Row(
           children: [
             // Attachment icon
-            SvgPicture.asset(AppImages.imageFileIcon),
+            GestureDetector(onTap: (){
+
+              showImagePickerOption(
+                  context, imageController);
+
+
+            },child: SvgPicture.asset(AppImages.imageFileIcon)),
             SizedBox(width: 12.w),
 
             // Text input

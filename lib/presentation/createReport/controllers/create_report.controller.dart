@@ -97,6 +97,8 @@ class CreateReportController extends GetxController {
         imageController.selectedImages.clear();
         imageController.clearVideo();
 
+        homeController.fatchedData.value=false;
+
         Get.snackbar(
             "Report Added",
             message ?? response.body["message"],

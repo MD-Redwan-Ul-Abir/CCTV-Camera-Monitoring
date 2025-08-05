@@ -41,33 +41,7 @@ class _HomeScreenState extends State<HomeScreen> {
       Color(0xFFC7ECFF), // Light Mint
     ];
 
-    // List<Map<String, String>> reportData = [
-    //   {
-    //     'title': 'Incident Report',
-    //     'description':
-    //     'Found broken fence on the northeast side of the site. Found broken fence on the northeast side of the site. Found broken fence on the northeast side of the site.',
-    //   },
-    //   {
-    //     'title': 'Safety Check',
-    //     'description': 'Found broken fence on the northeast side of the site.',
-    //   },
-    //   {
-    //     'title': 'Safety Check',
-    //     'description': 'Found broken fence on the northeast side of the site.',
-    //   },
-    //   {
-    //     'title': 'Safety Check',
-    //     'description': 'Found broken fence on the northeast side of the site.',
-    //   },
-    //   {
-    //     'title': 'Safety Check',
-    //     'description': 'Found broken fence on the northeast side of the site.',
-    //   },
-    //   {
-    //     'title': 'Maintenance',
-    //     'description': 'Found broken fence on the northeast side of the site.',
-    //   },
-    // ];
+
 
     return Scaffold(
       body: Obx(() {
