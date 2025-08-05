@@ -410,8 +410,6 @@ class _ConversationPageScreenState extends State<ConversationPageScreen> {
                   ),
                 ),
               ),
-
-               
               // Positioned(
               //   top: 50.h,
               //   left: 20.w,
