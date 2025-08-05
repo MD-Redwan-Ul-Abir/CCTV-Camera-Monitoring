@@ -54,18 +54,18 @@ class ConversationPageController extends GetxController {
     setupScrollListener();
 
     // Listen to image controller changes
-    setupImageControllerListener();
+   // setupImageControllerListener();
   }
 
-  void setupImageControllerListener() {
-    // Listen to changes in selected images
-    ever(imageController.selectedImages, (images) {
-      if (images.isNotEmpty) {
-        // Auto-send images when selected
-        sendImagesWithText();
-      }
-    });
-  }
+  // void setupImageControllerListener() {
+  //   // Listen to changes in selected images
+  //   ever(imageController.selectedImages, (images) {
+  //     if (images.isNotEmpty) {
+  //       // Auto-send images when selected
+  //       sendImagesWithText();
+  //     }
+  //   });
+  // }
 
   void setupScrollListener() {
     scrollController.addListener(() {
@@ -100,17 +100,7 @@ class ConversationPageController extends GetxController {
     await newMessageReceived();
   }
 
-  // Helper method to extract image URL from different possible locations
-  String _extractImageUrl(Map<String, dynamic> messageData) {
-    if (messageData['image'] != null &&
-        messageData['image']['imageUrl'] != null) {
-      return messageData['image']['imageUrl'];
-    }
-    if (messageData['senderImage'] != null) {
-      return messageData['senderImage'];
-    }
-    return '/uploads/users/user.png';
-  }
+
 
   // Helper method to safely parse DateTime
   DateTime? _parseDateTime(dynamic dateTime) {
@@ -482,6 +472,7 @@ class ConversationPageController extends GetxController {
         headers: {"Authorization": "Bearer ${token.value}"},
         files: files,
       );
+      isSendingMessage.value = false;
 
       if (response.statusCode == 200 || response.statusCode == 201) {
         // Clear the input and selected images
