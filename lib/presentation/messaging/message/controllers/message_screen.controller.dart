@@ -26,8 +26,14 @@ class MessageScreenController extends GetxController {
 
 
     // Wait for socket connection then fetch data
-    _waitForConnectionAndFetchData();
+    isLoading.value = true;
+
+    // Once connected, fetch user list
+
+
+    setupSocketListeners();
     getUserList();
+
   }
 
   void setupSocketListeners() {
@@ -46,28 +52,15 @@ class MessageScreenController extends GetxController {
     });
   }
 
-  Future<void> _waitForConnectionAndFetchData() async {
-    // Wait for socket to connect
-    // while (!socketController.isSocketConnected.value) {
-    //   await Future.delayed(Duration(milliseconds: 100));
-    //   if (socketController.socketStatus.value == 'error') {
-    //     isLoading.value = false;
-    //     return;
-    //   }
-    // }
-    isLoading.value = false;
 
-    // Once connected, fetch user list
-    getUserList();
-     setupSocketListeners();
-  }
 
   Future<void> getUserList() async {
     if (!socketController.isSocketConnected.value) {
-      LoggerHelper.error('Socket not connected. Cannot fetch user list.');
+      LoggerHelper.error(' Cannot fetch user list.');
       isLoading.value = false;
       return;
     }
+    // isLoading.value = true;
     LoggerHelper.error(' Emit started laa ladllasdfasdfsadf ');
     socketController.emitWithAck(
       'get-all-conversations-with-pagination',
@@ -109,7 +102,11 @@ class MessageScreenController extends GetxController {
   // Method to retry connection
   void retryConnection() {
     socketController.retryConnection();
-    _waitForConnectionAndFetchData();
+    isLoading.value = false;
+
+    // Once connected, fetch user list
+    setupSocketListeners();
+    getUserList();
   }
 
   // Method to leave message screen
@@ -127,6 +124,7 @@ class MessageScreenController extends GetxController {
   @override
   void onClose() {
     scrollController.dispose();
+    socketController.dispose();
     // Don't disconnect socket here - let the socket controller manage it
     super.onClose();
   }

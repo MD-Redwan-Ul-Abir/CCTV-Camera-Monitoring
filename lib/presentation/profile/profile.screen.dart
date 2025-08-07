@@ -5,6 +5,7 @@ import 'package:flutter_svg/svg.dart';
 
 import 'package:get/get.dart';
 import 'package:skt_sikring/infrastructure/theme/text_styles.dart';
+import 'package:skt_sikring/presentation/messaging/common/socket_controller.dart';
 import 'package:skt_sikring/presentation/shared/widgets/buttons/primary_buttons.dart';
 
 import '../../infrastructure/navigation/routes.dart';
@@ -655,7 +656,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
       backgroundColor: Colors.red,
       colorText: Colors.white,
     );
-
+SocketController.instance.disconnectSocket();
     // Navigate back to login or home screen
     Phoenix.rebirth(context);
 

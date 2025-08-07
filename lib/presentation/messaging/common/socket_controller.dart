@@ -24,6 +24,7 @@ class SocketController extends GetxController {
   @override
   void onInit() {
     super.onInit();
+
     _initializeUserData();
   }
 
@@ -78,6 +79,7 @@ class SocketController extends GetxController {
   }
 
   void _setupSocketListeners() {
+
     _socket?.onConnect((_) {
       LoggerHelper.info('==== Connected to server ====');
       isSocketConnected.value = true;
@@ -145,7 +147,7 @@ class SocketController extends GetxController {
     if (fromScreen == 'MessageScreen' || fromScreen == 'ConversationPage') {
       LoggerHelper.info('Leaving messaging flow from $fromScreen to $toScreen');
       _isInMessagingFlow = false;
-      disconnectSocket();
+     // disconnectSocket();
     }
   }
 

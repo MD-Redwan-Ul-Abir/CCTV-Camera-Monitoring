@@ -11,12 +11,12 @@ class CommonController extends GetxController {
   // Get socket controller instance
   SocketController get socketController => Get.find<SocketController>();
 
-  @override
-  void onInit() {
-    super.onInit();
-    // Initialize socket controller if not already initialized
-    if (!Get.isRegistered<SocketController>()) {
-      Get.put(SocketController(), permanent: true);
-    }
-  }
+  // @override
+  // void onInit() {
+  //   super.onInit();
+  //   // Initialize socket controller if not already initialized
+  //   if (!Get.isRegistered<SocketController>()) {
+  //     Get.put(SocketController(), permanent: true);
+  //   }
+  // }
 }

@@ -22,14 +22,14 @@ class _MessageScreenState extends State<MessageScreen> {
 
   final SocketController socketController = Get.put(SocketController());
 
-  @override
-  void initState() {
-    socketController.connectSocket();
-    messageScreenController.setupSocketListeners();
-    messageScreenController.setupSocketListeners();
-    super.initState();
-    // Controller initialization is handled in onInit
-  }
+  // @override
+  // void initState() {
+  //
+  //   messageScreenController.setupSocketListeners();
+  //   messageScreenController.setupSocketListeners();
+  //   super.initState();
+  //   // Controller initialization is handled in onInit
+  // }
 
   @override
   Widget build(BuildContext context) {
