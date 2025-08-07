@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_phoenix/flutter_phoenix.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/svg.dart';
 
@@ -563,15 +564,17 @@ class _ProfileScreenState extends State<ProfileScreen> {
 
                     // Delete Button
                     Expanded(
-                      child: Container(
+                      child: SizedBox(
                         height: 48.h,
                         child: ElevatedButton(
                           onPressed: () {
+
+
                             clearStoredUserData();
                             clearStoredUserData();
-                           // Navigator.of(context).pop();
+                            Navigator.of(context).pop();
                             _handleDeleteAccount();
-                            
+
                           },
                           style: ElevatedButton.styleFrom(
                             backgroundColor: AppColors.redDark, // Deep red
@@ -654,6 +657,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
     );
 
     // Navigate back to login or home screen
+    Phoenix.rebirth(context);
+
     Get.offAllNamed(Routes.LOG_IN);
   }
 }

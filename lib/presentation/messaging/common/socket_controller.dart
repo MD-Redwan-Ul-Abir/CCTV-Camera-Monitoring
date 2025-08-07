@@ -5,7 +5,7 @@ import 'package:skt_sikring/infrastructure/utils/log_helper.dart';
 import 'package:skt_sikring/infrastructure/utils/secure_storage_helper.dart';
 
 class SocketController extends GetxController {
-  static SocketController get instance => Get.find<SocketController>();
+  static SocketController get instance => Get.put(SocketController());
 
   IO.Socket? _socket;
   IO.Socket? get socket => _socket;

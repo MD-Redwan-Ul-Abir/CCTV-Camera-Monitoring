@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_phoenix/flutter_phoenix.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:skt_sikring/core/socket/socket_service.dart';
@@ -6,6 +7,7 @@ import 'package:skt_sikring/presentation/languageChanging/appConst.dart';
 import 'package:skt_sikring/presentation/languageChanging/di.dart' as di;
 import 'package:skt_sikring/presentation/languageChanging/localizationController.dart';
 import 'package:skt_sikring/presentation/languageChanging/message.dart';
+import 'package:skt_sikring/presentation/messaging/common/socket_controller.dart';
 import 'package:skt_sikring/presentation/shared/widgets/networkStatus/globalNetworkService.dart';
 
 import 'infrastructure/navigation/navigation.dart';
@@ -19,21 +21,13 @@ void main() async {
   // Initialize the global network service first
   await Get.putAsync<GlobalNetworkService>(() async => GlobalNetworkService());
 
-
+ SocketController.instance.connectSocket();
   Map<String, Map<String, String>> languages = await di.init();
 
+
   var initialRoute = await Routes.initialRoute;
-
-  final window = WidgetsBinding.instance.window;
-  final physicalSize = window.physicalSize;
-  final devicePixelRatio = window.devicePixelRatio;
-
-  final logicalWidth = physicalSize.width / devicePixelRatio;
-  final logicalHeight = physicalSize.height / devicePixelRatio;
-
   runApp(
-    // Main(initialRoute, Size(logicalWidth, logicalHeight), languages: languages),
-    Main(initialRoute, Size(375, 812), languages: languages),
+    Phoenix(child: Main(initialRoute, Size(375, 812), languages: languages)),
   );
 }
 

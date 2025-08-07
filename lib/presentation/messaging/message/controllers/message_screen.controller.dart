@@ -27,6 +27,7 @@ class MessageScreenController extends GetxController {
 
     // Wait for socket connection then fetch data
     _waitForConnectionAndFetchData();
+    getUserList();
   }
 
   void setupSocketListeners() {
@@ -47,13 +48,14 @@ class MessageScreenController extends GetxController {
 
   Future<void> _waitForConnectionAndFetchData() async {
     // Wait for socket to connect
-    while (!socketController.isSocketConnected.value) {
-      await Future.delayed(Duration(milliseconds: 100));
-      if (socketController.socketStatus.value == 'error') {
-        isLoading.value = false;
-        return;
-      }
-    }
+    // while (!socketController.isSocketConnected.value) {
+    //   await Future.delayed(Duration(milliseconds: 100));
+    //   if (socketController.socketStatus.value == 'error') {
+    //     isLoading.value = false;
+    //     return;
+    //   }
+    // }
+    isLoading.value = false;
 
     // Once connected, fetch user list
     getUserList();
@@ -66,10 +68,10 @@ class MessageScreenController extends GetxController {
       isLoading.value = false;
       return;
     }
-
+    LoggerHelper.error(' Emit started laa ladllasdfasdfsadf ');
     socketController.emitWithAck(
       'get-all-conversations-with-pagination',
-      {"page": 1, "limit": 10},
+      {"page": 1, "limit": 100},
       ack: (response) async {
         LoggerHelper.warn(response.toString());
 
