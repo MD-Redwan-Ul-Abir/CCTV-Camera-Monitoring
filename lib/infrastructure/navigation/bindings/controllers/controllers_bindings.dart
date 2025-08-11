@@ -1,4 +1,5 @@
 
+export 'package:skt_sikring/infrastructure/navigation/bindings/controllers/add_conversations.controller.binding.dart'; 
 export 'package:skt_sikring/infrastructure/navigation/bindings/controllers/change_password.controller.binding.dart'; 
 export 'package:skt_sikring/infrastructure/navigation/bindings/controllers/conversation_page.controller.binding.dart';
 export 'package:skt_sikring/infrastructure/navigation/bindings/controllers/create_report.controller.binding.dart'; 

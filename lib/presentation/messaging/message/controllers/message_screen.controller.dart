@@ -3,6 +3,7 @@ import 'package:get/get.dart';
 import 'package:skt_sikring/infrastructure/utils/log_helper.dart';
 import 'package:skt_sikring/presentation/messaging/common/commonController.dart';
 
+import '../../../../infrastructure/utils/secure_storage_helper.dart';
 import '../../common/socket_controller.dart';
 import '../model/conversationListModel.dart';
 
@@ -19,40 +20,39 @@ class MessageScreenController extends GetxController {
     super.onInit();
     socketController = Get.find<SocketController>();
 
-    // Enter messaging flow and connect socket
     socketController.enterMessagingFlow('MessageScreen');
 
-    // Setup socket listeners
-
-
-    // Wait for socket connection then fetch data
     isLoading.value = true;
-
-    // Once connected, fetch user list
-
 
     setupSocketListeners();
     getUserList();
-
   }
 
   void setupSocketListeners() {
     // Listen for conversation list updates
-    socketController.on('conversation-list-updated::${socketController.userId.value}', (data) {
-     // print('=========================${socketController.userId.value}==============================');
-      LoggerHelper.info('Conversation list updated: $data \n\n\n${socketController.userId.value}');
-      getUserList();
-    });
+    socketController.on(
+      'conversation-list-updated::${socketController.userId.value}',
+      (data) {
+        // print('=========================${socketController.userId.value}==============================');
+        LoggerHelper.info(
+          'Conversation list updated: $data \n\n\n${socketController.userId.value}',
+        );
+        getUserList();
+      },
+    );
 
     // Listen for user online status updates
-    socketController.on('related-user-online-status::${socketController.userId.value}', (data) {
-     // print('=========================${socketController.userId.value}==============================');
-      LoggerHelper.info('User online status updated: $data \n\n\n${socketController.userId.value}');
-      getUserList();
-    });
+    socketController.on(
+      'related-user-online-status::${socketController.userId.value}',
+      (data) {
+        // print('=========================${socketController.userId.value}==============================');
+        LoggerHelper.info(
+          'User online status updated: $data \n\n\n${socketController.userId.value}',
+        );
+        getUserList();
+      },
+    );
   }
-
-
 
   Future<void> getUserList() async {
     if (!socketController.isSocketConnected.value) {
@@ -61,7 +61,8 @@ class MessageScreenController extends GetxController {
       return;
     }
     // isLoading.value = true;
-    LoggerHelper.error(' Emit started laa ladllasdfasdfsadf ');
+
+
     socketController.emitWithAck(
       'get-all-conversations-with-pagination',
       {"page": 1, "limit": 100},
@@ -118,8 +119,6 @@ class MessageScreenController extends GetxController {
     // Notify socket controller about leaving
     socketController.leaveMessagingFlow('MessageScreen', toScreen: toScreen);
   }
-
-
 
   @override
   void onClose() {

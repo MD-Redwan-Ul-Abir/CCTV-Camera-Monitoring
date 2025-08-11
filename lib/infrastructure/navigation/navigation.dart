@@ -5,7 +5,7 @@ import 'package:get/get.dart';
 import '../../config.dart';
 import '../../presentation/auth/customSuccessMassege/custom_success_massege.screen.dart';
 import '../../presentation/languageChanging/language_screen.dart';
-
+import '../../presentation/messaging/AddConversations/add_conversations.screen.dart';
 import '../../presentation/messaging/message/message_screen.screen.dart';
 import '../../presentation/screens.dart';
 import '../../presentation/shared/widgets/imagePicker/imagePickerController.dart';
@@ -158,6 +158,11 @@ class Nav {
       name: Routes.NO_INTERNET,
       page: () => const NoInternetScreen(),
       binding: NoInternetControllerBinding(),
+    ),
+    GetPage(
+      name: Routes.ADD_CONVERSATIONS,
+      page: () => const AddConversationsScreen(),
+      binding: AddConversationsControllerBinding(),
     ),
   ];
 }

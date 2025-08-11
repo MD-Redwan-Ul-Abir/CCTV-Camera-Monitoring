@@ -18,6 +18,7 @@ class Routes {
   static const LOG_IN = '/log-in';
   static const MAIN_NAVIGATION_SCREEN = '/main-navigation-screen';
   static const MESSAGE_SCREEN = '/message-screen';
+  static const NO_INTERNET = '/no-internet';
   static const OTP_PAGE = '/otp-page';
   static const PRIVACY_SETTINGS = '/privacy-settings';
   static const PROFILE = '/profile';
@@ -27,5 +28,5 @@ class Routes {
   static const SITE_DETAILS = '/site-details';
   static const SPLASH_LANGUAGE = '/splash-language';
   static const SPLASH_SCREEN = '/splash-screen';
-  static const NO_INTERNET = '/no-internet';
+  static const ADD_CONVERSATIONS = '/add-conversations';
 }

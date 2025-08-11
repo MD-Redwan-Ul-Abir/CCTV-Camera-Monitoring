@@ -41,4 +41,5 @@ class Routes {
   static const SPLASH_SCREEN = '/splash-screen';
   static const ERROR_PAGE = '/error-page';
   static const NO_INTERNET = '/no-internet';
+  static const ADD_CONVERSATIONS = '/add-conversations';
 }

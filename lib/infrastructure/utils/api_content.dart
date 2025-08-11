@@ -77,4 +77,11 @@ class ApiConstants {
 ///-------------------------------Send image in the message section------------------------------------
 
   static String sendImageInMessage = 'message/create';
+
+
+  ///----------------------------------Add Conversation List-------------------------------------------
+
+
+  static String getAddConversations({String? personID,String? role, }) =>  '/user-site/conversation/person/paginate/?personId=$personID&role=$role';
+
 }
