@@ -35,10 +35,16 @@ class ApiConstants {
 
   ////----------------------Network URL for app---------------------------
 
-  static String baseUrl = "https://sheakh6733.sobhoy.com/api/v1";
-  static String imageBaseUrl = "https://sheakh6733.sobhoy.com" ;
-  static String dummyImageUrl = "https://sheakh6733.sobhoy.com";
-  static String socketUrl = "https://sheakh6733.sobhoy.com";
+  // static String baseUrl = "https://sheakh6733.sobhoy.com/api/v1";
+  // static String imageBaseUrl = "https://sheakh6733.sobhoy.com" ;
+  // static String dummyImageUrl = "https://sheakh6733.sobhoy.com";
+  // static String socketUrl = "https://sheakh6733.sobhoy.com";
+
+  //-----------------------https://linux_vai.syedbipul.me/api/v1/auth/login
+  static String baseUrl = "https://linux_vai.syedbipul.me/api/v1";
+  static String imageBaseUrl = "https://linux_vai.syedbipul.me" ;
+  static String dummyImageUrl = "https://linux_vai.syedbipul.me";
+  static String socketUrl = "https://linux_vai.syedbipul.me";
 
   ///-------------------------------------Auth------------------------------------
 

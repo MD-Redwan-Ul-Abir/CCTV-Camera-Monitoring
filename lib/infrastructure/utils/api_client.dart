@@ -3,14 +3,24 @@ import 'dart:io';
 import 'package:flutter/foundation.dart';
 import 'package:get/get.dart';
 import 'package:http/http.dart' as http;
+import 'package:http/io_client.dart';
 import 'package:http_parser/http_parser.dart';
 import 'package:mime_type/mime_type.dart';
 import 'package:skt_sikring/infrastructure/utils/secure_storage_helper.dart';
 
 import 'api_content.dart';
 
+class MyHttpOverrides extends HttpOverrides {
+  @override
+  HttpClient createHttpClient(SecurityContext? context) {
+    return super.createHttpClient(context)
+      ..badCertificateCallback =
+          (X509Certificate cert, String host, int port) => true;
+  }
+}
+
 class ApiClient extends GetxService {
-  static final _client = http.Client();
+  static final _client = IOClient(HttpClient()..badCertificateCallback = (X509Certificate cert, String host, int port) => true);
   static const _timeout = Duration(seconds: 30);
   static String _bearerToken = "";
   static const _noInternet = "Can't connect to the internet!";
@@ -119,7 +129,7 @@ class ApiClient extends GetxService {
       }
       return _handleResponse(response, url);
     } catch (e) {
-      debugPrint('Error: $e');
+      debugPrint('Error------>: $e');
       return const Response(statusCode: 0, statusText: _noInternet);
     }
   }

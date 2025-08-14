@@ -145,7 +145,7 @@ class _CreateReportScreenState extends State<CreateReportScreen> {
                 Obx(
                       () =>
                       CustomDropDown(
-                        hintText: "Site Name",
+                        hintText: reportController.siteList.isEmpty?"No Site Assigned To You":"Site Name",
                         errorText: "Please select Site",
                         selectedValue: reportController.selectedSite.value,
                         items: reportController.siteList,

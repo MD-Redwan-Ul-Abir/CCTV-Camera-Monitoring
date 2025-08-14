@@ -215,9 +215,9 @@ class CreateReportController extends GetxController {
       } else {
         // Fallback to hardcoded values if no sites available
         List<String> categories = [
-          'Site A',
-          'Site B',
-          'Site C',
+           // 'No site found',
+          // 'Site B',
+          // 'Site C',
         ];
 
         siteList.value = categories.map((category) {

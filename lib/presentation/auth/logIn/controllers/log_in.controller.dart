@@ -115,13 +115,16 @@ class LogInController extends GetxController with GetSingleTickerProviderStateMi
           isLoading.value = false;
           update();
           Get.snackbar("Log In Failed!", errorResponse.message ?? "Unknown error");
+          LoggerHelper.error(errorResponse.message);
         } catch (e) {
           isLoading.value = false;
           update();
-          CustomSnackbar.show(
-            title: "Log In Failed!",
-            message:response.body["message"],
-          );
+
+
+          // CustomSnackbar.show(
+          //   title: "Log In Failed!",
+          //   message:response.body["message"],
+          // );
 
         }
         return false;
@@ -130,6 +133,7 @@ class LogInController extends GetxController with GetSingleTickerProviderStateMi
       isLoading.value = false;
       update();
       Get.snackbar("Error", "An error occurred: ${e.toString()}");
+      LoggerHelper.error(e.toString());
       return false;
     } finally {
       isLoading.value = false;
