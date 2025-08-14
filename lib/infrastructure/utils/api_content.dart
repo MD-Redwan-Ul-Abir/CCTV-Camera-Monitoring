@@ -89,5 +89,5 @@ class ApiConstants {
 
 
   static String getAddConversations({String? personID,String? role, }) =>  '/user-site/conversation/person/paginate/?personId=$personID&role=$role';
-
+  static String startConversation = 'conversation/create';
 }
