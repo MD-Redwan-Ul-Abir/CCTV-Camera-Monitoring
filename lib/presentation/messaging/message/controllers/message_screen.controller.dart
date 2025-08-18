@@ -23,7 +23,7 @@ class MessageScreenController extends GetxController {
     socketController.enterMessagingFlow('MessageScreen');
 
     isLoading.value = true;
-
+    socketController.initializeUserData();
     setupSocketListeners();
     getUserList();
   }
@@ -124,6 +124,7 @@ class MessageScreenController extends GetxController {
   void onClose() {
     scrollController.dispose();
     socketController.dispose();
+    chatItemList.clear();
     // Don't disconnect socket here - let the socket controller manage it
     super.onClose();
   }

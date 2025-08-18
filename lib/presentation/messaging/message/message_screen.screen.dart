@@ -20,8 +20,7 @@ class MessageScreen extends StatefulWidget {
 }
 
 class _MessageScreenState extends State<MessageScreen> {
-  final MessageScreenController messageScreenController =
-      Get.find<MessageScreenController>();
+  final MessageScreenController messageScreenController = Get.find<MessageScreenController>();
 
   final SocketController socketController = Get.put(SocketController());
 
@@ -32,6 +31,12 @@ class _MessageScreenState extends State<MessageScreen> {
   //   messageScreenController.setupSocketListeners();
   //   super.initState();
   //   // Controller initialization is handled in onInit
+  // }
+  // @override
+  // void initState() {
+  //   // TODO: implement initState
+  //   super.initState();
+  //   messageScreenController.  getUserList();
   // }
 
   @override
@@ -427,6 +432,8 @@ Get.toNamed(Routes.ADD_CONVERSATIONS);
   void dispose() {
     // Handle disposal - this will be called when leaving the screen permanently
     messageScreenController.leaveMessageScreen();
+    // messageScreenController.chatItemList.clear();
+    // print(messageScreenController.chatItemList);
     super.dispose();
   }
 }

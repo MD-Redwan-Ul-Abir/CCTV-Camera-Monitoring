@@ -1,6 +1,7 @@
 import 'package:get/get.dart';
 import 'package:intl/intl.dart';
 import 'package:skt_sikring/infrastructure/utils/log_helper.dart';
+import 'package:skt_sikring/presentation/messaging/common/socket_controller.dart';
 import '../../../infrastructure/navigation/routes.dart';
 import '../../../infrastructure/utils/api_client.dart';
 import '../../../infrastructure/utils/api_content.dart';
@@ -18,7 +19,8 @@ class HomeController extends GetxController {
   Rxn<ProfileDetailsModel> profileDetails = Rxn<ProfileDetailsModel>();
   Rxn<GetAllSitesBySiteIdModel> getallSiteBySiteID = Rxn<GetAllSitesBySiteIdModel>();
   Rxn<GetReportByIdModel> getAllReportByDate = Rxn<GetReportByIdModel>();
-  RxBool fatchedData=false.obs;
+  RxBool fetchedData=false.obs;
+   final SocketController _socketController =Get.find<SocketController>();
 
 
   RxString profileImageUrl = "".obs;
@@ -48,7 +50,6 @@ class HomeController extends GetxController {
       localPersonID = await SecureStorageHelper.getString("id");
       role.value = roleString;
 
-
       final response = await _apiClient.getData(ApiConstants.getUserInfo,
         headers: token != null && token!.isNotEmpty  ? {"Authorization": "Bearer $token"} : null,
       );
@@ -57,7 +58,7 @@ class HomeController extends GetxController {
 
         updateProfileImage();
 
-
+        _socketController.connectSocket();
 
       }
 
@@ -120,7 +121,7 @@ class HomeController extends GetxController {
       );
       if (response.statusCode == 200 || response.statusCode == 201) {
         getAllReportByDate.value = GetReportByIdModel.fromJson(response.body);
-        fatchedData.value=true;
+        fetchedData.value=true;
 
       }
     /// -----------------more task to be needed----------------------
@@ -145,6 +146,6 @@ class HomeController extends GetxController {
   @override
   void onClose() {
     super.onClose();
-    fatchedData.value=true;
+    fetchedData.value=true;
   }
 }

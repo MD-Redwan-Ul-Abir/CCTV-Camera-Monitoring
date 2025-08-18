@@ -87,7 +87,7 @@ class ApiConstants {
 
   ///----------------------------------Add Conversation List-------------------------------------------
 
-
-  static String getAddConversations({String? personID,String? role, }) =>  '/user-site/conversation/person/paginate/?personId=$personID&role=$role';
+///-------------------------------------------------------------------------user-site/conversation/person/paginate/without-existing-conv
+  static String getAddConversations({String? personID,String? role, }) =>  '/user-site/conversation/person/paginate/without-existing-conv/?personId=$personID&role=$role';
   static String startConversation = 'conversation/create';
 }

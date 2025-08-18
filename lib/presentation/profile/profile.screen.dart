@@ -6,6 +6,7 @@ import 'package:flutter_svg/svg.dart';
 import 'package:get/get.dart';
 import 'package:skt_sikring/infrastructure/theme/text_styles.dart';
 import 'package:skt_sikring/presentation/messaging/common/socket_controller.dart';
+import 'package:skt_sikring/presentation/messaging/message/controllers/message_screen.controller.dart';
 import 'package:skt_sikring/presentation/shared/widgets/buttons/primary_buttons.dart';
 
 import '../../infrastructure/navigation/routes.dart';
@@ -27,6 +28,7 @@ class ProfileScreen extends StatefulWidget {
 
 class _ProfileScreenState extends State<ProfileScreen> {
   final ProfileController profileController = Get.find<ProfileController>();
+  final MessageScreenController _messageScreenController = Get.find<MessageScreenController>();
 
   @override
   Widget build(BuildContext context) {
@@ -570,9 +572,10 @@ class _ProfileScreenState extends State<ProfileScreen> {
                         child: ElevatedButton(
                           onPressed: () {
 
-
                             clearStoredUserData();
-                            clearStoredUserData();
+                            setState(() {
+                              _messageScreenController.dispose();
+                            });
                             Navigator.of(context).pop();
                             _handleDeleteAccount();
 

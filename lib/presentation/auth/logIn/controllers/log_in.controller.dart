@@ -75,18 +75,6 @@ class LogInController extends GetxController with GetSingleTickerProviderStateMi
         message = loginResponse.value?.message;
         isLoading.value = false;
 
-        // print("-----------------------------storing data started-------------------------------------");
-        // var storedData = await getStoredUserData();
-        // print("------------------------------storing complete and viewed------------------------------------");
-        // storedData.forEach((key, value) {
-        //   print("$key: $value");
-        // });
-
-
-
-
-        // Store all user data in secure storage
-       // homeController.token=loginResponse.value!.data!.attributes!.tokens!.accessToken;
         await addDataInSecureStorage();
 
        Get.snackbar(
@@ -96,17 +84,6 @@ class LogInController extends GetxController with GetSingleTickerProviderStateMi
             colorText: AppColors.primaryLighthover
         );
         Get.offAllNamed(Routes.MAIN_NAVIGATION_SCREEN);
-        // Future.microtask(() async {
-        //   await addDataInSecureStorage();
-        //
-        //   Get.snackbar(
-        //       "Log In Successful!",
-        //       message ?? "Welcome back!",
-        //       backgroundColor: AppColors.primaryNormal,
-        //       colorText: AppColors.primaryLighthover
-        //   );
-        // });
-
 
         return true;
       } else {
@@ -119,12 +96,6 @@ class LogInController extends GetxController with GetSingleTickerProviderStateMi
         } catch (e) {
           isLoading.value = false;
           update();
-
-
-          // CustomSnackbar.show(
-          //   title: "Log In Failed!",
-          //   message:response.body["message"],
-          // );
 
         }
         return false;
@@ -150,7 +121,7 @@ class LogInController extends GetxController with GetSingleTickerProviderStateMi
     final tokens = loginResponse.value!.data!.attributes!.tokens;
 
     try {
-      // Store user basic info
+
       if (user.id != null && user.id!.isNotEmpty) {
         await SecureStorageHelper.setString("id", user.id!);
       }

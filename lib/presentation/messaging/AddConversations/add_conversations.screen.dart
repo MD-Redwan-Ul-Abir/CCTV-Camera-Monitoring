@@ -21,7 +21,7 @@ class AddConversationsScreen extends StatefulWidget {
 
 class _AddConversationsScreenState extends State<AddConversationsScreen> {
   final AddConversationsController addConversationsController =
-  Get.find<AddConversationsController>();
+      Get.find<AddConversationsController>();
   final _formKey = GlobalKey<FormState>();
 
   @override
@@ -137,8 +137,7 @@ class _AddConversationsScreenState extends State<AddConversationsScreen> {
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Text(
-                          "${addConversationsController.userAttributes[index]
-                              .personId!.name}",
+                          "${addConversationsController.userAttributes[index].personId!.name}",
                           style: AppTextStyles.caption1.copyWith(
                             color: AppColors.secondaryLight,
                             fontSize: 14.sp,
@@ -146,8 +145,7 @@ class _AddConversationsScreenState extends State<AddConversationsScreen> {
                         ),
                         SizedBox(height: 4.h),
                         Text(
-                          "${addConversationsController.userAttributes[index]
-                              .personId!.role}",
+                          "${addConversationsController.userAttributes[index].personId!.role}",
                           style: AppTextStyles.caption2.copyWith(
                             color: AppColors.secondaryLight,
                           ),
@@ -159,8 +157,9 @@ class _AddConversationsScreenState extends State<AddConversationsScreen> {
                     GestureDetector(
                       onTap: () {
                         addConversationsController.siteID.value =
-                        addConversationsController.userAttributes[index]
-                            .siteId!;
+                            addConversationsController
+                                .userAttributes[index]
+                                .siteId!;
                         Get.bottomSheet(
                           SingleChildScrollView(
                             child: Form(
@@ -189,7 +188,8 @@ class _AddConversationsScreenState extends State<AddConversationsScreen> {
                                       decoration: BoxDecoration(
                                         color: AppColors.primaryNormal,
                                         borderRadius: BorderRadius.circular(
-                                            2.5.r),
+                                          2.5.r,
+                                        ),
                                       ),
                                     ),
                                     SizedBox(height: 24.h),
@@ -197,11 +197,14 @@ class _AddConversationsScreenState extends State<AddConversationsScreen> {
                                     // User info chip
                                     Container(
                                       padding: EdgeInsets.symmetric(
-                                          horizontal: 16, vertical: 8),
+                                        horizontal: 16,
+                                        vertical: 8,
+                                      ),
                                       decoration: BoxDecoration(
                                         color: AppColors.primaryLight,
                                         borderRadius: BorderRadius.circular(
-                                            20.r),
+                                          20.r,
+                                        ),
                                         border: Border.all(
                                           color: AppColors.primaryNormal
                                               .withOpacity(0.3),
@@ -212,13 +215,10 @@ class _AddConversationsScreenState extends State<AddConversationsScreen> {
                                         children: [
                                           CircleAvatar(
                                             radius: 12.r,
-                                            backgroundColor: AppColors
-                                                .primaryNormal,
+                                            backgroundColor:
+                                                AppColors.primaryNormal,
                                             child: Text(
-                                              "${addConversationsController
-                                                  .userAttributes[index]
-                                                  .personId!.name?[0]
-                                                  .toUpperCase()}",
+                                              "${addConversationsController.userAttributes[index].personId!.name?[0].toUpperCase()}",
                                               style: TextStyle(
                                                 color: Colors.white,
                                                 fontSize: 12,
@@ -228,14 +228,12 @@ class _AddConversationsScreenState extends State<AddConversationsScreen> {
                                           ),
                                           SizedBox(width: 8.w),
                                           Text(
-                                            "${addConversationsController
-                                                .userAttributes[index].personId!
-                                                .name}",
+                                            "${addConversationsController.userAttributes[index].personId!.name}",
                                             style: AppTextStyles.paragraph
                                                 .copyWith(
-                                              color: AppColors.primaryDark,
-                                              fontWeight: FontWeight.w500,
-                                            ),
+                                                  color: AppColors.primaryDark,
+                                                  fontWeight: FontWeight.w500,
+                                                ),
                                           ),
                                         ],
                                       ),
@@ -263,8 +261,9 @@ class _AddConversationsScreenState extends State<AddConversationsScreen> {
 
                                     CustomTextFormField(
                                       hintText: 'Your message',
-                                      controller: addConversationsController
-                                          .sendMessageController,
+                                      controller:
+                                          addConversationsController
+                                              .sendMessageController,
                                       validator: (value) {
                                         if (value == null || value.isEmpty) {
                                           return 'Please enter a message';
@@ -274,41 +273,39 @@ class _AddConversationsScreenState extends State<AddConversationsScreen> {
                                     ),
                                     SizedBox(height: 24.h),
 
-                                     PrimaryButton(
-                                        width: double.infinity,
-                                        onPressed: () async {
-                                          if (_formKey.currentState!
-                                              .validate()) {
-                                            Navigator.of(context).pop();
-                                            List<String> participants = [
-                                              addConversationsController
-                                                  .userAttributes[index]
-                                                  .personId!.userId!
-                                            ];
-                                            if (addConversationsController
-                                                .localPersonID != null) {
-                                              participants.add(
-                                                  addConversationsController
-                                                      .localPersonID!.value);
-                                            }
-                                            bool result = await addConversationsController
-                                                .startChat(
-                                              participants: participants,
-                                              siteId: addConversationsController
-                                                  .siteID.value,
+                                    PrimaryButton(
+                                      width: double.infinity,
+                                      onPressed: () async {
+                                        if (_formKey.currentState!.validate()) {
+                                          Navigator.of(context).pop();
+                                          List<String> participants = [
+                                            addConversationsController.userAttributes[index].personId!.userId!,
+                                          ];
+                                          if (addConversationsController.localPersonID !=
+                                              null) {
+                                            participants.add(
+                                              addConversationsController.localPersonID!.value,
                                             );
-
-                                            if (result == true) {
-                                              addConversationsController.sendMessageController.clear();
-
-                                              Future.delayed(Duration(milliseconds: 300), () {
-                                                addConversationsController.userAttributes.removeAt(index);
-                                              });
-                                            }
                                           }
-                                        },
-                                        text: 'Send message',
-                                 ),
+                                          bool result = await addConversationsController.startChat(
+                                                    participants: participants,
+                                                    siteId: addConversationsController.siteID.value,
+                                                  );
+
+                                          if (result == true) {
+                                            addConversationsController.sendMessageController.clear();
+
+                                            Future.delayed(
+                                              Duration(milliseconds: 300),
+                                              () {
+                                                addConversationsController.userAttributes.removeAt(index);
+                                              },
+                                            );
+                                          }
+                                        }
+                                      },
+                                      text: 'Send message',
+                                    ),
                                   ],
                                 ),
                               ),

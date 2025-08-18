@@ -89,7 +89,7 @@ class CreateReportController extends GetxController {
       if (response.statusCode == 200 || response.statusCode == 201) {
         isLoading.value = false;
 
-        homeController.fatchedData.value=false;
+        homeController.fetchedData.value=false;
         // Clear form after successful submission
         titleController.clear();
         descriptionController.clear();
@@ -97,7 +97,7 @@ class CreateReportController extends GetxController {
         imageController.selectedImages.clear();
         imageController.clearVideo();
 
-        homeController.fatchedData.value=false;
+        homeController.fetchedData.value=false;
 
         Get.snackbar(
             "Report Added",

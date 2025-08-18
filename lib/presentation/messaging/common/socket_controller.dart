@@ -25,13 +25,15 @@ class SocketController extends GetxController {
   void onInit() {
     super.onInit();
 
-    _initializeUserData();
+    initializeUserData();
   }
 
-  Future<void> _initializeUserData() async {
+  Future<void> initializeUserData() async {
     try {
       token.value = await SecureStorageHelper.getString('accessToken');
       userId.value = await SecureStorageHelper.getString('id');
+      print(token.value);
+      print(userId.value);
     } catch (e) {
       LoggerHelper.error('Error initializing user data: $e');
     }
@@ -47,7 +49,7 @@ class SocketController extends GetxController {
     try {
       // Ensure we have token and userId
       if (token.value.isEmpty || userId.value.isEmpty) {
-        await _initializeUserData();
+        await initializeUserData();
       }
 
       if (token.value.isEmpty) {
@@ -105,7 +107,7 @@ class SocketController extends GetxController {
   // Disconnect socket
   void disconnectSocket() {
     if (_socket != null) {
-      LoggerHelper.info('==== Disconnecting socket ====');
+      LoggerHelper.error('==== Disconnecting socket ====');
       _socket?.disconnect();
 
       _socket?.clearListeners();
