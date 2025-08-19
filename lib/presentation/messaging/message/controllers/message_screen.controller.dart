@@ -11,32 +11,36 @@ class MessageScreenController extends GetxController {
   final ScrollController scrollController = ScrollController();
   final CommonController commonController = Get.put(CommonController());
   late final SocketController socketController;
+  String token = '';
+  String userID = '';
 
   RxList<AllConversationList> chatItemList = <AllConversationList>[].obs;
   final RxBool isLoading = true.obs;
 
   @override
-  void onInit() {
+  Future<void> onInit() async {
     super.onInit();
 
-    // Use existing socket controller instance from main navigation
+
     socketController = Get.find<SocketController>();
-
     socketController.enterMessagingFlow('MessageScreen');
-
+    token = await SecureStorageHelper.getString('accessToken');
+    userID = await SecureStorageHelper.getString('id');
     isLoading.value = true;
     setupSocketListeners();
     getUserList();
   }
 
   void setupSocketListeners() {
-    // Listen for conversation list updates
+    print('Data List>>>>>$userID');
+
+
     socketController.on(
-      'conversation-list-updated::${socketController.userId.value}',
-      (data) {
+      'conversation-list-updated::$userID}',
+          (data) {
         // print('=========================${socketController.userId.value}==============================');
         LoggerHelper.info(
-          'Conversation list updated: $data \n\n\n${socketController.userId.value}',
+          'Conversation list updated: $data \n\n\n$userID',
         );
         getUserList();
       },
@@ -44,11 +48,11 @@ class MessageScreenController extends GetxController {
 
     // Listen for user online status updates
     socketController.on(
-      'related-user-online-status::${socketController.userId.value}',
-      (data) {
+      'related-user-online-status::$userID',
+          (data) {
         // print('=========================${socketController.userId.value}==============================');
         LoggerHelper.info(
-          'User online status updated: $data \n\n\n${socketController.userId.value}',
+          'User online status updated: $data \n\n\n$userID',
         );
         getUserList();
       },
@@ -68,7 +72,7 @@ class MessageScreenController extends GetxController {
       'get-all-conversations-with-pagination',
       {"page": 1, "limit": 100},
       ack: (response) async {
-        LoggerHelper.warn(response.toString());
+        LoggerHelper.error(response.toString());
 
         try {
           if (response != null &&
@@ -113,19 +117,20 @@ class MessageScreenController extends GetxController {
 
   // Method to leave message screen
   void leaveMessageScreen({String? toScreen}) {
-
-    socketController.off('conversation-list-updated::${socketController.userId.value}');
-    socketController.off('related-user-online-status::${socketController.userId.value}');
+    socketController.off('conversation-list-updated::$userID');
+    socketController.off('related-user-online-status::$userID');
     socketController.leaveMessagingFlow('MessageScreen', toScreen: toScreen);
   }
 
   // Clear user-specific data (call on logout)
   void clearUserData() {
     chatItemList.clear();
-    socketController.off('conversation-list-updated::${socketController.userId.value}');
-    socketController.off('related-user-online-status::${socketController.userId.value}');
-  }
+    socketController.off('conversation-list-updated::$userID');
+    socketController.off('related-user-online-status::$userID');
 
+
+
+  }
   @override
   void onClose() {
     scrollController.dispose();

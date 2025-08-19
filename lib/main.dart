@@ -28,7 +28,7 @@ void main() async {
     DeviceOrientation.portraitUp,
 
   ]);
-  // Initialize the global network service first
+
   await Get.putAsync<GlobalNetworkService>(() async => GlobalNetworkService());
 
  // SocketController.instance.connectSocket();

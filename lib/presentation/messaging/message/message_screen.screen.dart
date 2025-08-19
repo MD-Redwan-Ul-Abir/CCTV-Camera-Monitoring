@@ -145,6 +145,9 @@ class _MessageScreenState extends State<MessageScreen> {
                   // Main content
                   Obx(() {
                     final chatItemList = messageScreenController.chatItemList;
+
+                    print('List>>>>>>>>>>>>>${chatItemList.length}');
+
                     if (chatItemList.isEmpty) {
                       return Center(
                         child: Padding(
@@ -184,6 +187,8 @@ class _MessageScreenState extends State<MessageScreen> {
                       physics: NeverScrollableScrollPhysics(),
                       itemCount: chatItemList.length,
                       itemBuilder: (context, index) {
+
+
                         final chatItem = chatItemList[index];
 
                         // Extract data from the model
@@ -218,9 +223,7 @@ class _MessageScreenState extends State<MessageScreen> {
                                   .commonController
                                   .senderId
                                   .value = messageScreenController
-                                      .socketController
-                                      .userId
-                                      .value;
+                                      .userID;
 
                               messageScreenController
                                   .commonController
@@ -238,9 +241,7 @@ class _MessageScreenState extends State<MessageScreen> {
                                   .commonController
                                   .token
                                   .value = messageScreenController
-                                      .socketController
-                                      .token
-                                      .value;
+                                      .token;
 
                               messageScreenController
                                   .commonController

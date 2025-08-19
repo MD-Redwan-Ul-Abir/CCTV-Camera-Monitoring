@@ -7,43 +7,25 @@ class MainNavigationScreenController extends GetxController {
   late SocketController socketController;
 
   @override
-  void onInit() {
+  Future<void> onInit() async {
     super.onInit();
-    
-    // Initialize socket controller and connect
-    socketController = Get.put(SocketController(), permanent: true);
-    _initializeSocket();
+    socketController = Get.put(SocketController(), permanent: false);
+    socketController.initializeUserData();
+   await socketController.connectSocket();
   }
 
   void changeIndex(int index) {
     currentIndex.value = index;
   }
 
-  Future<void> _initializeSocket() async {
-    try {
-      LoggerHelper.info('Initializing socket in main navigation');
-      
-      // Initialize user data first
-      await socketController.initializeUserData();
-      
-      // Connect socket if user data is available
-      if (socketController.token.value.isNotEmpty && socketController.userId.value.isNotEmpty) {
-        await socketController.connectSocket();
-        LoggerHelper.info('Socket connected successfully in main navigation');
-      } else {
-        LoggerHelper.warn('User data not available, socket not connected');
-      }
-    } catch (e) {
-      LoggerHelper.error('Error initializing socket in main navigation: $e');
-    }
-  }
 
-  // Method to reconnect socket if needed
-  Future<void> reconnectSocket() async {
-    if (!socketController.isSocketConnected.value) {
-      await _initializeSocket();
-    }
-  }
+
+  // // Method to reconnect socket if needed
+  // Future<void> reconnectSocket() async {
+  //   if (!socketController.isSocketConnected.value) {
+  //     await _initializeSocket();
+  //   }
+  // }
 
   @override
   void onClose() {

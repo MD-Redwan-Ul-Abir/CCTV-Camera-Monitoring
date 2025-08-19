@@ -29,7 +29,8 @@ class ProfileScreen extends StatefulWidget {
 
 class _ProfileScreenState extends State<ProfileScreen> {
   final ProfileController profileController = Get.find<ProfileController>();
-  final MessageScreenController _messageScreenController = Get.find<MessageScreenController>();
+  final MessageScreenController _messageScreenController =
+      Get.find<MessageScreenController>();
   final SocketController _socketController = Get.find<SocketController>();
 
   @override
@@ -76,15 +77,13 @@ class _ProfileScreenState extends State<ProfileScreen> {
                           color: AppColors.grayDarker,
                           // Replace this part in your profile.screen.dart:
                           child: Obx(() {
-                            if(profileController.isLoading.value){
-
+                            if (profileController.isLoading.value) {
                               return Center(
-                                child: CircularProgressIndicator(color: AppColors.primaryNormal),
+                                child: CircularProgressIndicator(
+                                  color: AppColors.primaryNormal,
+                                ),
                               );
-
-                            }else
-
-                            if (profileController
+                            } else if (profileController
                                 .imageController
                                 .selectedImages
                                 .isNotEmpty) {
@@ -573,13 +572,12 @@ class _ProfileScreenState extends State<ProfileScreen> {
                         height: 48.h,
                         child: ElevatedButton(
                           onPressed: () {
-                            // Perform complete socket cleanup first
+                           _socketController.userId='';
+                           _socketController.token='';
                             _socketController.performLogoutCleanup();
-                            
-                            // Clear stored user data
+
                             clearStoredUserData();
 
-                            // Clear message controller data
                             _messageScreenController.clearUserData();
                             _messageScreenController.commonController.clearCommonValues();
 
@@ -655,7 +653,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
   void _handleDeleteAccount() {
     // Show success message
     Get.snackbar(
-      'Logout Successful', 
+      'Logout Successful',
       'You have successfully logged out from your account.',
       backgroundColor: Colors.red,
       colorText: Colors.white,

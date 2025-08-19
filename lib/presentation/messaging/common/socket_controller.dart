@@ -14,8 +14,8 @@ class SocketController extends GetxController {
   final RxString socketStatus = 'disconnected'.obs;
   final RxBool isConnecting = false.obs;
 
-  RxString token = ''.obs;
-  RxString userId = ''.obs;
+  String token = '' ;
+  String userId = '' ;
 
   // Track current screen to manage socket lifecycle
   String _currentScreen = '';
@@ -25,16 +25,16 @@ class SocketController extends GetxController {
   void onInit() {
     super.onInit();
 
-    initializeUserData();
+
   }
 
   Future<void> initializeUserData() async {
-    if(token.value==''|| userId.value==''){
+    if(token ==''|| userId ==''){
       try {
-        token.value = await SecureStorageHelper.getString('accessToken');
-        userId.value = await SecureStorageHelper.getString('id');
-        print(token.value);
-        print(userId.value);
+        token  = await SecureStorageHelper.getString('accessToken');
+        userId  = await SecureStorageHelper.getString('id');
+        print("token for socket connection ===================>$token" );
+        print("User ID for socket connection ===================>$userId");
       } catch (e) {
         LoggerHelper.error('Error initializing user data: $e');
       }
@@ -43,18 +43,18 @@ class SocketController extends GetxController {
 
   // Connect to socket
   Future<void> connectSocket() async {
-    if (isConnecting.value || isSocketConnected.value) return;
+      if (isConnecting.value || isSocketConnected.value) return;
 
     isConnecting.value = true;
     socketStatus.value = 'connecting';
 
     try {
       // Ensure we have token and userId
-      if (token.value.isEmpty || userId.value.isEmpty) {
+      if (token .isEmpty || userId .isEmpty) {
         await initializeUserData();
       }
 
-      if (token.value.isEmpty) {
+      if (token .isEmpty) {
         LoggerHelper.error('No token available for socket connection');
         isConnecting.value = false;
         socketStatus.value = 'error';
@@ -65,7 +65,7 @@ class SocketController extends GetxController {
       _socket = IO.io(ApiConstants.socketUrl, <String, dynamic>{
         'transports': ['websocket'],
         'autoConnect': false,
-        'extraHeaders': {'token': await SecureStorageHelper.getString('accessToken')},
+        'extraHeaders': {'token': token},
       });
 
       // Setup event listeners
@@ -80,6 +80,7 @@ class SocketController extends GetxController {
       socketStatus.value = 'error';
       isConnecting.value = false;
     }
+
   }
 
   void _setupSocketListeners() {
@@ -124,8 +125,8 @@ class SocketController extends GetxController {
   // Clear all user-specific data (call on logout)
   void clearUserData() {
     disconnectSocket();
-    token.value = '';
-    userId.value = '';
+    token  = '';
+    userId  = '';
     _currentScreen = '';
     _isInMessagingFlow = false;
   }
@@ -143,6 +144,7 @@ class SocketController extends GetxController {
     LoggerHelper.info('Performing complete socket logout cleanup');
 
     if (_socket != null) {
+
       _socket?.clearListeners();
       _socket?.disconnect();
       _socket?.dispose();
@@ -150,8 +152,8 @@ class SocketController extends GetxController {
     }
     
 
-    token.value = '';
-    userId.value = '';
+    token  = '';
+    userId  = '';
     isSocketConnected.value = false;
     socketStatus.value = 'disconnected';
     isConnecting.value = false;
@@ -237,6 +239,7 @@ class SocketController extends GetxController {
   @override
   void onClose() {
     disconnectSocket();
+    performLogoutCleanup();
     super.onClose();
   }
 }
