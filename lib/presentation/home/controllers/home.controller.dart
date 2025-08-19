@@ -20,7 +20,7 @@ class HomeController extends GetxController {
   Rxn<GetAllSitesBySiteIdModel> getallSiteBySiteID = Rxn<GetAllSitesBySiteIdModel>();
   Rxn<GetReportByIdModel> getAllReportByDate = Rxn<GetReportByIdModel>();
   RxBool fetchedData=false.obs;
-   final SocketController _socketController =Get.find<SocketController>();
+   late final SocketController _socketController;
 
 
   RxString profileImageUrl = "".obs;
@@ -29,6 +29,18 @@ class HomeController extends GetxController {
   String? localPersonID;
 
   RxString role = ''.obs;
+
+  @override
+  void onInit() {
+    super.onInit();
+    
+    // Use existing socket controller instance from main navigation
+    try {
+      _socketController = Get.find<SocketController>();
+    } catch (e) {
+      LoggerHelper.error('Socket controller not found in home controller: $e');
+    }
+  }
 
   void updateProfileImage() {
     try {
@@ -58,7 +70,8 @@ class HomeController extends GetxController {
 
         updateProfileImage();
 
-        _socketController.connectSocket();
+        // Socket should already be connected from main navigation
+        // No need to connect here
 
       }
 

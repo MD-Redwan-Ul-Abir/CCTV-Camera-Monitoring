@@ -5,7 +5,7 @@ import 'package:flutter/services.dart';
 import 'package:flutter_phoenix/flutter_phoenix.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
-import 'package:skt_sikring/core/socket/socket_service.dart';
+
 import 'package:skt_sikring/infrastructure/utils/api_client.dart';
 import 'package:skt_sikring/presentation/languageChanging/appConst.dart';
 import 'package:skt_sikring/presentation/languageChanging/di.dart' as di;
@@ -31,7 +31,7 @@ void main() async {
   // Initialize the global network service first
   await Get.putAsync<GlobalNetworkService>(() async => GlobalNetworkService());
 
- SocketController.instance.connectSocket();
+ // SocketController.instance.connectSocket();
   Map<String, Map<String, String>> languages = await di.init();
 
 

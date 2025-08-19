@@ -7,6 +7,7 @@ import 'package:get/get.dart';
 import 'package:skt_sikring/infrastructure/theme/text_styles.dart';
 import 'package:skt_sikring/presentation/messaging/common/socket_controller.dart';
 import 'package:skt_sikring/presentation/messaging/message/controllers/message_screen.controller.dart';
+import 'package:skt_sikring/presentation/messaging/common/commonController.dart';
 import 'package:skt_sikring/presentation/shared/widgets/buttons/primary_buttons.dart';
 
 import '../../infrastructure/navigation/routes.dart';
@@ -29,6 +30,7 @@ class ProfileScreen extends StatefulWidget {
 class _ProfileScreenState extends State<ProfileScreen> {
   final ProfileController profileController = Get.find<ProfileController>();
   final MessageScreenController _messageScreenController = Get.find<MessageScreenController>();
+  final SocketController _socketController = Get.find<SocketController>();
 
   @override
   Widget build(BuildContext context) {
@@ -571,14 +573,18 @@ class _ProfileScreenState extends State<ProfileScreen> {
                         height: 48.h,
                         child: ElevatedButton(
                           onPressed: () {
-
+                            // Perform complete socket cleanup first
+                            _socketController.performLogoutCleanup();
+                            
+                            // Clear stored user data
                             clearStoredUserData();
-                            setState(() {
-                              _messageScreenController.dispose();
-                            });
+
+                            // Clear message controller data
+                            _messageScreenController.clearUserData();
+                            _messageScreenController.commonController.clearCommonValues();
+
                             Navigator.of(context).pop();
                             _handleDeleteAccount();
-
                           },
                           style: ElevatedButton.styleFrom(
                             backgroundColor: AppColors.redDark, // Deep red
@@ -647,22 +653,16 @@ class _ProfileScreenState extends State<ProfileScreen> {
   }
 
   void _handleDeleteAccount() {
-    // Add your delete account logic here
-    // For example:
-    // controller.deleteAccount();
-    // Or show a loading dialog, make API call, etc.
-
-    // You can also show a success message
+    // Show success message
     Get.snackbar(
-      'Logout Successful',
+      'Logout Successful', 
       'You have successfully logged out from your account.',
       backgroundColor: Colors.red,
       colorText: Colors.white,
     );
-SocketController.instance.disconnectSocket();
+
     // Navigate back to login or home screen
     Phoenix.rebirth(context);
-
     Get.offAllNamed(Routes.LOG_IN);
   }
 }

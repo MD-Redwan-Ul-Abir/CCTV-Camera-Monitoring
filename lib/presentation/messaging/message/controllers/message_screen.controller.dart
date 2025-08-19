@@ -18,12 +18,13 @@ class MessageScreenController extends GetxController {
   @override
   void onInit() {
     super.onInit();
+
+    // Use existing socket controller instance from main navigation
     socketController = Get.find<SocketController>();
 
     socketController.enterMessagingFlow('MessageScreen');
 
     isLoading.value = true;
-    socketController.initializeUserData();
     setupSocketListeners();
     getUserList();
   }
@@ -112,20 +113,26 @@ class MessageScreenController extends GetxController {
 
   // Method to leave message screen
   void leaveMessageScreen({String? toScreen}) {
-    // Remove specific listeners for this screen
-    // socketController.off('conversation-list-updated::${socketController.userId.value}');
-    // socketController.off('related-user-online-status::${socketController.userId.value}');
 
-    // Notify socket controller about leaving
+    socketController.off('conversation-list-updated::${socketController.userId.value}');
+    socketController.off('related-user-online-status::${socketController.userId.value}');
     socketController.leaveMessagingFlow('MessageScreen', toScreen: toScreen);
+  }
+
+  // Clear user-specific data (call on logout)
+  void clearUserData() {
+    chatItemList.clear();
+    socketController.off('conversation-list-updated::${socketController.userId.value}');
+    socketController.off('related-user-online-status::${socketController.userId.value}');
   }
 
   @override
   void onClose() {
     scrollController.dispose();
-    socketController.dispose();
+
+    commonController.clearCommonValues();
     chatItemList.clear();
-    // Don't disconnect socket here - let the socket controller manage it
+
     super.onClose();
   }
 }

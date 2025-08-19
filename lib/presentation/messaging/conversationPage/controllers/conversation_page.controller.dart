@@ -45,10 +45,11 @@ class ConversationPageController extends GetxController {
   void onInit() {
     super.onInit();
 
+    // Use existing socket controller instance from main navigation
     socketController = Get.find<SocketController>();
     currentUserId.value = commonController.senderId.value;
 
-    // No need to connect socket here - it should already be connected
+    // Socket should already be connected from main navigation
     // Just setup listeners and join conversation
     joinConversation();
     setupScrollListener();
