@@ -29,8 +29,8 @@ class MainNavigationScreenControllerBinding extends Bindings {
     Get.lazyPut<MessageScreenController>(
           () => MessageScreenController(),
     );
-    // Get.lazyPut<HomeController>(
-    //       () => HomeController(),
-    // );
+    Get.lazyPut<HomeController>(
+          () => HomeController(),
+    );
   }
 }

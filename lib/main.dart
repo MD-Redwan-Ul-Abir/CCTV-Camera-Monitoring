@@ -1,9 +1,12 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_phoenix/flutter_phoenix.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
-import 'package:skt_sikring/core/socket/socket_service.dart';
+
+import 'package:skt_sikring/infrastructure/utils/api_client.dart';
 import 'package:skt_sikring/presentation/languageChanging/appConst.dart';
 import 'package:skt_sikring/presentation/languageChanging/di.dart' as di;
 import 'package:skt_sikring/presentation/languageChanging/localizationController.dart';
@@ -17,6 +20,7 @@ import 'infrastructure/theme/app_colors.dart';
 
 
 void main() async {
+  HttpOverrides.global = MyHttpOverrides();
   WidgetsFlutterBinding.ensureInitialized();
 
 
@@ -24,10 +28,10 @@ void main() async {
     DeviceOrientation.portraitUp,
 
   ]);
-  // Initialize the global network service first
+
   await Get.putAsync<GlobalNetworkService>(() async => GlobalNetworkService());
 
- SocketController.instance.connectSocket();
+ // SocketController.instance.connectSocket();
   Map<String, Map<String, String>> languages = await di.init();
 
 

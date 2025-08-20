@@ -14,8 +14,7 @@ import '../shared/widgets/bottomNav/custom_nav_bar.dart';
 import '../shared/widgets/bottomNav/nav_bar_model.dart';
 import 'controllers/main_navigation_screen.controller.dart';
 
-class MainNavigationScreenScreen
-    extends GetView<MainNavigationScreenController> {
+class MainNavigationScreenScreen extends GetView<MainNavigationScreenController> {
   const MainNavigationScreenScreen({super.key});
   @override
   Widget build(BuildContext context) {
@@ -42,10 +41,10 @@ class MainNavigationScreenScreen
 
     // Define your screens corresponding to each nav item
     final List<Widget> screens = [
-      const HomeScreen(), // Your modified home screen
-      const MessageScreen(), // Placeholder
-      const ReportScreen(), // Placeholder
-      const ProfileScreen(), // Placeholder
+      const  HomeScreen(),
+      const  MessageScreen(),
+      const  ReportScreen(),
+      const  ProfileScreen(),
     ];
 
 

@@ -8,8 +8,16 @@ class CommonController extends GetxController {
   RxString profileImage = ''.obs;
   RxString token = ''.obs;
 
-  // Get socket controller instance
-  SocketController get socketController => Get.find<SocketController>();
+
+  // SocketController get socketController => Get.find<SocketController>();
+
+  Future<void> clearCommonValues()async {
+     senderId.value = '' ;
+     conversationId.value = '' ;
+     userName.value = '' ;
+     profileImage.value = '' ;
+    token.value = '' ;
+  }
 
   // @override
   // void onInit() {

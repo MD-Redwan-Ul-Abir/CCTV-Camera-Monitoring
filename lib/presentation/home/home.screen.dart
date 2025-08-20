@@ -23,7 +23,7 @@ class _HomeScreenState extends State<HomeScreen> {
   @override
   void initState() {
     super.initState();
-    if(homeController.fatchedData==false){
+    if(homeController.fetchedData==false){
       WidgetsBinding.instance.addPostFrameCallback((__) async {
         await homeController.getProfile();
         await homeController.getAllYourSites();
