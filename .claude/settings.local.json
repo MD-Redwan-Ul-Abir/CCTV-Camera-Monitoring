@@ -1,7 +1,11 @@
 {
   "permissions": {
     "allow": [
-      "Bash(flutter analyze:*)"
+      "Bash(flutter analyze:*)",
+      "Bash(mkdir:*)",
+      "Bash(dart:*)",
+      "WebSearch",
+      "WebFetch(domain:developers.weglot.com)"
     ],
     "deny": [],
     "ask": []

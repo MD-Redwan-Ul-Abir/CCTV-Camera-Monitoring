@@ -18,16 +18,9 @@ class SocketController extends GetxController {
   String token = '' ;
   String userId = '' ;
 
-  // Track current screen to manage socket lifecycle
   String _currentScreen = '';
   bool _isInMessagingFlow = false;
 
-  @override
-  void onInit() {
-    super.onInit();
-
-
-  }
 
   Future<void> initializeUserData() async {
     if(token ==''|| userId ==''){
