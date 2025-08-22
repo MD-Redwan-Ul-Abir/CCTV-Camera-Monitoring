@@ -14,8 +14,17 @@ import '../shared/widgets/bottomNav/custom_nav_bar.dart';
 import '../shared/widgets/bottomNav/nav_bar_model.dart';
 import 'controllers/main_navigation_screen.controller.dart';
 
-class MainNavigationScreenScreen extends GetView<MainNavigationScreenController> {
+class MainNavigationScreenScreen extends StatefulWidget {
   const MainNavigationScreenScreen({super.key});
+
+  @override
+  State<MainNavigationScreenScreen> createState() => _MainNavigationScreenScreenState();
+}
+
+class _MainNavigationScreenScreenState extends State<MainNavigationScreenScreen> {
+  final MainNavigationScreenController mainNavigationScreenController = Get.find<MainNavigationScreenController>();
+
+
   @override
   Widget build(BuildContext context) {
 
@@ -50,11 +59,11 @@ class MainNavigationScreenScreen extends GetView<MainNavigationScreenController>
 
 
     return Obx(() => Scaffold(
-      body: screens[controller.currentIndex.value],
+      body: screens[mainNavigationScreenController.currentIndex.value],
       bottomNavigationBar: CustomBottomNavBar(
-        currentIndex: controller.currentIndex.value,
+        currentIndex: mainNavigationScreenController.currentIndex.value,
         onTap: (index) {
-          controller.changeIndex(index);
+          mainNavigationScreenController.changeIndex(index);
         },
         items: navItems,
         backgroundColor: AppColors.secondaryDark,
@@ -66,4 +75,5 @@ class MainNavigationScreenScreen extends GetView<MainNavigationScreenController>
       ),
     ));
   }
+
 }

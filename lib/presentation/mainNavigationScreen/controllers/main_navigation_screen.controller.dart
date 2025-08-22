@@ -29,6 +29,9 @@ class MainNavigationScreenController extends GetxController {
 
   @override
   void onClose() {
+    socketController.disconnectSocket();
+    socketController.dispose();
+
     // Don't disconnect socket here - it should persist across navigation
     // Socket will be disconnected only on logout
     super.onClose();

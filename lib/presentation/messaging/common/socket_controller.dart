@@ -14,6 +14,7 @@ class SocketController extends GetxController {
   final RxString socketStatus = 'disconnected'.obs;
   final RxBool isConnecting = false.obs;
 
+
   String token = '' ;
   String userId = '' ;
 
@@ -65,6 +66,7 @@ class SocketController extends GetxController {
       _socket = IO.io(ApiConstants.socketUrl, <String, dynamic>{
         'transports': ['websocket'],
         'autoConnect': false,
+        'forceNew': true,
         'extraHeaders': {'token': token},
       });
 
