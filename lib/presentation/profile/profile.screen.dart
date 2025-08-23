@@ -5,10 +5,12 @@ import 'package:flutter_svg/svg.dart';
 
 import 'package:get/get.dart';
 import 'package:skt_sikring/infrastructure/theme/text_styles.dart';
+import 'package:skt_sikring/presentation/languageChanging/localizationController.dart';
 import 'package:skt_sikring/presentation/messaging/common/socket_controller.dart';
 import 'package:skt_sikring/presentation/messaging/message/controllers/message_screen.controller.dart';
 import 'package:skt_sikring/presentation/messaging/common/commonController.dart';
 import 'package:skt_sikring/presentation/shared/widgets/buttons/primary_buttons.dart';
+import '../languageChanging/appString.dart';
 
 import '../../infrastructure/navigation/routes.dart';
 import '../../infrastructure/theme/app_colors.dart';
@@ -47,7 +49,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
           scrolledUnderElevation: 0,
           automaticallyImplyLeading: false,
           title: Text(
-            "Profile & Settings",
+            AppStrings.profileSettingsTitle.tr,
             style: AppTextStyles.headLine6.copyWith(
               fontWeight: FontWeight.w400,
               height: 1.5,
@@ -176,7 +178,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                   Get.toNamed(
                     Routes.CUSTOM_PRIVACY_POLICY,
                     arguments: {
-                      'title': 'Edit Profile',
+                      'title': AppStrings.editProfileButton.tr,
                       'customWidget': Form(
                         key: profileController.editProfileFormKey,
                         child: Column(
@@ -221,7 +223,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                 onPressed: () async {
                                   await profileController.editProfile();
                                 },
-                                text: 'Update',
+                                text: AppStrings.updateButton.tr,
                               );
                             }),
                           ],
@@ -230,7 +232,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                     },
                   );
                 },
-                text: "Edit Profile",
+                text: AppStrings.editProfileButton.tr,
               ),
               SizedBox(height: 50.h),
               Container(
@@ -248,13 +250,13 @@ class _ProfileScreenState extends State<ProfileScreen> {
                       Align(
                         alignment: Alignment.topLeft,
                         child: Text(
-                          "Account Settings",
+                          AppStrings.accountSettingsTitle.tr,
                           style: AppTextStyles.paragraph3,
                         ),
                       ),
                       Spacer(),
                       ProfileSettings(
-                        text: 'Change Password',
+                        text: AppStrings.changePasswordMenuItem.tr,
                         leftIcon: AppImages.lock,
                         onTap: () {
                           Get.toNamed(Routes.CHANGE_PASSWORD);
@@ -262,7 +264,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                       ),
                       Spacer(),
                       ProfileSettings(
-                        text: 'Privacy Settings',
+                        text: AppStrings.privacySettingsMenuItem.tr,
                         leftIcon: AppImages.settingsIcon,
                         onTap: () {
                           Get.toNamed(Routes.PRIVACY_SETTINGS);
@@ -271,7 +273,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                       Spacer(),
 
                       ProfileSettings(
-                        text: 'Reviews',
+                        text: AppStrings.reviewsMenuItem.tr,
                         leftIcon: AppImages.ratingsIcon,
                         onTap: () {
                           // Reset rating before navigating
@@ -281,7 +283,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                           Get.toNamed(
                             Routes.CUSTOM_PRIVACY_POLICY,
                             arguments: {
-                              'title': 'Reviews',
+                              'title': AppStrings.reviewsMenuItem.tr,
                               'customWidget': Form(
                                 key: profileController.reviewFormKey,
                                 child: Column(
@@ -293,7 +295,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                       width: 292.w,
                                     ),
                                     Text(
-                                      'Rating',
+                                      AppStrings.ratingLabel.tr,
                                       style: AppTextStyles.textButton.copyWith(
                                         fontWeight: FontWeight.w600,
                                       ),
@@ -318,7 +320,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                     Align(
                                       alignment: Alignment.topLeft,
                                       child: Text(
-                                        'Comment (optional)',
+                                        AppStrings.commentOptionalLabel.tr,
                                         style: AppTextStyles.button,
                                       ),
                                     ),
@@ -326,7 +328,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                     CustomTextFormField(
                                       controller:
                                           profileController.commentController,
-                                      hintText: 'Write your opinion',
+                                      hintText: AppStrings.writeOpinionHint.tr,
                                       keyboardType: 'multiline',
 
                                       validator: (value) {
@@ -334,7 +336,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                         // But you can add validation if needed
                                         if (value != null &&
                                             value.trim().length > 500) {
-                                          return 'Comment should not exceed 500 characters';
+                                          return AppStrings.commentLengthValidation.tr;
                                         }
                                         return null;
                                       },
@@ -357,7 +359,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                           await profileController
                                               .submitReview();
                                         },
-                                        text: 'Submit',
+                                        text: AppStrings.submitButton.tr,
                                       );
                                     }),
                                   ],
@@ -370,7 +372,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
 
                       Spacer(),
                       ProfileSettings(
-                        text: 'Language',
+                        text: AppStrings.languageMenuItem.tr,
                         leftIcon: AppImages.language,
                         onTap: () {
                           _showLanguageDropdown(context);
@@ -378,7 +380,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                       ),
                       Spacer(),
                       ProfileSettings(
-                        text: 'Log out',
+                        text: AppStrings.logoutMenuItem.tr,
                         leftIcon: AppImages.undo,
                         onTap: () {
                           // implement it here
@@ -483,9 +485,14 @@ class _ProfileScreenState extends State<ProfileScreen> {
   }
 
   void _selectLanguage(String language) {
-    // Handle language selection here
-    // You can save the selected language to SharedPreferences or update the app loca le
-
+    final localizationController = Get.find<LocalizationController>();
+    if (language == 'Danish') {
+      localizationController.setLanguage(Locale('da', 'DK'));
+    } else if (language == 'Swedish') {
+      localizationController.setLanguage(Locale('sv', 'SE'));
+    } else {
+      localizationController.setLanguage(Locale('en', 'US'));
+    }
     Get.snackbar(
       'Language Changed',
       'Language changed to $language',
@@ -493,15 +500,6 @@ class _ProfileScreenState extends State<ProfileScreen> {
       colorText: Colors.white,
       duration: Duration(seconds: 2),
     );
-
-    // Example: Update app locale (you'll need to implement this based on your localization setup)
-    if (language == 'Danish') {
-      Get.updateLocale(Locale('da', 'DK'));
-    } else if (language == 'Swedish') {
-      Get.updateLocale(Locale('sv', 'SE'));
-    } else {
-      Get.updateLocale(Locale('en', 'US'));
-    }
   }
 
   void _showDeleteAccountDialog(BuildContext context) {

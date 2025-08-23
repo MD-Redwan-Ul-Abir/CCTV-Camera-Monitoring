@@ -5,6 +5,7 @@ import 'package:get/get.dart';
 import 'package:skt_sikring/infrastructure/theme/text_styles.dart';
 import 'package:skt_sikring/infrastructure/utils/api_content.dart';
 import 'package:skt_sikring/presentation/shared/widgets/buttons/primary_buttons.dart';
+import '../languageChanging/appString.dart';
 import '../../infrastructure/navigation/routes.dart';
 import '../../infrastructure/theme/app_colors.dart';
 import '../../infrastructure/utils/app_images.dart';
@@ -159,7 +160,7 @@ class _HomeScreenState extends State<HomeScreen> {
                                                   ?.attributes?.name ?? 'User';
 
                                               return Text(
-                                                'Welcome, $userName',
+                                                '${AppStrings.welcomeMessage.tr}, $userName',
                                                 style: AppTextStyles.textButton
                                                     .copyWith(
                                                   color: AppColors.secondaryLight,
@@ -170,7 +171,7 @@ class _HomeScreenState extends State<HomeScreen> {
                                             Obx(() {
                                               return Text(
                                                 homeController.role.value.isEmpty
-                                                    ? 'Role'
+                                                    ? AppStrings.roleDefault.tr
                                                     : homeController.role.value,
                                                 style: AppTextStyles.textCaption1
                                                     .copyWith(
@@ -236,7 +237,7 @@ class _HomeScreenState extends State<HomeScreen> {
                                       final profileData = homeController
                                           .profileDetails.value;
                                       final userName = profileData?.data
-                                          ?.attributes?.name ?? 'No User Found';
+                                          ?.attributes?.name ?? AppStrings.noUserFound.tr;
 
                                       return Text(
                                         userName,
@@ -272,7 +273,7 @@ class _HomeScreenState extends State<HomeScreen> {
                       Align(
                         alignment: Alignment.centerLeft,
                         child: Text(
-                          'Your sites',
+                          AppStrings.yourSitesTitle.tr,
                           style: AppTextStyles.headLine6.copyWith(height: 0,
                               color: AppColors.secondaryLight),
                         ),
@@ -286,7 +287,7 @@ class _HomeScreenState extends State<HomeScreen> {
                             siteData!.data!.attributes!.results!.isEmpty) {
                           return Center(
                             child: Text(
-                              'No sites available',
+                              AppStrings.noSitesAvailable.tr,
                               style: AppTextStyles.caption1.copyWith(
                                 color: AppColors.grayNormal,
                               ),
@@ -319,7 +320,7 @@ class _HomeScreenState extends State<HomeScreen> {
                                         vertical: 4.0, horizontal: 8),
                                     child: Text(
                                       results[index].siteId?.name ??
-                                          'No site found',
+                                          AppStrings.noSiteFound.tr,
                                       style: AppTextStyles.button.copyWith(
                                         color: AppColors.secondaryDarker,
                                       ),
@@ -356,7 +357,7 @@ class _HomeScreenState extends State<HomeScreen> {
                       Align(
                         alignment: Alignment.topLeft,
                         child: Text(
-                          "Today's Report",
+                          AppStrings.todaysReportTitle.tr,
                           style: AppTextStyles.headLine6.copyWith(
                             color: AppColors.primaryLight,
                             height: 1.5,
@@ -372,7 +373,7 @@ class _HomeScreenState extends State<HomeScreen> {
                             todaysReport!.data!.attributes!.results!.isEmpty) {
                           return Center(
                             child: Text(
-                              'Nothing Reported Today',
+                              AppStrings.nothingReportedToday.tr,
                               style: AppTextStyles.caption1.copyWith(
                                 color: AppColors.grayNormal,
                               ),
@@ -445,7 +446,7 @@ class _HomeScreenState extends State<HomeScreen> {
                                         Get.toNamed(Routes.DETAILS_REPORT,arguments:reportData[index].reportId!.reportId);
                                       },
                                       child: Text(
-                                        'View Reports',
+                                        AppStrings.viewReportsLink.tr,
                                         style: AppTextStyles.caption1.copyWith(
                                           color: AppColors.primaryNormal,
                                           height: 1.3,
@@ -466,7 +467,7 @@ class _HomeScreenState extends State<HomeScreen> {
                         onPressed: () {
                           Get.toNamed(Routes.CREATE_REPORT);
                         },
-                        text: 'Create Report',
+                        text: AppStrings.createReportButton.tr,
                       ),
                       SizedBox(height: 16.h),
                     ],

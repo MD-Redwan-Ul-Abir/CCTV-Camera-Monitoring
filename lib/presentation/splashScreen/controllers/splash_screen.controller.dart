@@ -1,14 +1,12 @@
 import 'package:get/get.dart';
+import 'package:skt_sikring/presentation/languageChanging/localizationController.dart';
 
 import '../../../infrastructure/navigation/routes.dart';
 import '../../../infrastructure/utils/secure_storage_helper.dart';
 import '../../shared/widgets/networkStatus/globalNetworkService.dart';
 import '../../shared/widgets/networkStatus/network.dart';
 
-
 class SplashScreenController extends GetxController {
-
-
   final count = 0.obs;
   RxBool isConnected = false.obs;
   final NetworkConnectivity connectivity = NetworkConnectivity();
@@ -24,22 +22,25 @@ class SplashScreenController extends GetxController {
 
   void startSplashTimer() {
     Future.delayed(Duration(seconds: 3), () async {
+      final LocalizationController localizationController =
+          Get.find<LocalizationController>();
+      localizationController.loadCurrentLanguage();
       // Navigate to next page, replace '/next' with your route
       // var token = await SecureStorageHelper.getString("accessToken");
       //final HomeController homeController = Get.find<HomeController>();
-      if(isConnected.value==true){
+      if (isConnected.value == true) {
         var storedData = await getStoredUserData();
 
-        if(storedData['accessToken']!=''){
+        if (storedData['accessToken'] != '') {
           // Start global monitoring before navigating to main app
           _networkService.startGlobalMonitoring();
           Get.offAllNamed(Routes.MAIN_NAVIGATION_SCREEN);
-        }else{
+        } else {
           // Start global monitoring before navigating to language selection
           _networkService.startGlobalMonitoring();
           Get.offNamed(Routes.SPLASH_LANGUAGE);
         }
-      }else{
+      } else {
         Get.toNamed(Routes.NO_INTERNET);
       }
     });

@@ -4,6 +4,7 @@ import 'package:flutter_svg/svg.dart';
 
 import 'package:get/get.dart';
 import 'package:skt_sikring/presentation/shared/widgets/buttons/primary_buttons.dart';
+import '../languageChanging/appString.dart';
 
 import '../../infrastructure/theme/app_colors.dart';
 import '../../infrastructure/theme/text_styles.dart';
@@ -28,7 +29,7 @@ class ChangePasswordScreen extends GetView<ChangePasswordController> {
         automaticallyImplyLeading: false,
         toolbarHeight: 80.h,
         title: Text(
-          "Change password",
+          AppStrings.changePasswordTitle.tr,
           style: AppTextStyles.paragraph3.copyWith(
             fontWeight: FontWeight.w400,
             height: 1.5,
@@ -63,7 +64,7 @@ class ChangePasswordScreen extends GetView<ChangePasswordController> {
 
             children: [
               CustomTextFormField(
-                hintText: "Current password",
+                hintText: AppStrings.currentPasswordHint.tr,
 
                 controller: changePasswordController.currentPasswordController,
                 keyboardType: 'visiblePassword',
@@ -71,7 +72,7 @@ class ChangePasswordScreen extends GetView<ChangePasswordController> {
               ),
               SizedBox(height: 16.h),
               CustomTextFormField(
-                hintText: "New Password",
+                hintText: AppStrings.newPasswordHint.tr,
                 onChanged: (_) => changePasswordController.validatePasswords(),
                 controller: changePasswordController.newPasswordController,
                 keyboardType: 'visiblePassword',
@@ -79,7 +80,7 @@ class ChangePasswordScreen extends GetView<ChangePasswordController> {
               ),
               SizedBox(height: 16.h),
               CustomTextFormField(
-                hintText: "Confirm New Password",
+                hintText: AppStrings.confirmNewPasswordHint.tr,
                 onChanged: (_) => changePasswordController.validatePasswords(),
                 controller: changePasswordController.confirmPasswordController,
                 keyboardType: 'visiblePassword',
@@ -104,7 +105,7 @@ class ChangePasswordScreen extends GetView<ChangePasswordController> {
                     changePasswordController.changePassword();
                   }
                       : null,
-                  text: "Done",
+                  text: AppStrings.doneButton.tr,
                 );
               }),
             ],

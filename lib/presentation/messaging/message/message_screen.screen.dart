@@ -3,6 +3,7 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:skt_sikring/presentation/messaging/common/socket_controller.dart';
+import '../../languageChanging/appString.dart';
 import '../../../app/routes/app_routes.dart';
 import '../../../infrastructure/theme/app_colors.dart';
 import '../../../infrastructure/theme/text_styles.dart';
@@ -35,7 +36,7 @@ class _MessageScreenState extends State<MessageScreen> {
           scrolledUnderElevation: 0,
           automaticallyImplyLeading: false,
           title: Text(
-            "Message",
+            AppStrings.messageTitle.tr,
             style: AppTextStyles.headLine6.copyWith(
               fontWeight: FontWeight.w400,
               height: 1.5,
@@ -67,7 +68,7 @@ class _MessageScreenState extends State<MessageScreen> {
                     crossAxisAlignment: CrossAxisAlignment.center,
                     children: [
                       Text(
-                        'Message',
+                        AppStrings.messageTitle.tr,
                         style: AppTextStyles.headLine6.copyWith(height: 1.5),
                       ),
                       // PrimaryButton(onPressed: () {  }, text: 'Add User',height: 42.h,
@@ -84,7 +85,7 @@ class _MessageScreenState extends State<MessageScreen> {
                           ),
                           child: Center(child: Padding(
                             padding:  EdgeInsets.symmetric(horizontal: 16.w,vertical: 8.h),
-                            child: Text("Add User",style: AppTextStyles.caption1.copyWith(color: AppColors.secondaryLight),),
+                            child: Text(AppStrings.addUserButton.tr,style: AppTextStyles.caption1.copyWith(color: AppColors.secondaryLight),),
                           ),),
                         ),
                       )

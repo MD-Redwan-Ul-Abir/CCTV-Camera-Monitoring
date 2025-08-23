@@ -3,6 +3,7 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 import 'package:get/get.dart';
 import 'package:skt_sikring/infrastructure/utils/app_images.dart';
+import '../languageChanging/appString.dart';
 
 import '../../infrastructure/theme/app_colors.dart';
 import '../home/home.screen.dart';
@@ -32,19 +33,19 @@ class _MainNavigationScreenScreenState extends State<MainNavigationScreenScreen>
     final List<CustomNavItem> navItems = [
       CustomNavItem(
 
-        label: 'Home', svgAssetPath: AppImages.home,
+        label: AppStrings.homeNavLabel.tr, svgAssetPath: AppImages.home,
       ),
       CustomNavItem(
 
-        label: 'Message', svgAssetPath: AppImages.message,
+        label: AppStrings.messageNavLabel.tr, svgAssetPath: AppImages.message,
       ),
       CustomNavItem(
 
-        label: 'Report', svgAssetPath: AppImages.report,
+        label: AppStrings.reportNavLabel.tr, svgAssetPath: AppImages.report,
       ),
       CustomNavItem(
 
-        label: 'Profile', svgAssetPath: AppImages.profile2,
+        label: AppStrings.profileNavLabel.tr, svgAssetPath: AppImages.profile2,
       ),
     ];
 

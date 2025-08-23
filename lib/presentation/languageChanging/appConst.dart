@@ -12,10 +12,10 @@ class AppConstants {
         countryCode: 'US',
         languageCode: 'en'),
     LanguageModel(
-        languageName: AppStrings.spanish,
-        countryCode: 'ES',
-        languageCode: 'es'),
+        languageName: AppStrings.danish,
+        countryCode: 'DK',
+        languageCode: 'da'),
     LanguageModel(
-        languageName: AppStrings.french, countryCode: 'FR', languageCode: 'fr'),
+        languageName: AppStrings.swedish, countryCode: 'SE', languageCode: 'sv'),
   ];
 }

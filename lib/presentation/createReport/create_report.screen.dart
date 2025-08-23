@@ -6,6 +6,7 @@ import 'package:flutter_svg/svg.dart';
 import 'package:get/get.dart';
 import 'package:skt_sikring/presentation/shared/widgets/buttons/primary_buttons.dart';
 import 'package:skt_sikring/presentation/shared/widgets/custom_text_form_field.dart';
+import '../languageChanging/appString.dart';
 
 import '../../infrastructure/theme/app_colors.dart';
 import '../../infrastructure/theme/text_styles.dart';
@@ -42,7 +43,7 @@ class _CreateReportScreenState extends State<CreateReportScreen> {
         automaticallyImplyLeading: false,
         toolbarHeight: 70.h,
         title: Text(
-          "Create reports",
+          AppStrings.createReportsTitle.tr,
           style: AppTextStyles.headLine6.copyWith(
             fontWeight: FontWeight.w400,
             height: 1.5,
@@ -81,18 +82,18 @@ class _CreateReportScreenState extends State<CreateReportScreen> {
               children: [
                 // Report Title with validation
                 CustomTextFormField(
-                  hintText: "Report Title",
+                  hintText: AppStrings.reportTitleHint.tr,
                   controller: reportController.titleController,
                   validator: (value) {
                     if (value == null || value
                         .trim()
                         .isEmpty) {
-                      return 'Please enter a report title';
+                      return AppStrings.enterReportTitleValidation.tr;
                     }
                     if (value
                         .trim()
                         .length < 5) {
-                      return 'Title must be at least 5 characters long';
+                      return AppStrings.titleLengthValidation.tr;
                     }
                     return null;
                   },
@@ -104,15 +105,15 @@ class _CreateReportScreenState extends State<CreateReportScreen> {
                 Obx(
                       () =>
                       CustomDropDown(
-                        hintText: "Report template selection",
-                        errorText: "Please select report template",
+                        hintText: AppStrings.reportTemplateHint.tr,
+                        errorText: AppStrings.selectReportTemplateError.tr,
                         selectedValue: reportController.selectedReportTemplate
                             .value,
                         items: reportController.reportTemplateList,
                         onChanged: reportController.updateReportTemplate,
                         validator: (value) {
                           if (value == null || value.isEmpty) {
-                            return 'Please select a report template';
+                            return AppStrings.selectTemplateValidation.tr;
                           }
                           return null;
                         },
@@ -125,14 +126,14 @@ class _CreateReportScreenState extends State<CreateReportScreen> {
                 Obx(
                       () =>
                       CustomDropDown(
-                        hintText: "Incident Severity",
-                        errorText: "Please select severity",
+                        hintText: AppStrings.incidentSeverityHint.tr,
+                        errorText: AppStrings.selectSeverityError.tr,
                         selectedValue: reportController.selectedSeverity.value,
                         items: reportController.severityList,
                         onChanged: reportController.updateSeverity,
                         validator: (value) {
                           if (value == null || value.isEmpty) {
-                            return 'Please select incident severity';
+                            return AppStrings.selectSeverityValidation.tr;
                           }
                           return null;
                         },
@@ -145,14 +146,14 @@ class _CreateReportScreenState extends State<CreateReportScreen> {
                 Obx(
                       () =>
                       CustomDropDown(
-                        hintText: reportController.siteList.isEmpty?"No Site Assigned To You":"Site Name",
-                        errorText: "Please select Site",
+                        hintText: reportController.siteList.isEmpty?AppStrings.noSiteAssignedHint.tr:AppStrings.siteNameHint.tr,
+                        errorText: AppStrings.selectSiteError.tr,
                         selectedValue: reportController.selectedSite.value,
                         items: reportController.siteList,
                         onChanged: reportController.updateSite,
                         validator: (value) {
                           if (value == null || value.isEmpty) {
-                            return 'Please select a site';
+                            return AppStrings.selectSiteValidation.tr;
                           }
                           return null;
                         },
@@ -163,19 +164,19 @@ class _CreateReportScreenState extends State<CreateReportScreen> {
 
                 // Description with validation
                 CustomTextFormField(
-                  hintText: 'Description',
+                  hintText: AppStrings.descriptionHint.tr,
                   keyboardType: 'multiline',
                   controller: reportController.descriptionController,
                   validator: (value) {
                     if (value == null || value
                         .trim()
                         .isEmpty) {
-                      return 'Please enter a description';
+                      return AppStrings.enterDescriptionValidation.tr;
                     }
                     if (value
                         .trim()
                         .length < 10) {
-                      return 'Description must be at least 10 characters long';
+                      return AppStrings.descriptionLengthValidation.tr;
                     }
                     return null;
                   },
@@ -203,7 +204,7 @@ class _CreateReportScreenState extends State<CreateReportScreen> {
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
                         Text(
-                          'Photos/Document',
+                          AppStrings.photosDocumentTitle.tr,
                           style: AppTextStyles.button.copyWith(
                             color: Color(0xFFFFFFFF),
                           ),
@@ -292,7 +293,7 @@ class _CreateReportScreenState extends State<CreateReportScreen> {
                                           SvgPicture.asset(AppImages.camera2),
                                           SizedBox(height: 4.h),
                                           Text(
-                                            'Add Photo',
+                                            AppStrings.addPhotoButton.tr,
                                             style: AppTextStyles.caption2,
                                           ),
                                         ],
@@ -332,7 +333,7 @@ class _CreateReportScreenState extends State<CreateReportScreen> {
                                       SvgPicture.asset(AppImages.upload),
                                       SizedBox(width: 8.w),
                                       Text(
-                                        'Upload Video',
+                                        AppStrings.uploadVideoButton.tr,
                                         style: AppTextStyles.button.copyWith(
                                           color: Color(0xFFFFFFFF),
                                         ),
@@ -398,7 +399,7 @@ class _CreateReportScreenState extends State<CreateReportScreen> {
                         reportController.createReport();
                       }
                     },
-                    text: 'Submit Report',
+                    text: AppStrings.submitReportButton.tr,
                   );
                 }),
 
@@ -480,7 +481,7 @@ class _CreateReportScreenState extends State<CreateReportScreen> {
                             color: AppColors.primaryDark,
                           ),
                           SizedBox(height: 8.h),
-                          Text("Replace", style: AppTextStyles.textButton),
+                          Text(AppStrings.replaceButton.tr, style: AppTextStyles.textButton),
                         ],
                       ),
                     ),
@@ -501,7 +502,7 @@ class _CreateReportScreenState extends State<CreateReportScreen> {
                             color: Colors.red,
                           ),
                           SizedBox(height: 8.h),
-                          Text("Remove", style: AppTextStyles.textButton
+                          Text(AppStrings.removeButton.tr, style: AppTextStyles.textButton
                               .copyWith(color: Colors.red)),
                         ],
                       ),
@@ -546,7 +547,7 @@ class _CreateReportScreenState extends State<CreateReportScreen> {
                             color: AppColors.primaryDark,
                           ),
                           SizedBox(height: 8.h),
-                          Text("Replace", style: AppTextStyles.textButton),
+                          Text(AppStrings.replaceButton.tr, style: AppTextStyles.textButton),
                         ],
                       ),
                     ),
@@ -567,7 +568,7 @@ class _CreateReportScreenState extends State<CreateReportScreen> {
                             color: Colors.red,
                           ),
                           SizedBox(height: 8.h),
-                          Text("Remove", style: AppTextStyles.textButton
+                          Text(AppStrings.removeButton.tr, style: AppTextStyles.textButton
                               .copyWith(color: Colors.red)),
                         ],
                       ),

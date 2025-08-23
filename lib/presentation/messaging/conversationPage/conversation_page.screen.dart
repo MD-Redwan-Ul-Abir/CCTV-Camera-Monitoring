@@ -3,6 +3,7 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
+import '../../languageChanging/appString.dart';
 
 import '../../../infrastructure/theme/app_colors.dart';
 import '../../../infrastructure/theme/text_styles.dart';
@@ -537,7 +538,7 @@ class _ConversationPageScreenState extends State<ConversationPageScreen> {
                   color: AppColors.primaryLight,
                 ),
                 decoration: InputDecoration(
-                  hintText: "Type a message",
+                  hintText: AppStrings.typeMessageHint.tr,
                   hintStyle: AppTextStyles.button.copyWith(letterSpacing: 0),
                   border: InputBorder.none,
                   contentPadding: EdgeInsets.zero,

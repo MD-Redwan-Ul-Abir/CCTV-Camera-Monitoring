@@ -3,6 +3,7 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/svg.dart';
 
 import 'package:get/get.dart';
+import '../../languageChanging/appString.dart';
 
 import '../../../infrastructure/navigation/routes.dart';
 import '../../../infrastructure/theme/app_colors.dart';
@@ -50,7 +51,7 @@ class ResetPasswordScreen extends GetView<ResetPasswordController> {
             Align(
               alignment: Alignment.topLeft,
               child: Text(
-                "Reset password",
+                AppStrings.resetPasswordTitle.tr,
                 style: AppTextStyles.headLine6.copyWith(
                   color: Color(0xFFFFFFFF),
                 ),
@@ -60,13 +61,13 @@ class ResetPasswordScreen extends GetView<ResetPasswordController> {
             Align(
               alignment: Alignment.topLeft,
               child: Text(
-                "Enter Your new password as you want",
+                AppStrings.resetPasswordSubtitle.tr,
                 style: AppTextStyles.button,
               ),
             ),
             SizedBox(height: 30.h),
             CustomTextFormField(
-              hintText: "Enter New password",
+              hintText: AppStrings.newPasswordHint.tr,
               controller: resetPasswordController.newPasswordController,
               onChanged: (_) => resetPasswordController.validatePasswords(),
 
@@ -75,7 +76,7 @@ class ResetPasswordScreen extends GetView<ResetPasswordController> {
             ),
             SizedBox(height: 11.h),
             CustomTextFormField(
-              hintText: "Confirm New password",
+              hintText: AppStrings.confirmPasswordHint.tr,
               controller: resetPasswordController.confirmPasswordController,
               onChanged: (_) => resetPasswordController.validatePasswords(),
 
@@ -111,7 +112,7 @@ class ResetPasswordScreen extends GetView<ResetPasswordController> {
                           // controller.isLoading.value = false;
                         }
                         : null,
-                text: "Done",
+                text: AppStrings.doneButton.tr,
               );
             }),
           ],

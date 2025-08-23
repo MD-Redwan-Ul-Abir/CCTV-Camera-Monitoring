@@ -9,6 +9,7 @@ import '../../infrastructure/navigation/routes.dart';
 import '../../infrastructure/theme/app_colors.dart';
 import '../../infrastructure/theme/text_styles.dart';
 import '../../infrastructure/utils/app_images.dart';
+import '../languageChanging/appString.dart';
 import '../shared/widgets/buttons/primary_buttons.dart';
 import 'controllers/report_screen.controller.dart';
 
@@ -32,7 +33,7 @@ class ReportScreen extends GetView<ReportScreenController> {
           scrolledUnderElevation: 0,
           automaticallyImplyLeading: false,
           title: Text(
-            "Reports",
+            AppStrings.reportsTitle.tr,
             style: AppTextStyles.headLine6.copyWith(
               fontWeight: FontWeight.w400,
               height: 1.5,
@@ -75,7 +76,7 @@ class ReportScreen extends GetView<ReportScreenController> {
                 onPressed: () {
                   Get.toNamed(Routes.CREATE_REPORT);
                 },
-                text: 'Create Report',
+                text: AppStrings.createReportButton.tr,
               ),
               SizedBox(height: 16.h),
             ],
@@ -128,7 +129,7 @@ class ReportScreen extends GetView<ReportScreenController> {
         height: 200.h,
         child: Center(
           child: Text(
-            'No reports found',
+            AppStrings.noReportsFound.tr,
             style: AppTextStyles.paragraph.copyWith(
               color: AppColors.primaryLight.withOpacity(0.7),
             ),

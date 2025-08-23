@@ -1,6 +1,9 @@
 import 'package:flutter/cupertino.dart';
 import 'package:get/get.dart';
 import 'package:skt_sikring/presentation/home/controllers/home.controller.dart';
+import 'package:skt_sikring/presentation/languageChanging/appConst.dart';
+import 'package:skt_sikring/presentation/languageChanging/languageModel.dart';
+import 'package:skt_sikring/presentation/languageChanging/localizationController.dart';
 
 import '../../../app/routes/app_routes.dart';
 import '../../../infrastructure/theme/app_colors.dart';
@@ -34,7 +37,6 @@ class ProfileController extends GetxController {
     name.value = await SecureStorageHelper.getString("name");
     email.value = await SecureStorageHelper.getString("email");
     address.value = await SecureStorageHelper.getString("address");
-
   }
 
   final count = 0.obs;
@@ -54,13 +56,13 @@ class ProfileController extends GetxController {
     try {
       final response = await _apiClient.getData(
         ApiConstants.postReviewAndRatings,
-        headers:
-            token != null && token!.isNotEmpty
-                ? {"Authorization": "Bearer $token"}
-                : null,
+        headers: token != null && token!.isNotEmpty
+            ? {"Authorization": "Bearer $token"}
+            : null,
       );
       if (response.statusCode == 200 || response.statusCode == 201) {
       }
+
       /// -----------------more task to be needed----------------------
       else if (response.statusCode == 400) {
         if (!Get.isSnackbarOpen) {
@@ -123,17 +125,15 @@ class ProfileController extends GetxController {
       // Check if image is selected
       if (imageController.selectedImages.isEmpty) {
         CustomSnackbar.show(
-            title: "Error",
-            message: "Please select an image first"
-        );
+            title: "Error", message: "Please select an image first");
         return false;
       }
 
       isLoading.value = true;
 
-      List<MultipartBody> files = imageController.selectedImages.map((file) =>
-          MultipartBody('profileImage', file)
-      ).toList();
+      List<MultipartBody> files = imageController.selectedImages
+          .map((file) => MultipartBody('profileImage', file))
+          .toList();
 
       final response = await _apiClient.putData(
         ApiConstants.updateProfilePicture,
@@ -142,7 +142,6 @@ class ProfileController extends GetxController {
       );
 
       if (response.statusCode == 200 || response.statusCode == 201) {
-
         Get.snackbar(
           "Picture updated",
           response.body["message"] ?? "Profile picture updated successfully",
@@ -150,23 +149,24 @@ class ProfileController extends GetxController {
           colorText: AppColors.primaryLighthover,
         );
         homeController.getProfile();
-        homeController.fetchedData.value=false;
+        homeController.fetchedData.value = false;
         if (response.body != null &&
             response.body["data"] != null &&
             response.body["data"]["profileImageUrl"] != null) {
-          homeController.profileImageUrl.value = response.body["data"]["profileImageUrl"];
-          await SecureStorageHelper.setString("profileImageUrl", response.body["data"]["profileImageUrl"]);
-
-
-
+          homeController.profileImageUrl.value =
+              response.body["data"]["profileImageUrl"];
+          await SecureStorageHelper.setString(
+              "profileImageUrl", response.body["data"]["profileImageUrl"]);
         }
-        String imageURL = await SecureStorageHelper.getString("profileImageUrl");
+        String imageURL =
+            await SecureStorageHelper.getString("profileImageUrl");
 
         return true;
       } else {
         CustomSnackbar.show(
           title: "Failed!",
-          message: response.body?["message"] ?? "Failed to update profile picture",
+          message:
+              response.body?["message"] ?? "Failed to update profile picture",
         );
         return false;
       }
@@ -181,10 +181,12 @@ class ProfileController extends GetxController {
   Future<bool> editProfile() async {
     isLoading.value = true;
     try {
-
       final Map<String, dynamic> updatedUserData = {
-        'name': userNameController.text.isEmpty ? name.value : userNameController.text,
-        'address': addressController.text.isEmpty ? address.value : addressController.text,
+        'name':
+            userNameController.text.isEmpty ? name.value : userNameController.text,
+        'address': addressController.text.isEmpty
+            ? address.value
+            : addressController.text,
       };
 
       final response = await _apiClient.putData(
@@ -195,9 +197,14 @@ class ProfileController extends GetxController {
       if (response.statusCode == 200 || response.statusCode == 201) {
         isLoading.value = false;
         name.value = userNameController.text;
-        homeController.fetchedData.value=false;
-        await SecureStorageHelper.setString("name", userNameController.text.isEmpty ? name.value : userNameController.text);
-        await SecureStorageHelper.setString("address",  addressController.text.isEmpty ? address.value : addressController.text);
+        homeController.fetchedData.value = false;
+        await SecureStorageHelper.setString("name",
+            userNameController.text.isEmpty ? name.value : userNameController.text);
+        await SecureStorageHelper.setString(
+            "address",
+            addressController.text.isEmpty
+                ? address.value
+                : addressController.text);
 
         Get.snackbar(
           "Info updated",
@@ -223,5 +230,20 @@ class ProfileController extends GetxController {
     } finally {
       isLoading.value = false;
     }
+  }
+
+  void changeLanguage(String languageName) {
+    final localizationController = Get.find<LocalizationController>();
+    for (var language in AppConstants.languages) {
+      if (language.languageName == languageName) {
+        localizationController.setLanguage(
+            Locale(language.languageCode, language.countryCode));
+        break;
+      }
+    }
+  }
+
+  List<LanguageModel> getAvailableLanguages() {
+    return AppConstants.languages;
   }
 }

@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:image_picker/image_picker.dart';
+import '../../../languageChanging/appString.dart';
 
 import '../../../../infrastructure/theme/app_colors.dart';
 import '../../../../infrastructure/theme/text_styles.dart';
@@ -42,7 +43,7 @@ void showImagePickerOption(
                     //   color: Colors.black,
                     //   fontSize: 16.sp,
                     // ),
-                    Text("Gallery", style: AppTextStyles.textButton),
+                    Text(AppStrings.galleryOption.tr, style: AppTextStyles.textButton),
                   ],
                 ),
               ),
@@ -69,7 +70,7 @@ void showImagePickerOption(
                     //   color: Colors.black,
                     //   fontSize: 16.sp,
                     // ),
-                    Text("Camera", style: AppTextStyles.textButton),
+                    Text(AppStrings.cameraOption.tr, style: AppTextStyles.textButton),
                   ],
                 ),
               ),

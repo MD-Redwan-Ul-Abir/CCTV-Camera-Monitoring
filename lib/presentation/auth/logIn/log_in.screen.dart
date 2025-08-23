@@ -3,6 +3,7 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:get/get.dart';
 import 'package:skt_sikring/presentation/shared/widgets/custom_button.dart';
+import '../../languageChanging/appString.dart';
 
 import '../../../infrastructure/navigation/routes.dart';
 import '../../../infrastructure/theme/app_colors.dart';
@@ -87,13 +88,13 @@ class _LogInScreenState extends State<LogInScreen> with TickerProviderStateMixin
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
-                    "Login or create \nAccount",
+                    AppStrings.loginTitle.tr,
                     style: AppTextStyles.headLine6.copyWith(
                         color: Color(0xFFFFFFFF)),
                   ),
                   SizedBox(height: 12.h),
                   Text(
-                    "Enter Your Email to enjoy the best security \nmanagement",
+                    AppStrings.loginSubtitle.tr,
                     style: AppTextStyles.button,
                   ),
                   SizedBox(height: 30.h),
@@ -129,13 +130,13 @@ class _LogInScreenState extends State<LogInScreen> with TickerProviderStateMixin
                             Tab(
                               child: Align(
                                 alignment: Alignment.center,
-                                child: Text("user", style: AppTextStyles.button),
+                                child: Text(AppStrings.userTab.tr, style: AppTextStyles.button),
                               ),
                             ),
                             Tab(
                               child: Align(
                                 alignment: Alignment.center,
-                                child: Text("Customer", style: AppTextStyles.button),
+                                child: Text(AppStrings.customerTab.tr, style: AppTextStyles.button),
                               ),
                             ),
                           ],
@@ -146,17 +147,17 @@ class _LogInScreenState extends State<LogInScreen> with TickerProviderStateMixin
 
                   SizedBox(height: 30.h),
                   CustomTextFormField(
-                    validator: (value) => (value?.trim().isEmpty ?? true) ? 'Enter your Email address' : null,
+                    validator: (value) => (value?.trim().isEmpty ?? true) ? AppStrings.enterEmailAddressValidation.tr : null,
                     controller: loginController.emailController,
-                    hintText: "Email",
+                    hintText: AppStrings.emailHint.tr,
                     keyboardType: 'email',
                     prefixSvg: AppImages.emailIcon,
                   ),
                   SizedBox(height: 17.h),
                   CustomTextFormField(
-                    validator: (value) => (value?.trim().isEmpty ?? true) ? 'Enter your Password' : null,
+                    validator: (value) => (value?.trim().isEmpty ?? true) ? AppStrings.enterPasswordValidation.tr : null,
                     controller: loginController.passwordController,
-                    hintText: "Password",
+                    hintText: AppStrings.passwordHint.tr,
                     keyboardType: 'visiblePassword',
                     prefixSvg: AppImages.password,
                   ),
@@ -169,7 +170,7 @@ class _LogInScreenState extends State<LogInScreen> with TickerProviderStateMixin
                           Get.toNamed(Routes.FORGET_PASSWORD);
                         },
                         child: Text(
-                          "Forget Password?",
+                          AppStrings.forgetPasswordButton.tr,
                           style: AppTextStyles.textCaption1.copyWith(
                             color: AppColors.primaryNormal,
                           ),
@@ -208,7 +209,7 @@ class _LogInScreenState extends State<LogInScreen> with TickerProviderStateMixin
                            await controller.login();
                           }
                         },
-                        text: "Log in",
+                        text: AppStrings.loginButton.tr,
                       );
                     },
                   ),

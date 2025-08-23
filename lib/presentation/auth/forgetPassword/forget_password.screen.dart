@@ -3,6 +3,7 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/svg.dart';
 
 import 'package:get/get.dart';
+import '../../languageChanging/appString.dart';
 
 import '../../../infrastructure/navigation/routes.dart';
 import '../../../infrastructure/theme/app_colors.dart';
@@ -53,21 +54,21 @@ class ForgetPasswordScreen extends GetView<ForgetPasswordController> {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
-                    "Forget Email",
+                    AppStrings.forgetEmailTitle.tr,
                     style: AppTextStyles.headLine6.copyWith(color: Color(0xFFFFFFFF)),
                   ),
                   SizedBox(height: 12.h),
                   Text(
-                    "Enter Your Email to enjoy the best security management",
+                    AppStrings.forgetEmailSubtitle.tr,
                     style: AppTextStyles.button,
                   ),
 
 
                   SizedBox(height: 50.h),
                   CustomTextFormField(
-                    validator: (value) => (value?.trim().isEmpty ?? true) ? 'Enter your Email address' : null,
+                    validator: (value) => (value?.trim().isEmpty ?? true) ? AppStrings.enterEmailAddressValidation.tr : null,
                     controller: forgetPasswordController.forgetEmailController,
-                    hintText: "Email",
+                    hintText: AppStrings.emailHint.tr,
                     keyboardType: 'email',
                     prefixSvg: AppImages.emailIcon,
                   ),
@@ -89,7 +90,7 @@ class ForgetPasswordScreen extends GetView<ForgetPasswordController> {
                           }
 
                         },
-                        text: "Send OTP",
+                        text: AppStrings.sendOtpButton.tr,
                       );
                     },
                   ),

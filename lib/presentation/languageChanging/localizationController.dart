@@ -1,16 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 
+import '../../infrastructure/utils/secure_storage_helper.dart';
 import 'appConst.dart';
 import 'languageModel.dart';
 
-
-
 class LocalizationController extends GetxController implements GetxService {
-  final SharedPreferences sharedPreferences;
 
-  LocalizationController({required this.sharedPreferences}) {
+  LocalizationController() {
     loadCurrentLanguage();
   }
 
@@ -26,7 +23,7 @@ class LocalizationController extends GetxController implements GetxService {
   void setLanguage(Locale locale) {
     Get.updateLocale(locale);
     _locale = locale;
-    if (_locale.languageCode == 'fr') {
+    if (_locale.languageCode == 'sv') {
       _isLtr = false;
     } else {
       _isLtr = true;
@@ -36,12 +33,15 @@ class LocalizationController extends GetxController implements GetxService {
   }
 
   void loadCurrentLanguage() async {
-    _locale = Locale(
-        sharedPreferences.getString(AppConstants.LANGUAGE_CODE) ??
-            AppConstants.languages[0].languageCode,
-        sharedPreferences.getString(AppConstants.COUNTRY_CODE) ??
-            AppConstants.languages[0].countryCode);
-    _isLtr = _locale.languageCode != 'fr';
+    String languageCode = await SecureStorageHelper.getString(
+        AppConstants.LANGUAGE_CODE, 
+        defaultValue: AppConstants.languages[0].languageCode);
+    String countryCode = await SecureStorageHelper.getString(
+        AppConstants.COUNTRY_CODE, 
+        defaultValue: AppConstants.languages[0].countryCode);
+    
+    _locale = Locale(languageCode, countryCode);
+    _isLtr = _locale.languageCode != 'sv';
     for (int index = 0; index < AppConstants.languages.length; index++) {
       if (AppConstants.languages[index].languageCode == _locale.languageCode) {
         _selectedIndex = index;
@@ -54,9 +54,9 @@ class LocalizationController extends GetxController implements GetxService {
   }
 
   void saveLanguage(Locale locale) async {
-    sharedPreferences.setString(
+    await SecureStorageHelper.setString(
         AppConstants.LANGUAGE_CODE, locale.languageCode);
-    sharedPreferences.setString(
+    await SecureStorageHelper.setString(
         AppConstants.COUNTRY_CODE, locale.countryCode ?? "");
   }
 

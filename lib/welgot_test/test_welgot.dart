@@ -13,7 +13,7 @@ void main() async {
   print('\n2. Testing translations...');
   
   List<String> testTexts = [
-    'Current password',
+    'Sayed vi is a good not best deleloper.',
     'New Password',
     'Confirm New Password',
     'Thank you very much',

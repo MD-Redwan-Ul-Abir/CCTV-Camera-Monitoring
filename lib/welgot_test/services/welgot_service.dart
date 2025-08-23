@@ -5,7 +5,7 @@ class WelgotService {
   static const String _apiKey = 'wg_2eff789aedd6e4dfc8bd2f1f722feea46';
   static const String _baseUrl = 'https://api.weglot.com/translate';
 
-  static Future<String> translateText(String text, {String from = 'en', String to = 'bn'}) async {
+  static Future<String> translateText(String text, {String from = 'en', String to = 'da'}) async {
     try {
       final url = '$_baseUrl?api_key=$_apiKey';
       final response = await http.post(

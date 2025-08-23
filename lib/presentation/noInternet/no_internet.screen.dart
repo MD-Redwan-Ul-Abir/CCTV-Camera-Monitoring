@@ -5,6 +5,7 @@ import 'package:get/get.dart';
 import 'package:gif/gif.dart';
 import 'package:skt_sikring/infrastructure/theme/app_colors.dart';
 import 'package:skt_sikring/infrastructure/theme/text_styles.dart';
+import '../languageChanging/appString.dart';
 
 import '../../infrastructure/navigation/routes.dart';
 import '../../infrastructure/utils/app_images.dart';
@@ -46,7 +47,7 @@ class NoInternetScreen extends GetView<NoInternetController> {
                 height: 10.h,
               ),
 
-              Text("Internet not available",
+              Text(AppStrings.internetNotAvailableMessage.tr,
                 style: AppTextStyles.headLine4.copyWith(
                     color: AppColors.primaryNormal),),
               Spacer(),
@@ -56,7 +57,7 @@ class NoInternetScreen extends GetView<NoInternetController> {
                   // Use the updated tryAgain method
                   await noInternet.tryAgain();
                 },
-                text: 'Try Again',
+                text: AppStrings.tryAgainButton.tr,
               ),
 
               SizedBox(height: 32.h),
