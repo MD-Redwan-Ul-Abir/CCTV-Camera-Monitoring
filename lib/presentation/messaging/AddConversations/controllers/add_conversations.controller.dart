@@ -6,6 +6,7 @@ import '../../../../infrastructure/utils/api_client.dart';
 import '../../../../infrastructure/utils/api_content.dart';
 import '../../../../infrastructure/utils/secure_storage_helper.dart';
 import '../../../shared/widgets/customSnakBar.dart';
+import '../../../languageChanging/appString.dart';
 import '../model/allUserModel.dart';
 
 class AddConversationsController extends GetxController {
@@ -41,8 +42,8 @@ class AddConversationsController extends GetxController {
         if((!Get.isSnackbarOpen)){
 
           CustomSnackbar.show(
-            title: "Error!",
-            message: "Report Could not be fached",
+            title: AppStrings.errorTitle.tr,
+            message: AppStrings.reportCouldNotBeFetched.tr,
           );
         }
 
@@ -75,7 +76,7 @@ class AddConversationsController extends GetxController {
         // message = loginResponse.value?.message;
         isLoading.value = false;
         CustomSnackbar.show(
-          title: "You can message",
+          title: AppStrings.youCanMessageMessage.tr,
           message: response.body["message"],
         );
 
@@ -105,7 +106,7 @@ class AddConversationsController extends GetxController {
     } catch (e) {
       isLoading.value = false;
       update();
-      Get.snackbar("Error", "An error occurred: ${e.toString()}");
+      Get.snackbar(AppStrings.errorTitle.tr, "${AppStrings.errorOccurredTitle.tr}: ${e.toString()}");
       LoggerHelper.error(e.toString());
       return false;
     } finally {

@@ -6,6 +6,7 @@ import '../../../infrastructure/utils/api_client.dart';
 import '../../../infrastructure/utils/api_content.dart';
 import '../../../infrastructure/utils/secure_storage_helper.dart';
 import '../../shared/widgets/customSnakBar.dart';
+import '../../languageChanging/appString.dart';
 import '../model/privacyModel.dart';
 
 class PrivacySettingsController extends GetxController {
@@ -44,8 +45,8 @@ class PrivacySettingsController extends GetxController {
       else if(response.statusCode == 400){
         if(!Get.isSnackbarOpen){
           CustomSnackbar.show(
-            title: "Oops!",
-            message: "Session Expired",
+            title: AppStrings.oopsTitle.tr,
+            message: AppStrings.sessionExpiredMessage.tr,
           );
         }
 

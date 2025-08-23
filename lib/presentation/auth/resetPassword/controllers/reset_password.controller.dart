@@ -9,6 +9,7 @@ import '../../../../infrastructure/theme/text_styles.dart';
 import '../../../../infrastructure/utils/api_client.dart';
 import '../../../../infrastructure/utils/api_content.dart';
 import '../../forgetPassword/model/forgetPasswordModel.dart';
+import '../../../languageChanging/appString.dart';
 
 class ResetPasswordController extends GetxController {
   final ApiClient _apiClient = Get.find<ApiClient>();
@@ -62,7 +63,7 @@ class ResetPasswordController extends GetxController {
           "",
           "",
           titleText: Text(
-            "Reset Password success",
+            AppStrings.passwordChangedTitle.tr,
             style: AppTextStyles.paragraph2.copyWith(
               fontSize: 18.sp,
               fontWeight: FontWeight.bold,
@@ -70,7 +71,7 @@ class ResetPasswordController extends GetxController {
             ),
           ),
           messageText: Text(
-            "Your new password is ready",
+            AppStrings.newPasswordReadyMessage.tr,
             style: AppTextStyles.button.copyWith(
               color: AppColors.primaryLighthover,
             ),
@@ -87,7 +88,7 @@ class ResetPasswordController extends GetxController {
           update();
           // final errorResponse = response.body.;
           Get.snackbar(
-            response.statusCode as String,
+            AppStrings.errorTitle.tr,
             "Unable to reset password",
             backgroundColor: Colors.red,
             colorText: Colors.white,
@@ -102,7 +103,7 @@ class ResetPasswordController extends GetxController {
             margin: EdgeInsets.all(16),
             padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 12.h),
             titleText: Text(
-              "Oops!",
+              AppStrings.oopsTitle.tr,
               style: AppTextStyles.paragraph2.copyWith(
                 fontSize: 18.sp,
                 fontWeight: FontWeight.bold,
@@ -110,7 +111,7 @@ class ResetPasswordController extends GetxController {
               ),
             ),
             messageText: Text(
-              "Failed to reset password. Please try again.",
+              AppStrings.failedToSendOtpMessage.tr,
               style: AppTextStyles.button.copyWith(
                 fontSize: 14.sp,
                 color: AppColors.redDark,
@@ -128,7 +129,7 @@ class ResetPasswordController extends GetxController {
         return false;
       }
     } catch (e) {
-      Get.snackbar("Error", "An error occurred: ${e.toString()}");
+      Get.snackbar(AppStrings.errorTitle.tr, "${AppStrings.errorOccurredTitle.tr}: ${e.toString()}");
       return false;
     } finally {
       isLoading.value = false;

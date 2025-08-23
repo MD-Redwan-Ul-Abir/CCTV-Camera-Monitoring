@@ -12,6 +12,7 @@ import '../../../../infrastructure/utils/secure_storage_helper.dart';
 import '../../../shared/networkImageFormating.dart';
 import '../../../shared/widgets/customSnakBar.dart';
 import '../model/logInModel.dart';
+import '../../../languageChanging/appString.dart';
 
 class LogInController extends GetxController with GetSingleTickerProviderStateMixin {
   final ApiClient _apiClient = Get.find<ApiClient>();
@@ -78,8 +79,8 @@ class LogInController extends GetxController with GetSingleTickerProviderStateMi
         await addDataInSecureStorage();
 
        Get.snackbar(
-            "Log In Successful!",
-            message ?? "Welcome back!",
+            AppStrings.logInSuccessfulTitle.tr,
+            message ?? AppStrings.welcomeBackMessage.tr,
             backgroundColor: AppColors.primaryNormal,
             colorText: AppColors.primaryLighthover
         );
@@ -91,7 +92,7 @@ class LogInController extends GetxController with GetSingleTickerProviderStateMi
           final errorResponse = LogInModel.fromRawJson(response.body);
           isLoading.value = false;
           update();
-          Get.snackbar("Log In Failed!", errorResponse.message ?? "Unknown error");
+          Get.snackbar(AppStrings.logInFailedTitle.tr, errorResponse.message ?? AppStrings.unknownErrorMessage.tr);
           LoggerHelper.error(errorResponse.message);
         } catch (e) {
           isLoading.value = false;
@@ -103,7 +104,7 @@ class LogInController extends GetxController with GetSingleTickerProviderStateMi
     } catch (e) {
       isLoading.value = false;
       update();
-      Get.snackbar("Error", "An error occurred: ${e.toString()}");
+      Get.snackbar(AppStrings.errorTitle.tr, "${AppStrings.errorOccurredTitle.tr}: ${e.toString()}");
       LoggerHelper.error(e.toString());
       return false;
     } finally {
@@ -184,7 +185,7 @@ class LogInController extends GetxController with GetSingleTickerProviderStateMi
 
     } catch (e) {
       print("Error storing data in secure storage: $e");
-      Get.snackbar("Storage Error", "Failed to store user data securely");
+      Get.snackbar(AppStrings.storageErrorTitle.tr, AppStrings.storageErrorMessage.tr);
     }
   }
 

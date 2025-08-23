@@ -26,6 +26,18 @@ class SecureStorageHelper {
     }
   }
 
+  // Nullable getter for String values - returns null if not found
+  static Future<String?> getNullableString(String key) async {
+    try {
+      final value = await _secureStorage.read(key: key);
+      LoggerHelper.info("$key, SUCCESSFULLY GET FROM SECURE STORAGE");
+      return value;
+    } catch (e) {
+      LoggerHelper.error("Failed to get $key from secure storage: $e");
+      return null;
+    }
+  }
+
   // Generic getter for bool values
   static Future<bool> getBool(String key, {bool defaultValue = false}) async {
     try {

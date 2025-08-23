@@ -11,18 +11,32 @@ import '../../../infrastructure/navigation/routes.dart';
 import '../../../infrastructure/theme/app_colors.dart';
 import '../../../infrastructure/theme/text_styles.dart';
 import '../../../infrastructure/utils/app_images.dart';
+import '../../languageChanging/appString.dart';
 import '../../shared/widgets/buttons/primary_buttons.dart';
 import 'controllers/otp_page.controller.dart';
 
-class OtpPageScreen extends GetView<OtpPageController> {
+class OtpPageScreen extends StatefulWidget {
   const OtpPageScreen({super.key});
+
+  @override
+  State<OtpPageScreen> createState() => _OtpPageScreenState();
+}
+
+class _OtpPageScreenState extends State<OtpPageScreen> {
+  final OtpPageController controller = Get.find<OtpPageController>();
+
+  final StreamController<ErrorAnimationType> errorController =
+      StreamController<ErrorAnimationType>();
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    // This will rebuild the widget when the locale changes
+    setState(() {});
+  }
+
   @override
   Widget build(BuildContext context) {
-    final OtpPageController otpPageController = Get.find<OtpPageController>();
-
-    final StreamController<ErrorAnimationType> errorController =
-    StreamController<ErrorAnimationType>();
-
     return Scaffold(
       appBar: AppBar(
         backgroundColor: AppColors.secondaryDark,
@@ -34,8 +48,8 @@ class OtpPageScreen extends GetView<OtpPageController> {
               icon: SvgPicture.asset(
                 AppImages.backIcon,
                 color: AppColors.primaryLight,
-                  height: 24.h,
-                  width: 24.w
+                height: 24.h,
+                width: 24.w,
               ),
               onPressed: () {
                 Get.offAllNamed(Routes.LOG_IN);
@@ -47,19 +61,21 @@ class OtpPageScreen extends GetView<OtpPageController> {
         toolbarHeight: 95.h,
       ),
       body: Padding(
-        padding:  EdgeInsets.symmetric(horizontal: 24.w,vertical: 20.h),
+        padding: EdgeInsets.symmetric(horizontal: 24.w, vertical: 20.h),
         child: Column(
           children: [
             SizedBox(height: 10.h),
             Align(
               alignment: Alignment.topLeft,
-              child: Text("Verify Email", style: AppTextStyles.headLine6.copyWith(color: Color(0xFFFFFFFF))),
+              child: Text(AppStrings.otpTitle.tr,
+                  style: AppTextStyles.headLine6
+                      .copyWith(color: Color(0xFFFFFFFF))),
             ),
             SizedBox(height: 12.h),
             Align(
               alignment: Alignment.topLeft,
               child: Text(
-                "We have sent a verification code to your email. Please check your email and enter the code",
+                AppStrings.otpSubtitle.tr,
                 style: AppTextStyles.button,
               ),
             ),
@@ -82,14 +98,14 @@ class OtpPageScreen extends GetView<OtpPageController> {
                 inactiveColor: Colors.transparent,
                 selectedColor: Colors.transparent,
               ),
-              cursorColor:AppColors.primaryDark,
+              cursorColor: AppColors.primaryDark,
               animationDuration: const Duration(milliseconds: 300),
               enableActiveFill: true,
               errorAnimationController: errorController,
-              controller: otpPageController.otpTextEditingController,
+              controller: controller.otpTextEditingController,
               keyboardType: TextInputType.number,
               textStyle: AppTextStyles.button.copyWith(
-                  fontSize: 14.sp,
+                fontSize: 14.sp,
                 color: AppColors.primaryDark,
               ),
               boxShadows: const [
@@ -129,7 +145,10 @@ class OtpPageScreen extends GetView<OtpPageController> {
             GetBuilder<OtpPageController>(
               builder: (controller) {
                 if (controller.isLoading.value) {
-                  return Center(child: CircularProgressIndicator(color: AppColors.primaryLight,));
+                  return Center(
+                      child: CircularProgressIndicator(
+                    color: AppColors.primaryLight,
+                  ));
                 }
                 return PrimaryButton(
                   width: double.infinity,
@@ -141,9 +160,8 @@ class OtpPageScreen extends GetView<OtpPageController> {
                     //   // print(x);
                     // }
                     controller.verifyOtp();
-
                   },
-                  text: "Send OTP",
+                  text: AppStrings.sendOTP.tr,
                 );
               },
             ),

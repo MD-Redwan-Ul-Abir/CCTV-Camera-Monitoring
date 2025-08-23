@@ -10,6 +10,7 @@ import '../../../infrastructure/theme/app_colors.dart';
 import '../../../infrastructure/theme/text_styles.dart';
 import '../../../infrastructure/utils/app_images.dart';
 import '../../shared/networkImageFormating.dart';
+import '../../languageChanging/appString.dart';
 import 'controllers/add_conversations.controller.dart';
 
 class AddConversationsScreen extends StatefulWidget {
@@ -46,7 +47,7 @@ class _AddConversationsScreenState extends State<AddConversationsScreen> {
           scrolledUnderElevation: 0,
           automaticallyImplyLeading: false,
           title: Text(
-            "Add Contacts",
+            AppStrings.addContactsTitle.tr,
             style: AppTextStyles.headLine6.copyWith(
               fontWeight: FontWeight.w400,
               height: 1.5,
@@ -82,7 +83,7 @@ class _AddConversationsScreenState extends State<AddConversationsScreen> {
         } else if (addConversationsController.userAttributes.isEmpty) {
           return Center(
             child: Text(
-              "There's no one to chat.",
+              AppStrings.noOneToChat.tr,
               style: AppTextStyles.headLine6,
             ),
           );
@@ -241,7 +242,7 @@ class _AddConversationsScreenState extends State<AddConversationsScreen> {
                                     SizedBox(height: 16.h),
 
                                     Text(
-                                      'Start a new conversation',
+                                      AppStrings.startNewConversation.tr,
                                       style: AppTextStyles.headLine4.copyWith(
                                         color: AppColors.secondaryNormal,
                                         fontSize: 20,
@@ -251,7 +252,7 @@ class _AddConversationsScreenState extends State<AddConversationsScreen> {
                                     SizedBox(height: 8.h),
 
                                     Text(
-                                      'Send your first message to begin chatting',
+                                      AppStrings.sendFirstMessage.tr,
                                       textAlign: TextAlign.center,
                                       style: AppTextStyles.paragraph.copyWith(
                                         color: AppColors.grayDark,
@@ -260,13 +261,13 @@ class _AddConversationsScreenState extends State<AddConversationsScreen> {
                                     SizedBox(height: 24.h),
 
                                     CustomTextFormField(
-                                      hintText: 'Your message',
+                                      hintText: AppStrings.yourMessageHint.tr,
                                       controller:
                                           addConversationsController
                                               .sendMessageController,
                                       validator: (value) {
                                         if (value == null || value.isEmpty) {
-                                          return 'Please enter a message';
+                                          return AppStrings.enterMessageValidation.tr;
                                         }
                                         return null;
                                       },
@@ -304,7 +305,7 @@ class _AddConversationsScreenState extends State<AddConversationsScreen> {
                                           }
                                         }
                                       },
-                                      text: 'Send message',
+                                      text: AppStrings.sendMessageButton.tr,
                                     ),
                                   ],
                                 ),
@@ -324,7 +325,7 @@ class _AddConversationsScreenState extends State<AddConversationsScreen> {
                           child: Padding(
                             padding: EdgeInsets.symmetric(horizontal: 12.w),
                             child: Text(
-                              "Start Chat",
+                              AppStrings.startChatButton.tr,
                               style: AppTextStyles.caption2.copyWith(
                                 color: AppColors.secondaryLight,
                               ),

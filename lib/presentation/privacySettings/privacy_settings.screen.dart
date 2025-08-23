@@ -11,6 +11,7 @@ import '../../infrastructure/utils/app_images.dart';
 import '../shared/widgets/buttons/primary_buttons.dart';
 import '../shared/widgets/customRatings/customRatings.dart';
 import '../shared/widgets/custom_text_form_field.dart';
+import '../languageChanging/appString.dart';
 import 'controllers/privacy_settings.controller.dart';
 import 'model/privacyModel.dart';
 
@@ -40,7 +41,7 @@ class _PrivacySettingsScreenState extends State<PrivacySettingsScreen> {
         automaticallyImplyLeading: false,
         toolbarHeight: 80.h,
         title: Text(
-          "Privacy Setting",
+          AppStrings.privacySettingsTitle.tr,
           style: AppTextStyles.paragraph3.copyWith(
             fontWeight: FontWeight.w400,
             height: 1.5,
@@ -82,7 +83,7 @@ class _PrivacySettingsScreenState extends State<PrivacySettingsScreen> {
             children: [
               SizedBox(height: 20.h),
               privacySettings(
-                Name: 'Terms of Services',
+                Name: AppStrings.termsOfServicesMenuItem.tr,
                 onTap: () {
                   Attribute? termsAttr = privacySettingsController
                       .getAttributeByType('termsAndConditions'); // Use actual type from API
@@ -90,11 +91,11 @@ class _PrivacySettingsScreenState extends State<PrivacySettingsScreen> {
                   Get.toNamed(
                     Routes.CUSTOM_PRIVACY_POLICY,
                     arguments: {
-                      'title': 'Terms of Services',
+                      'title': AppStrings.termsOfServicesMenuItem.tr,
                       'customWidget': Column(
                         children: [
                           Text(
-                            termsAttr?.details ?? 'No terms available',
+                            termsAttr?.details ?? AppStrings.noTermsAvailable.tr,
 
                             style: AppTextStyles.button.copyWith(
                               height: 1.6,
@@ -110,18 +111,18 @@ class _PrivacySettingsScreenState extends State<PrivacySettingsScreen> {
               ),
               SizedBox(height: 17.h),
               privacySettings(
-                Name: 'Privacy Policy',
+                Name: AppStrings.privacyPolicyMenuItem.tr,
                 onTap: () {
                   Attribute? privacyPolicy = privacySettingsController
                       .getAttributeByType('privacyPolicy');
                   Get.toNamed(
                     Routes.CUSTOM_PRIVACY_POLICY,
                     arguments: {
-                      'title': 'Privacy Policy',
+                      'title': AppStrings.privacyPolicyMenuItem.tr,
                       'customWidget': Column(
                         children: [
                           Text(
-                            privacyPolicy?.details ?? 'No privacy policy available',
+                            privacyPolicy?.details ?? AppStrings.noPrivacyPolicyAvailable.tr,
 
                             style: AppTextStyles.button.copyWith(
                               height: 1.6,
@@ -137,14 +138,14 @@ class _PrivacySettingsScreenState extends State<PrivacySettingsScreen> {
               ),
               SizedBox(height: 17.h),
               privacySettings(
-                Name: 'About us',
+                Name: AppStrings.aboutUsMenuItem.tr,
                 onTap: () {
                   Attribute? aboutUs = privacySettingsController
                       .getAttributeByType('aboutUs');
                   Get.toNamed(
                     Routes.CUSTOM_PRIVACY_POLICY,
                     arguments: {
-                      'title': 'About us',
+                      'title': AppStrings.aboutUsMenuItem.tr,
                       'customWidget': Column(
                         children: [
                           Image.asset(
@@ -154,7 +155,7 @@ class _PrivacySettingsScreenState extends State<PrivacySettingsScreen> {
                           ),
                           SizedBox(height: 22.h),
                           Text(
-                            aboutUs?.details ?? 'No info found',
+                            aboutUs?.details ?? AppStrings.noInfoFound.tr,
 
                             style: AppTextStyles.button.copyWith(
                               height: 1.6,
@@ -170,7 +171,7 @@ class _PrivacySettingsScreenState extends State<PrivacySettingsScreen> {
               ),
               SizedBox(height: 17.h),
               privacySettings(
-                Name: 'Contact us',
+                Name: AppStrings.contactUsMenuItem.tr,
                 onTap: () {
                   // Get the attribute first, then access its contactUs property
                   Attribute? contactAttr = privacySettingsController
@@ -180,7 +181,7 @@ class _PrivacySettingsScreenState extends State<PrivacySettingsScreen> {
                   Get.toNamed(
                     Routes.CUSTOM_PRIVACY_POLICY,
                     arguments: {
-                      'title': 'Contact us',
+                      'title': AppStrings.contactUsMenuItem.tr,
                       'customWidget': Column(
                         children: [
                           SizedBox(height: 22.h),
@@ -206,7 +207,7 @@ class _PrivacySettingsScreenState extends State<PrivacySettingsScreen> {
                                 mainAxisAlignment: MainAxisAlignment.center,
                                 children: [
                                   Text(
-                                    "SGT Sikring",
+                                    AppStrings.sgtSikringTitle.tr,
                                     style: AppTextStyles.textButton.copyWith(
                                       color: AppColors.primaryLight,
                                       fontSize: 21.5.sp,
@@ -220,7 +221,7 @@ class _PrivacySettingsScreenState extends State<PrivacySettingsScreen> {
                                       SvgPicture.asset(AppImages.phone2),
                                       SizedBox(width: 12.w),
                                       Text(
-                                        contactUS?.phone ?? '+45 12 34 56 78', // Use contactUS.phone
+                                        contactUS?.phone ?? AppStrings.defaultPhone.tr, // Use contactUS.phone
                                         style: AppTextStyles.textButton.copyWith(
                                           fontSize: 15.5.sp,
                                         ),
@@ -236,7 +237,7 @@ class _PrivacySettingsScreenState extends State<PrivacySettingsScreen> {
                                         color: AppColors.secondaryLightActive,),
                                       SizedBox(width: 12.w),
                                       Text(
-                                        contactUS?.email ?? 'support@sktsikring.dk', // Use contactUS.email
+                                        contactUS?.email ?? AppStrings.defaultEmail.tr, // Use contactUS.email
                                         style: AppTextStyles.textButton.copyWith(
                                           fontSize: 15.5.sp,
                                         ),
@@ -253,7 +254,7 @@ class _PrivacySettingsScreenState extends State<PrivacySettingsScreen> {
                                       SizedBox(width: 12.w),
                                       Flexible(
                                         child: Text(
-                                          contactUS?.address ?? 'Nordre Ringvej 14,2600 Glostrup, Denmark', // Use contactUS.address
+                                          contactUS?.address ?? AppStrings.defaultAddress.tr, // Use contactUS.address
                                           style: AppTextStyles.textButton.copyWith(
                                             fontSize: 15.5.sp,
                                           ),
@@ -271,7 +272,7 @@ class _PrivacySettingsScreenState extends State<PrivacySettingsScreen> {
                                       SvgPicture.asset(AppImages.timer),
                                       SizedBox(width: 12.w),
                                       Text(
-                                        contactUS?.availableTime ?? 'Mon–Fri, 08:00–17:00', // Use contactUS.availableTime
+                                        contactUS?.availableTime ?? AppStrings.defaultHours.tr, // Use contactUS.availableTime
                                         style: AppTextStyles.textButton.copyWith(
                                           fontSize: 15.5.sp,
                                         ),

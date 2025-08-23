@@ -106,6 +106,8 @@ class AppStrings {
   static const String defaultEmail = "defaultEmail";
   static const String defaultAddress = "defaultAddress";
   static const String defaultHours = "defaultHours";
+  static const String privacySettingsTitle = "privacySettingsTitle";
+  static const String sgtSikringTitle = "sgtSikringTitle";
 
   //=======================>> Messaging <<=======================================
   static const String messageTitle = "messageTitle";
@@ -113,6 +115,13 @@ class AppStrings {
   static const String yourMessageHint = "yourMessageHint";
   static const String sendMessageButton = "sendMessageButton";
   static const String typeMessageHint = "typeMessageHint";
+  static const String addContactsTitle = "addContactsTitle";
+  static const String noOneToChat = "noOneToChat";
+  static const String startChatButton = "startChatButton";
+  static const String startNewConversation = "startNewConversation";
+  static const String sendFirstMessage = "sendFirstMessage";
+  static const String enterMessageValidation = "enterMessageValidation";
+  static const String reportCouldNotBeFetched = "reportCouldNotBeFetched";
 
   //=======================>> Live View <<=======================================
   static const String liveViewTitle = "liveViewTitle";
@@ -146,4 +155,20 @@ class AppStrings {
   static const String errorOccurredMessage = "errorOccurredMessage";
   static const String sessionExpiredMessage = "sessionExpiredMessage";
   static const String youCanMessageMessage = "youCanMessageMessage";
+  static const String checkEmailTitle = "checkEmailTitle";
+  static const String failedToSendOtpTitle = "failedToSendOtpTitle";
+  static const String failedToSendOtpMessage = "failedToSendOtpMessage";
+  static const String logInSuccessfulTitle = "logInSuccessfulTitle";
+  static const String welcomeBackMessage = "welcomeBackMessage";
+  static const String logInFailedTitle = "logInFailedTitle";
+  static const String unknownErrorMessage = "unknownErrorMessage";
+  static const String storageErrorTitle = "storageErrorTitle";
+  static const String storageErrorMessage = "storageErrorMessage";
+  static const String submittedTitle = "submittedTitle";
+  static const String errorOccurredTitle = "errorOccurredTitle";
+static const String otpTitle = "Verify Email";
+  static const String otpSubtitle= "We have sent a verification code to your email. Please check your email and enter the code";
+
+  static const String sendOTP = "Send OTP";
+
 }

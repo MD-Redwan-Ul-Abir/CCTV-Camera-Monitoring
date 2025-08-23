@@ -1,4 +1,5 @@
 import 'package:flutter/cupertino.dart';
+import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:skt_sikring/presentation/home/controllers/home.controller.dart';
 import 'package:skt_sikring/presentation/languageChanging/appConst.dart';
@@ -12,6 +13,7 @@ import '../../../infrastructure/utils/api_content.dart';
 import '../../../infrastructure/utils/secure_storage_helper.dart';
 import '../../shared/widgets/customSnakBar.dart';
 import '../../shared/widgets/imagePicker/imagePickerController.dart';
+import '../../languageChanging/appString.dart';
 
 class ProfileController extends GetxController {
   final ApiClient _apiClient = Get.find();
@@ -95,7 +97,7 @@ class ProfileController extends GetxController {
         isLoading.value = false;
 
         Get.snackbar(
-          "Submitted",
+          AppStrings.submittedTitle.tr,
           response.body["message"],
           backgroundColor: AppColors.primaryNormal,
           colorText: AppColors.primaryLighthover,
@@ -105,14 +107,14 @@ class ProfileController extends GetxController {
         isLoading.value = false;
 
         CustomSnackbar.show(
-          title: "Failed!",
+          title: AppStrings.failedTitle.tr,
           message: response.body["message"],
         );
 
         return false;
       }
     } catch (e) {
-      CustomSnackbar.show(title: "Error", message: e.toString());
+      CustomSnackbar.show(title: AppStrings.errorTitle.tr, message: e.toString());
 
       return false;
     } finally {
@@ -164,14 +166,14 @@ class ProfileController extends GetxController {
         return true;
       } else {
         CustomSnackbar.show(
-          title: "Failed!",
+          title: AppStrings.failedTitle.tr,
           message:
               response.body?["message"] ?? "Failed to update profile picture",
         );
         return false;
       }
     } catch (e) {
-      CustomSnackbar.show(title: "Error", message: e.toString());
+      CustomSnackbar.show(title: AppStrings.errorTitle.tr, message: e.toString());
       return false;
     } finally {
       isLoading.value = false;
@@ -217,14 +219,14 @@ class ProfileController extends GetxController {
         isLoading.value = false;
 
         CustomSnackbar.show(
-          title: "Failed!",
+          title: AppStrings.failedTitle.tr,
           message: response.body["message"],
         );
 
         return false;
       }
     } catch (e) {
-      CustomSnackbar.show(title: "Error", message: e.toString());
+      CustomSnackbar.show(title: AppStrings.errorTitle.tr, message: e.toString());
 
       return false;
     } finally {
@@ -232,16 +234,55 @@ class ProfileController extends GetxController {
     }
   }
 
-  void changeLanguage(String languageName) {
-    final localizationController = Get.find<LocalizationController>();
-    for (var language in AppConstants.languages) {
-      if (language.languageName == languageName) {
-        localizationController.setLanguage(
-            Locale(language.languageCode, language.countryCode));
-        break;
+  // void changeLanguage(String languageName) {
+  //   final localizationController = Get.find<LocalizationController>();
+  //   for (var language in AppConstants.languages) {
+  //     if (language.languageName == languageName) {
+  //       localizationController.setLanguage(
+  //           Locale(language.languageCode, language.countryCode));
+  //       break;
+  //     }
+  //   }
+  // }
+
+  // Add this method to your existing ProfileController class
+// Replace the existing changeLanguage method with this enhanced version
+
+  Future<void> changeLanguage(String languageName) async {
+    try {
+      final localizationController = Get.find<LocalizationController>();
+
+      for (int index = 0; index < AppConstants.languages.length; index++) {
+        var language = AppConstants.languages[index];
+        if (language.languageName == languageName) {
+          // Use the LocalizationController's setLanguage method which handles saving
+          localizationController.setLanguage(
+              Locale(language.languageCode, language.countryCode)
+          );
+          // Also update the selected index
+          localizationController.setSelectIndex(index);
+
+          print("Language changed and saved: $languageName (${language.languageCode}-${language.countryCode})");
+          break;
+        }
       }
+    } catch (e) {
+      print("Error changing language: $e");
     }
   }
+
+// Also update the _selectLanguage method in ProfileScreen to use the enhanced method
+//   void _selectLanguage(String language) async {
+//     await profileController.changeLanguage(language);
+//
+//     Get.snackbar(
+//       'Language Changed',
+//       'Language changed to $language',
+//       backgroundColor: AppColors.primaryDark,
+//       colorText: Colors.white,
+//       duration: Duration(seconds: 2),
+//     );
+//   }
 
   List<LanguageModel> getAvailableLanguages() {
     return AppConstants.languages;

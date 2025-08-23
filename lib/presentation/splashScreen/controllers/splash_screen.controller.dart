@@ -1,5 +1,7 @@
+import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:skt_sikring/presentation/languageChanging/localizationController.dart';
+import 'package:skt_sikring/presentation/languageChanging/appConst.dart';
 
 import '../../../infrastructure/navigation/routes.dart';
 import '../../../infrastructure/utils/secure_storage_helper.dart';
@@ -11,34 +13,52 @@ class SplashScreenController extends GetxController {
   RxBool isConnected = false.obs;
   final NetworkConnectivity connectivity = NetworkConnectivity();
 
-  // Get the global network service
+
   final GlobalNetworkService _networkService = Get.find<GlobalNetworkService>();
 
   Future<void> checkInitialConnectivity() async {
-    // Use the global service for consistency
+
     final bool connected = await _networkService.checkInitialConnectivity();
     isConnected.value = connected;
   }
 
+  // Initialize language using the existing LocalizationController
+  Future<void> initializeLanguage() async {
+    try {
+      final LocalizationController localizationController = Get.find<LocalizationController>();
+      localizationController.loadCurrentLanguage();
+
+      print("Language initialized with locale: ${localizationController.locale}");
+
+    } catch (e) {
+      print("Error initializing language: $e");
+      // The LocalizationController should handle fallback to default language
+    }
+  }
+
   void startSplashTimer() {
     Future.delayed(Duration(seconds: 3), () async {
-      final LocalizationController localizationController =
-          Get.find<LocalizationController>();
-      localizationController.loadCurrentLanguage();
-      // Navigate to next page, replace '/next' with your route
-      // var token = await SecureStorageHelper.getString("accessToken");
-      //final HomeController homeController = Get.find<HomeController>();
+      // Initialize language first
+      await initializeLanguage();
+      
       if (isConnected.value == true) {
         var storedData = await getStoredUserData();
+        String? language = await SecureStorageHelper.getNullableString(AppConstants.LANGUAGE_CODE);
 
-        if (storedData['accessToken'] != '') {
-          // Start global monitoring before navigating to main app
+        if (storedData['accessToken'] != null && storedData['accessToken'] != '') {
+          // User is logged in, go to main screen
           _networkService.startGlobalMonitoring();
           Get.offAllNamed(Routes.MAIN_NAVIGATION_SCREEN);
-        } else {
-          // Start global monitoring before navigating to language selection
+        }
+        else if (language != null && language.isNotEmpty) {
+          // Language is selected but not logged in, go to login
           _networkService.startGlobalMonitoring();
-          Get.offNamed(Routes.SPLASH_LANGUAGE);
+          Get.offAllNamed(Routes.LOG_IN);
+        }
+        else {
+          // No language selected, go to language selection screen
+          _networkService.startGlobalMonitoring();
+          Get.offAllNamed(Routes.SPLASH_LANGUAGE);
         }
       } else {
         Get.toNamed(Routes.NO_INTERNET);

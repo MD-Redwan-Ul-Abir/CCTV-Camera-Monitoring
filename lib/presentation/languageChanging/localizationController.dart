@@ -33,15 +33,24 @@ class LocalizationController extends GetxController implements GetxService {
   }
 
   void loadCurrentLanguage() async {
-    String languageCode = await SecureStorageHelper.getString(
-        AppConstants.LANGUAGE_CODE, 
-        defaultValue: AppConstants.languages[0].languageCode);
-    String countryCode = await SecureStorageHelper.getString(
-        AppConstants.COUNTRY_CODE, 
-        defaultValue: AppConstants.languages[0].countryCode);
+    String? languageCode = await SecureStorageHelper.getNullableString(AppConstants.LANGUAGE_CODE);
+    String? countryCode = await SecureStorageHelper.getNullableString(AppConstants.COUNTRY_CODE);
+    
+    // If no language is stored, use default (first language in the list)
+    if (languageCode == null || languageCode.isEmpty) {
+      languageCode = AppConstants.languages[0].languageCode;
+      countryCode = AppConstants.languages[0].countryCode;
+    } else {
+      // If language code exists but country code is null, use default country code
+      countryCode ??= AppConstants.languages[0].countryCode;
+    }
     
     _locale = Locale(languageCode, countryCode);
     _isLtr = _locale.languageCode != 'sv';
+    
+    // Set the locale in GetX immediately
+    Get.updateLocale(_locale);
+    
     for (int index = 0; index < AppConstants.languages.length; index++) {
       if (AppConstants.languages[index].languageCode == _locale.languageCode) {
         _selectedIndex = index;

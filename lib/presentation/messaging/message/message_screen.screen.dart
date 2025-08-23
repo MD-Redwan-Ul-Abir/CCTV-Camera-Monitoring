@@ -21,9 +21,8 @@ class MessageScreen extends StatefulWidget {
 }
 
 class _MessageScreenState extends State<MessageScreen> {
-  final MessageScreenController messageScreenController = Get.find<MessageScreenController>();
-
-
+  final MessageScreenController messageScreenController =
+      Get.find<MessageScreenController>();
 
   @override
   Widget build(BuildContext context) {
@@ -75,20 +74,30 @@ class _MessageScreenState extends State<MessageScreen> {
                       //
                       // )
                       GestureDetector(
-                        onTap: (){
-    Get.toNamed(Routes.ADD_CONVERSATIONS);
+                        onTap: () {
+                          Get.toNamed(Routes.ADD_CONVERSATIONS);
                         },
                         child: Container(
                           decoration: BoxDecoration(
                             borderRadius: BorderRadius.circular(50.r),
                             color: AppColors.primaryNormal,
                           ),
-                          child: Center(child: Padding(
-                            padding:  EdgeInsets.symmetric(horizontal: 16.w,vertical: 8.h),
-                            child: Text(AppStrings.addUserButton.tr,style: AppTextStyles.caption1.copyWith(color: AppColors.secondaryLight),),
-                          ),),
+                          child: Center(
+                            child: Padding(
+                              padding: EdgeInsets.symmetric(
+                                horizontal: 16.w,
+                                vertical: 8.h,
+                              ),
+                              child: Text(
+                                AppStrings.addUserButton.tr,
+                                style: AppTextStyles.caption1.copyWith(
+                                  color: AppColors.secondaryLight,
+                                ),
+                              ),
+                            ),
+                          ),
                         ),
-                      )
+                      ),
                     ],
                   ),
 
@@ -188,8 +197,6 @@ class _MessageScreenState extends State<MessageScreen> {
                       physics: NeverScrollableScrollPhysics(),
                       itemCount: chatItemList.length,
                       itemBuilder: (context, index) {
-
-
                         final chatItem = chatItemList[index];
 
                         // Extract data from the model
@@ -223,16 +230,13 @@ class _MessageScreenState extends State<MessageScreen> {
                               messageScreenController
                                   .commonController
                                   .senderId
-                                  .value = messageScreenController
-                                      .userID;
+                                  .value = messageScreenController.userID;
 
                               messageScreenController
-                                  .commonController
-                                  .conversationId
-                                  .value = chatItem
-                                      .conversations!
-                                      .first
-                                      .conversationId!;
+                                      .commonController
+                                      .conversationId
+                                      .value =
+                                  chatItem.conversations!.first.conversationId!;
 
                               messageScreenController
                                   .commonController
@@ -241,8 +245,7 @@ class _MessageScreenState extends State<MessageScreen> {
                               messageScreenController
                                   .commonController
                                   .token
-                                  .value = messageScreenController
-                                      .token;
+                                  .value = messageScreenController.token;
 
                               messageScreenController
                                   .commonController
@@ -264,16 +267,13 @@ class _MessageScreenState extends State<MessageScreen> {
                               Get.toNamed(Routes.CONVERSATION_PAGE);
                             },
                             borderRadius: BorderRadius.circular(4.r),
-                            splashColor: AppColors.grayDarker.withOpacity(
-                              0.3,
-                            ),
+                            splashColor: AppColors.grayDarker.withOpacity(0.3),
                             highlightColor: AppColors.grayDarker.withOpacity(
                               0.3,
                             ),
                             child: Padding(
                               padding: EdgeInsets.symmetric(
-                                horizontal: 6.w
-                                ,
+                                horizontal: 6.w,
                                 vertical: 12.h,
                               ),
                               child: Column(
@@ -296,6 +296,26 @@ class _MessageScreenState extends State<MessageScreen> {
                                           height: 64.h,
                                           width: 64.w,
                                           fit: BoxFit.cover,
+                                          errorBuilder: (
+                                            context,
+                                            error,
+                                            stackTrace,
+                                          ) {
+                                            return Container(
+                                              height: 64.h,
+                                              width: 64.w,
+                                              decoration: BoxDecoration(
+                                                color: AppColors.secondaryDark,
+                                                borderRadius:
+                                                    BorderRadius.circular(50.r),
+                                              ),
+                                              child: Icon(
+                                                Icons.person,
+                                                color: AppColors.primaryLight,
+                                                size: 32.sp,
+                                              ),
+                                            );
+                                          },
                                         ),
                                       ),
                                       SizedBox(width: 16.w),
@@ -304,26 +324,15 @@ class _MessageScreenState extends State<MessageScreen> {
                                           crossAxisAlignment:
                                               CrossAxisAlignment.start,
                                           children: [
-                                            ConstrainedBox(
-                                              constraints: BoxConstraints(
-                                                maxWidth:
-                                                    MediaQuery.of(
-                                                      context,
-                                                    ).size.width *
-                                                    0.5,
-                                              ),
-                                              child: Text(
-                                                userName,
-                                                style: AppTextStyles.button
-                                                    .copyWith(
-                                                      color:
-                                                          AppColors
-                                                              .primaryLight,
-                                                    ),
-                                                maxLines: 2,
-                                                overflow:
-                                                    TextOverflow.ellipsis,
-                                              ),
+                                            Text(
+                                              userName,
+                                              style: AppTextStyles.button
+                                                  .copyWith(
+                                                    color:
+                                                        AppColors.primaryLight,
+                                                  ),
+                                              maxLines: 1,
+                                              overflow: TextOverflow.ellipsis,
                                             ),
                                             SizedBox(height: 8.h),
                                             Text(
@@ -338,18 +347,24 @@ class _MessageScreenState extends State<MessageScreen> {
                                           ],
                                         ),
                                       ),
+                                      SizedBox(width: 8.w),
                                       Column(
                                         crossAxisAlignment:
                                             CrossAxisAlignment.end,
                                         children: [
                                           Text(
                                             //"${messageScreenController.chatItemList[index].conversations?.first.updatedAt}",
-                                         formatMessageTime("${messageScreenController.chatItemList[index].conversations?.first.updatedAt}" ?? ""),
+                                            formatMessageTime(
+                                              "${messageScreenController.chatItemList[index].conversations?.first.updatedAt}" ??
+                                                  "",
+                                            ),
                                             style: GoogleFonts.plusJakartaSans(
-                                              fontSize: 15.sp,
+                                              fontSize: 12.sp,
                                               fontWeight: FontWeight.w400,
                                               height: 1.35,
-                                              color: Color(0xFFD1DDEB).withOpacity(0.62),
+                                              color: Color(
+                                                0xFFD1DDEB,
+                                              ).withOpacity(0.62),
                                             ),
                                           ),
                                           SizedBox(height: 12.h),
@@ -378,19 +393,17 @@ class _MessageScreenState extends State<MessageScreen> {
       }),
     );
   }
+
   String formatMessageTime(String timestamp) {
     try {
-
       DateTime messageTime = DateTime.parse(timestamp);
       DateTime now = DateTime.now();
 
       Duration difference = now.difference(messageTime);
       int minutesDifference = difference.inMinutes;
 
-
       String hour = messageTime.hour.toString().padLeft(2, '0');
       String minute = messageTime.minute.toString().padLeft(2, '0');
-
 
       if (minutesDifference < 5) {
         return "now";
@@ -398,15 +411,12 @@ class _MessageScreenState extends State<MessageScreen> {
         return "$minute mins";
       }
 
-
-
-
       return "$hour:$minute";
     } catch (e) {
-
       return timestamp;
     }
   }
+
   @override
   void dispose() {
     // Handle disposal - this will be called when leaving the screen permanently

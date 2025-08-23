@@ -3,6 +3,7 @@ import 'appString.dart';
 import 'languageModel.dart';
 
 class AppConstants {
+  AppConstants._();
 
   static const String LANGUAGE_CODE = 'language_code';
   static const String COUNTRY_CODE = 'country_code';

@@ -69,7 +69,7 @@ class _LanguageScreenState extends State<LanguageScreen> {
                     selectedOption = value;
                   });
                   Get.snackbar(
-                    "AppStrings.languageText.tr",
+                    AppStrings.languageText.tr,
                     "${languageData.languageName}",
                     duration: Duration(seconds: 2),
                   );

@@ -9,6 +9,7 @@ import '../../../../infrastructure/utils/api_client.dart';
 import '../../../../infrastructure/utils/api_content.dart';
 import '../../forgetPassword/model/forgetPasswordModel.dart';
 import '../model/otpModel.dart';
+import '../../../languageChanging/appString.dart';
 
 class OtpPageController extends GetxController {
   final otpTextEditingController = TextEditingController();
@@ -124,7 +125,7 @@ class OtpPageController extends GetxController {
         return false;
       }
     } catch (e) {
-      Get.snackbar("Error", "An error occurred: ${e.toString()}");
+      Get.snackbar(AppStrings.errorTitle.tr, "${AppStrings.errorOccurredTitle.tr}: ${e.toString()}");
       return false;
     } finally {
       isLoading.value = false;

@@ -15,79 +15,83 @@ class SplashLanguageScreen extends GetView<SplashLanguageController> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: Padding(
-        padding: EdgeInsets.symmetric(horizontal: 24.w, vertical: 50.h),
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          crossAxisAlignment: CrossAxisAlignment.center,
-          children: [
-            // Logo image
-            Image.asset(
-              AppImages.appLogo,
-              height: 92.h,
-              width: 233.w,
-            ),
-            SizedBox(
-              height: 100.h,
-            ),
-            Text(
-              AppStrings.languageText.tr,
-              style: AppTextStyles.paragraph2,
-            ),
-            SizedBox(
-              height: 16.h,
-            ),
-            // Custom dropdown field
-            Obx(
-              () {
-                return CustomTextFormField(
-                  dropDownItems: [
-                    DropdownMenuItem(
-                      value: 'English',
-                      child: Text(
-                        AppStrings.english.tr,
-                        style: AppTextStyles.button,
+      body: SingleChildScrollView(
+        child: Padding(
+          padding: EdgeInsets.symmetric(horizontal: 24.w, ),
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            crossAxisAlignment: CrossAxisAlignment.center,
+            children: [
+              // Logo image
+           SizedBox(
+             height: 153.h,
+           ),
+              Image.asset(
+                AppImages.appLogo,
+                height: 92.h,
+                width: 233.w,
+              ),
+              SizedBox(
+                height: 100.h,
+              ),
+              Text(
+                AppStrings.languageText.tr,
+                style: AppTextStyles.paragraph2,
+              ),
+              SizedBox(
+                height: 16.h,
+              ),
+              // Custom dropdown field
+              Obx(
+                () {
+                  return CustomTextFormField(
+                    dropDownItems: [
+                      DropdownMenuItem(
+                        value: AppStrings.english,
+                        child: Text(
+                          AppStrings.english.tr,
+                          style: AppTextStyles.button,
+                        ),
                       ),
-                    ),
-                    DropdownMenuItem(
-                      value: 'Danish',
-                      child: Text(
-                        AppStrings.danish.tr,
-                        style: AppTextStyles.button,
+                      DropdownMenuItem(
+                        value: AppStrings.danish,
+                        child: Text(
+                          AppStrings.danish.tr,
+                          style: AppTextStyles.button,
+                        ),
                       ),
-                    ),
-                    DropdownMenuItem(
-                      value: 'Swedish',
-                      child: Text(
-                        AppStrings.swedish.tr,
-                        style: AppTextStyles.button,
+                      DropdownMenuItem(
+                        value: AppStrings.swedish,
+                        child: Text(
+                          AppStrings.swedish.tr,
+                          style: AppTextStyles.button,
+                        ),
                       ),
-                    ),
-                  ],
-                  selectedValue: controller.selectedLanguage.value,
-                  onChanged: (String? newValue) {
-                    controller.updateSelectedLanguage(newValue);
-                  },
-                  hintText: AppStrings.selectOptionHint.tr,
-                  //suffixSvg: AppImages.backIcon,
-                );
-              },
-            ),
-
-            SizedBox(
-              height: 26.h,
-            ),
-            PrimaryButton(
-                width: double.infinity,
-                onPressed: () {
-                  controller.saveLanguageAndNavigate();
+                    ],
+                    selectedValue: controller.selectedLanguage.value,
+                    onChanged: (String? newValue) {
+                      controller.updateSelectedLanguage(newValue);
+                    },
+                    hintText: AppStrings.selectOptionHint.tr,
+                    //suffixSvg: AppImages.backIcon,
+                  );
                 },
-                text: AppStrings.startButton.tr),
+              ),
 
-            SizedBox(
-              height: 150.h,
-            )
-          ],
+              SizedBox(
+                height: 26.h,
+              ),
+              PrimaryButton(
+                  width: double.infinity,
+                  onPressed: () {
+                    controller.saveLanguageAndNavigate();
+                  },
+                  text: AppStrings.startButton.tr),
+
+              SizedBox(
+                height: 150.h,)
+            ],
+          ),
         ),
       ),
     );
