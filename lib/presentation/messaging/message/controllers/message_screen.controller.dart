@@ -11,8 +11,8 @@ class MessageScreenController extends GetxController {
   final ScrollController scrollController = ScrollController();
   final CommonController commonController = Get.put(CommonController());
   late final SocketController socketController;
-  String token = '';
-  String userID = '';
+  RxString token = ''.obs;
+  RxString userID = ''.obs;
 
   RxList<AllConversationList> chatItemList = <AllConversationList>[].obs;
   final RxBool isLoading = true.obs;
@@ -24,8 +24,8 @@ class MessageScreenController extends GetxController {
 
     socketController = Get.find<SocketController>();
     socketController.enterMessagingFlow('MessageScreen');
-    token = await SecureStorageHelper.getString('accessToken');
-    userID = await SecureStorageHelper.getString('id');
+    token.value = await SecureStorageHelper.getString('accessToken');
+    userID.value = await SecureStorageHelper.getString('id');
     isLoading.value = true;
     setupSocketListeners();
     getUserList();
@@ -36,11 +36,11 @@ class MessageScreenController extends GetxController {
 
 
     socketController.on(
-      'conversation-list-updated::$userID}',
+      'conversation-list-updated::${userID.value}',
           (data) {
         // print('=========================${socketController.userId.value}==============================');
-        LoggerHelper.info(
-          'Conversation list updated: $data \n\n\n$userID',
+        LoggerHelper.warn(
+          'Conversation list updated: $data \n\n\n${userID.value}',
         );
         getUserList();
       },
@@ -48,11 +48,11 @@ class MessageScreenController extends GetxController {
 
     // Listen for user online status updates
     socketController.on(
-      'related-user-online-status::$userID',
+      'related-user-online-status::${userID.value}',
           (data) {
         // print('=========================${socketController.userId.value}==============================');
         LoggerHelper.info(
-          'User online status updated: $data \n\n\n$userID',
+          'User online status updated: $data \n\n\n${userID.value}',
         );
         getUserList();
       },
@@ -72,6 +72,7 @@ class MessageScreenController extends GetxController {
       'get-all-conversations-with-pagination',
       {"page": 1, "limit": 100},
       ack: (response) async {
+        LoggerHelper.warn(' Message screens list fetched successfully');
         LoggerHelper.error(response.toString());
 
         try {

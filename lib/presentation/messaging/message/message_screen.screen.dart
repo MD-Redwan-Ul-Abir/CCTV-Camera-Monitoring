@@ -22,7 +22,9 @@ class MessageScreen extends StatefulWidget {
 
 class _MessageScreenState extends State<MessageScreen> {
   final MessageScreenController messageScreenController =
-      Get.find<MessageScreenController>();
+  Get.find<MessageScreenController>();
+
+
 
   @override
   Widget build(BuildContext context) {
@@ -106,9 +108,9 @@ class _MessageScreenState extends State<MessageScreen> {
                   // Connection status indicator
                   Obx(() {
                     if (messageScreenController
-                            .socketController
-                            .socketStatus
-                            .value ==
+                        .socketController
+                        .socketStatus
+                        .value ==
                         'error') {
                       return Container(
                         padding: EdgeInsets.all(12),
@@ -139,7 +141,7 @@ class _MessageScreenState extends State<MessageScreen> {
                             ),
                             TextButton(
                               onPressed:
-                                  messageScreenController.retryConnection,
+                              messageScreenController.retryConnection,
                               child: Text(
                                 'Retry',
                                 style: TextStyle(color: Colors.red),
@@ -203,19 +205,19 @@ class _MessageScreenState extends State<MessageScreen> {
                         final userName =
                             chatItem.userId?.name ?? 'Unknown User';
                         final lastMessage =
-                            chatItem.conversations?.isNotEmpty == true
-                                ? chatItem
-                                        .conversations!
-                                        .first
-                                        .lastMessage
-                                        ?.text ??
-                                    'No messages'
-                                : 'No messages';
+                        chatItem.conversations?.isNotEmpty == true
+                            ? chatItem
+                            .conversations!
+                            .first
+                            .lastMessage
+                            ?.text ??
+                            'No messages'
+                            : 'No messages';
                         final isOnline = chatItem.isOnline ?? false;
                         final dotColor =
-                            isOnline
-                                ? AppColors.greenNormal
-                                : AppColors.redNormal;
+                        isOnline
+                            ? AppColors.greenNormal
+                            : AppColors.redNormal;
 
                         return Card(
                           color: AppColors.secondaryDark,
@@ -230,13 +232,13 @@ class _MessageScreenState extends State<MessageScreen> {
                               messageScreenController
                                   .commonController
                                   .senderId
-                                  .value = messageScreenController.userID;
+                                  .value = messageScreenController.userID.value;
 
                               messageScreenController
-                                      .commonController
-                                      .conversationId
-                                      .value =
-                                  chatItem.conversations!.first.conversationId!;
+                                  .commonController
+                                  .conversationId
+                                  .value =
+                              chatItem.conversations!.first.conversationId!;
 
                               messageScreenController
                                   .commonController
@@ -245,7 +247,7 @@ class _MessageScreenState extends State<MessageScreen> {
                               messageScreenController
                                   .commonController
                                   .token
-                                  .value = messageScreenController.token;
+                                  .value = messageScreenController.token.value;
 
                               messageScreenController
                                   .commonController
@@ -276,109 +278,113 @@ class _MessageScreenState extends State<MessageScreen> {
                                 horizontal: 6.w,
                                 vertical: 12.h,
                               ),
-                              child: Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  Row(
-                                    children: [
-                                      ClipRRect(
-                                        borderRadius: BorderRadius.circular(
-                                          50.r,
-                                        ),
-                                        child: Image.network(
-                                          ProfileImageHelper.formatImageUrl(
-                                            messageScreenController
-                                                .chatItemList[index]
-                                                .userId!
-                                                .profileImage!
-                                                .imageUrl,
+                              child: Obx(() {
+                                return Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    Row(
+                                      children: [
+                                        ClipRRect(
+                                          borderRadius: BorderRadius.circular(
+                                            50.r,
                                           ),
-                                          height: 64.h,
-                                          width: 64.w,
-                                          fit: BoxFit.cover,
-                                          errorBuilder: (
-                                            context,
-                                            error,
-                                            stackTrace,
-                                          ) {
-                                            return Container(
-                                              height: 64.h,
-                                              width: 64.w,
-                                              decoration: BoxDecoration(
-                                                color: AppColors.secondaryDark,
-                                                borderRadius:
-                                                    BorderRadius.circular(50.r),
-                                              ),
-                                              child: Icon(
-                                                Icons.person,
-                                                color: AppColors.primaryLight,
-                                                size: 32.sp,
-                                              ),
-                                            );
-                                          },
+                                          child: Image.network(
+                                            ProfileImageHelper.formatImageUrl(
+                                              messageScreenController
+                                                  .chatItemList[index]
+                                                  .userId!
+                                                  .profileImage!
+                                                  .imageUrl,
+                                            ),
+                                            height: 64.h,
+                                            width: 64.w,
+                                            fit: BoxFit.cover,
+                                            errorBuilder: (context,
+                                                error,
+                                                stackTrace,) {
+                                              return Container(
+                                                height: 64.h,
+                                                width: 64.w,
+                                                decoration: BoxDecoration(
+                                                  color: AppColors
+                                                      .secondaryDark,
+                                                  borderRadius:
+                                                  BorderRadius.circular(50.r),
+                                                ),
+                                                child: Icon(
+                                                  Icons.person,
+                                                  color: AppColors.primaryLight,
+                                                  size: 32.sp,
+                                                ),
+                                              );
+                                            },
+                                          ),
                                         ),
-                                      ),
-                                      SizedBox(width: 16.w),
-                                      Expanded(
-                                        child: Column(
+                                        SizedBox(width: 16.w),
+                                        Expanded(
+                                          child: Column(
+                                            crossAxisAlignment:
+                                            CrossAxisAlignment.start,
+                                            children: [
+                                              Text(
+                                                userName,
+                                                style: AppTextStyles.button
+                                                    .copyWith(
+                                                  color:
+                                                  AppColors.primaryLight,
+                                                ),
+                                                maxLines: 1,
+                                                overflow: TextOverflow.ellipsis,
+                                              ),
+                                              SizedBox(height: 8.h),
+                                              Text(
+                                                lastMessage,
+                                                style: AppTextStyles.caption1
+                                                    .copyWith(
+                                                  color: Color(0xFFBAB8B9),
+                                                ),
+                                                maxLines: 1,
+                                                overflow: TextOverflow.ellipsis,
+                                              ),
+                                            ],
+                                          ),
+                                        ),
+                                        SizedBox(width: 8.w),
+                                        Column(
                                           crossAxisAlignment:
-                                              CrossAxisAlignment.start,
+                                          CrossAxisAlignment.end,
                                           children: [
                                             Text(
-                                              userName,
-                                              style: AppTextStyles.button
-                                                  .copyWith(
-                                                    color:
-                                                        AppColors.primaryLight,
-                                                  ),
-                                              maxLines: 1,
-                                              overflow: TextOverflow.ellipsis,
+                                              //"${messageScreenController.chatItemList[index].conversations?.first.updatedAt}",
+                                              formatMessageTime(
+                                                "${messageScreenController
+                                                    .chatItemList[index]
+                                                    .conversations?.first
+                                                    .updatedAt}",
+                                              ),
+                                              style: GoogleFonts
+                                                  .plusJakartaSans(
+                                                fontSize: 12.sp,
+                                                fontWeight: FontWeight.w400,
+                                                height: 1.35,
+                                                color: Color(
+                                                  0xFFD1DDEB,
+                                                ).withOpacity(0.62),
+                                              ),
                                             ),
-                                            SizedBox(height: 8.h),
-                                            Text(
-                                              lastMessage,
-                                              style: AppTextStyles.caption1
-                                                  .copyWith(
-                                                    color: Color(0xFFBAB8B9),
-                                                  ),
-                                              maxLines: 1,
-                                              overflow: TextOverflow.ellipsis,
+                                            SizedBox(height: 12.h),
+                                            Icon(
+                                              Icons.circle,
+                                              size: 10,
+                                              color: dotColor,
                                             ),
                                           ],
                                         ),
-                                      ),
-                                      SizedBox(width: 8.w),
-                                      Column(
-                                        crossAxisAlignment:
-                                            CrossAxisAlignment.end,
-                                        children: [
-                                          Text(
-                                            //"${messageScreenController.chatItemList[index].conversations?.first.updatedAt}",
-                                            formatMessageTime(
-                                              "${messageScreenController.chatItemList[index].conversations?.first.updatedAt}" ??
-                                                  "",
-                                            ),
-                                            style: GoogleFonts.plusJakartaSans(
-                                              fontSize: 12.sp,
-                                              fontWeight: FontWeight.w400,
-                                              height: 1.35,
-                                              color: Color(
-                                                0xFFD1DDEB,
-                                              ).withOpacity(0.62),
-                                            ),
-                                          ),
-                                          SizedBox(height: 12.h),
-                                          Icon(
-                                            Icons.circle,
-                                            size: 10,
-                                            color: dotColor,
-                                          ),
-                                        ],
-                                      ),
-                                    ],
-                                  ),
-                                ],
-                              ),
+                                      ],
+                                    ),
+                                  ],
+                                );
+                              }),
                             ),
                           ),
                         );

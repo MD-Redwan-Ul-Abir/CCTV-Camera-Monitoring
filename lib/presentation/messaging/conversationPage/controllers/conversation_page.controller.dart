@@ -2,6 +2,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:get/get.dart';
 import 'package:skt_sikring/presentation/messaging/common/commonController.dart';
+import 'package:skt_sikring/presentation/messaging/message/controllers/message_screen.controller.dart';
 
 import '../../../../infrastructure/theme/app_colors.dart';
 import '../../../../infrastructure/utils/api_client.dart';
@@ -19,6 +20,7 @@ class ConversationPageController extends GetxController {
   final CommonController commonController = Get.put(CommonController());
   late final SocketController socketController;
   final ApiClient _apiClient = Get.find<ApiClient>();
+  final MessageScreenController messageScreenController = Get.find<MessageScreenController>();
   final imagePickerController imageController =
   Get.find<imagePickerController>();
 
@@ -523,6 +525,7 @@ class ConversationPageController extends GetxController {
 
         try {
           if (data != null && data is Map) {
+            messageScreenController.getUserList();
             Map<String, dynamic> messageData = _convertResponseToStringMap(
               data,
             );

@@ -41,10 +41,10 @@ class ApiConstants {
   // static String socketUrl = "https://sheakh6733.sobhoy.com";
 
   //-----------------------https://linux_vai.syedbipul.me/api/v1/auth/login
-  static String baseUrl = "https://linux_vai.syedbipul.me/api/v1";
-  static String imageBaseUrl = "https://linux_vai.syedbipul.me" ;
-  static String dummyImageUrl = "https://linux_vai.syedbipul.me";
-  static String socketUrl = "https://linux_vai.syedbipul.me";
+  static String baseUrl = "https://newsheakh6733.sobhoy.com/api/v1";
+  static String imageBaseUrl = "https://newsheakh6733.sobhoy.com" ;
+  static String dummyImageUrl = "https://newsheakh6733.sobhoy.com";
+  static String socketUrl = "https://newsheakh6733.sobhoy.com";
 
   ///-------------------------------------Auth------------------------------------
 
