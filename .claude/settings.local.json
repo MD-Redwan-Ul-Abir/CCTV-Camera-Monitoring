@@ -6,7 +6,8 @@
       "Bash(dart:*)",
       "WebSearch",
       "WebFetch(domain:developers.weglot.com)",
-      "Bash(flutter build:*)"
+      "Bash(flutter build:*)",
+      "Bash(flutter run:*)"
     ],
     "deny": [],
     "ask": []

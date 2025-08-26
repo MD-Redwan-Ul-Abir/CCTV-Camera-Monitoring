@@ -65,7 +65,7 @@ class MessageScreenController extends GetxController {
       isLoading.value = false;
       return;
     }
-    // isLoading.value = true;
+     //isLoading.value = true;
 
 
     socketController.emitWithAck(

@@ -3,6 +3,7 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/svg.dart';
 
 import 'package:get/get.dart';
+import 'package:html/parser.dart';
 
 import '../../infrastructure/navigation/routes.dart';
 import '../../infrastructure/theme/app_colors.dart';
@@ -93,13 +94,13 @@ class _PrivacySettingsScreenState extends State<PrivacySettingsScreen> {
                     arguments: {
                       'title': AppStrings.termsOfServicesMenuItem.tr,
                       'customWidget': Column(
-                        children: [
-                          Text(
-                            termsAttr?.details ?? AppStrings.noTermsAvailable.tr,
 
+                        children: [
+
+                          Text(
+                            parse( termsAttr?.details  ?? AppStrings.noPrivacyPolicyAvailable.tr).body?.text ?? '',
                             style: AppTextStyles.button.copyWith(
                               height: 1.6,
-
                               color: AppColors.secondaryLightActive,
                             ),
                           ),
@@ -121,12 +122,11 @@ class _PrivacySettingsScreenState extends State<PrivacySettingsScreen> {
                       'title': AppStrings.privacyPolicyMenuItem.tr,
                       'customWidget': Column(
                         children: [
-                          Text(
-                            privacyPolicy?.details ?? AppStrings.noPrivacyPolicyAvailable.tr,
 
+                          Text(
+                            parse(privacyPolicy?.details ?? AppStrings.noPrivacyPolicyAvailable.tr).body?.text ?? '',
                             style: AppTextStyles.button.copyWith(
                               height: 1.6,
-
                               color: AppColors.secondaryLightActive,
                             ),
                           ),
@@ -154,12 +154,11 @@ class _PrivacySettingsScreenState extends State<PrivacySettingsScreen> {
                             width: 132.w,
                           ),
                           SizedBox(height: 22.h),
-                          Text(
-                            aboutUs?.details ?? AppStrings.noInfoFound.tr,
 
+                          Text(
+                            parse( aboutUs?.details   ?? AppStrings.noPrivacyPolicyAvailable.tr).body?.text ?? '',
                             style: AppTextStyles.button.copyWith(
                               height: 1.6,
-
                               color: AppColors.secondaryLightActive,
                             ),
                           ),
