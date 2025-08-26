@@ -124,7 +124,7 @@ class ProfileController extends GetxController {
 
   Future<bool> updateProfilePicture() async {
     try {
-      // Check if image is selected
+
       if (imageController.selectedImages.isEmpty) {
         CustomSnackbar.show(
             title: "Error", message: "Please select an image first");
@@ -139,7 +139,7 @@ class ProfileController extends GetxController {
 
       final response = await _apiClient.putData(
         ApiConstants.updateProfilePicture,
-        null, // Keep data as null for multipart requests
+        null,
         files: files,
       );
 
@@ -234,19 +234,7 @@ class ProfileController extends GetxController {
     }
   }
 
-  // void changeLanguage(String languageName) {
-  //   final localizationController = Get.find<LocalizationController>();
-  //   for (var language in AppConstants.languages) {
-  //     if (language.languageName == languageName) {
-  //       localizationController.setLanguage(
-  //           Locale(language.languageCode, language.countryCode));
-  //       break;
-  //     }
-  //   }
-  // }
 
-  // Add this method to your existing ProfileController class
-// Replace the existing changeLanguage method with this enhanced version
 
   Future<void> changeLanguage(String languageName) async {
     try {
@@ -271,18 +259,6 @@ class ProfileController extends GetxController {
     }
   }
 
-// Also update the _selectLanguage method in ProfileScreen to use the enhanced method
-//   void _selectLanguage(String language) async {
-//     await profileController.changeLanguage(language);
-//
-//     Get.snackbar(
-//       'Language Changed',
-//       'Language changed to $language',
-//       backgroundColor: AppColors.primaryDark,
-//       colorText: Colors.white,
-//       duration: Duration(seconds: 2),
-//     );
-//   }
 
   List<LanguageModel> getAvailableLanguages() {
     return AppConstants.languages;
