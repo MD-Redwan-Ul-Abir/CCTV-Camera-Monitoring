@@ -2,7 +2,6 @@ import 'package:flutter/cupertino.dart';
 import 'package:get/get.dart';
 import 'package:skt_sikring/infrastructure/utils/log_helper.dart';
 import 'package:skt_sikring/presentation/messaging/common/commonController.dart';
-
 import '../../../../infrastructure/utils/secure_storage_helper.dart';
 import '../../common/socket_controller.dart';
 import '../model/conversationListModel.dart';
@@ -32,9 +31,6 @@ class MessageScreenController extends GetxController {
   }
 
   void setupSocketListeners() {
-    print('Data List>>>>>$userID');
-
-
     socketController.on(
       'conversation-list-updated::${userID.value}',
           (data) {
@@ -65,9 +61,6 @@ class MessageScreenController extends GetxController {
       isLoading.value = false;
       return;
     }
-     //isLoading.value = true;
-
-
     socketController.emitWithAck(
       'get-all-conversations-with-pagination',
       {"page": 1, "limit": 100},

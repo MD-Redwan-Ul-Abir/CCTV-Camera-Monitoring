@@ -19,14 +19,13 @@ import 'model/privacyModel.dart';
 class PrivacySettingsScreen extends StatefulWidget {
   const PrivacySettingsScreen({super.key});
 
-
   @override
   State<PrivacySettingsScreen> createState() => _PrivacySettingsScreenState();
 }
 
 class _PrivacySettingsScreenState extends State<PrivacySettingsScreen> {
-  final PrivacySettingsController privacySettingsController = Get.find<
-      PrivacySettingsController>();
+  final PrivacySettingsController privacySettingsController =
+      Get.find<PrivacySettingsController>();
 
   @override
   void initState() {
@@ -55,10 +54,10 @@ class _PrivacySettingsScreenState extends State<PrivacySettingsScreen> {
             alignment: Alignment.centerLeft,
             child: IconButton(
               icon: SvgPicture.asset(
-                  AppImages.backIcon,
-                  color: AppColors.primaryLight,
-                  height: 24.h,
-                  width: 24.w
+                AppImages.backIcon,
+                color: AppColors.primaryLight,
+                height: 24.h,
+                width: 24.w,
               ),
               onPressed: () {
                 Get.back();
@@ -71,11 +70,9 @@ class _PrivacySettingsScreenState extends State<PrivacySettingsScreen> {
       body: Padding(
         padding: EdgeInsets.symmetric(horizontal: 24.w, vertical: 10.h),
         child: Obx(() {
-          if(privacySettingsController.isLoading.value==true){
+          if (privacySettingsController.isLoading.value == true) {
             return Center(
-              child: CircularProgressIndicator(
-                color: AppColors.primaryNormal,
-              ),
+              child: CircularProgressIndicator(color: AppColors.primaryNormal),
             );
           }
           return Column(
@@ -87,18 +84,21 @@ class _PrivacySettingsScreenState extends State<PrivacySettingsScreen> {
                 Name: AppStrings.termsOfServicesMenuItem.tr,
                 onTap: () {
                   Attribute? termsAttr = privacySettingsController
-                      .getAttributeByType('termsAndConditions'); // Use actual type from API
-
+                      .getAttributeByType(
+                        'termsAndConditions',
+                      ); // Use actual type from API
                   Get.toNamed(
                     Routes.CUSTOM_PRIVACY_POLICY,
                     arguments: {
                       'title': AppStrings.termsOfServicesMenuItem.tr,
                       'customWidget': Column(
-
                         children: [
-
                           Text(
-                            parse( termsAttr?.details  ?? AppStrings.noPrivacyPolicyAvailable.tr).body?.text ?? '',
+                            parse(
+                                  termsAttr?.details ??
+                                      AppStrings.noPrivacyPolicyAvailable.tr,
+                                ).body?.text ??
+                                '',
                             style: AppTextStyles.button.copyWith(
                               height: 1.6,
                               color: AppColors.secondaryLightActive,
@@ -122,9 +122,12 @@ class _PrivacySettingsScreenState extends State<PrivacySettingsScreen> {
                       'title': AppStrings.privacyPolicyMenuItem.tr,
                       'customWidget': Column(
                         children: [
-
                           Text(
-                            parse(privacyPolicy?.details ?? AppStrings.noPrivacyPolicyAvailable.tr).body?.text ?? '',
+                            parse(
+                                  privacyPolicy?.details ??
+                                      AppStrings.noPrivacyPolicyAvailable.tr,
+                                ).body?.text ??
+                                '',
                             style: AppTextStyles.button.copyWith(
                               height: 1.6,
                               color: AppColors.secondaryLightActive,
@@ -156,7 +159,11 @@ class _PrivacySettingsScreenState extends State<PrivacySettingsScreen> {
                           SizedBox(height: 22.h),
 
                           Text(
-                            parse( aboutUs?.details   ?? AppStrings.noPrivacyPolicyAvailable.tr).body?.text ?? '',
+                            parse(
+                                  aboutUs?.details ??
+                                      AppStrings.noPrivacyPolicyAvailable.tr,
+                                ).body?.text ??
+                                '',
                             style: AppTextStyles.button.copyWith(
                               height: 1.6,
                               color: AppColors.secondaryLightActive,
@@ -175,7 +182,8 @@ class _PrivacySettingsScreenState extends State<PrivacySettingsScreen> {
                   // Get the attribute first, then access its contactUs property
                   Attribute? contactAttr = privacySettingsController
                       .getAttributeByType('contactUs');
-                  ContactUs? contactUS = contactAttr?.contactUs; // Access the contactUs property
+                  ContactUs? contactUS =
+                      contactAttr?.contactUs; // Access the contactUs property
 
                   Get.toNamed(
                     Routes.CUSTOM_PRIVACY_POLICY,
@@ -214,49 +222,59 @@ class _PrivacySettingsScreenState extends State<PrivacySettingsScreen> {
                                   ),
                                   SizedBox(height: 30.h),
                                   Row(
-                                    crossAxisAlignment: CrossAxisAlignment.start,
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
                                     mainAxisAlignment: MainAxisAlignment.start,
                                     children: [
                                       SvgPicture.asset(AppImages.phone2),
                                       SizedBox(width: 12.w),
                                       Text(
-                                        contactUS?.phone ?? AppStrings.defaultPhone.tr, // Use contactUS.phone
-                                        style: AppTextStyles.textButton.copyWith(
-                                          fontSize: 15.5.sp,
-                                        ),
+                                        contactUS?.phone ??
+                                            AppStrings.defaultPhone.tr,
+                                        // Use contactUS.phone
+                                        style: AppTextStyles.textButton
+                                            .copyWith(fontSize: 15.5.sp),
                                       ),
                                     ],
                                   ),
                                   Spacer(),
                                   Row(
-                                    crossAxisAlignment: CrossAxisAlignment.start,
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
                                     mainAxisAlignment: MainAxisAlignment.start,
                                     children: [
-                                      SvgPicture.asset(AppImages.email2,
-                                        color: AppColors.secondaryLightActive,),
+                                      SvgPicture.asset(
+                                        AppImages.email2,
+                                        color: AppColors.secondaryLightActive,
+                                      ),
                                       SizedBox(width: 12.w),
                                       Text(
-                                        contactUS?.email ?? AppStrings.defaultEmail.tr, // Use contactUS.email
-                                        style: AppTextStyles.textButton.copyWith(
-                                          fontSize: 15.5.sp,
-                                        ),
+                                        contactUS?.email ??
+                                            AppStrings.defaultEmail.tr,
+                                        // Use contactUS.email
+                                        style: AppTextStyles.textButton
+                                            .copyWith(fontSize: 15.5.sp),
                                       ),
                                     ],
                                   ),
                                   Spacer(),
                                   Row(
-                                    crossAxisAlignment: CrossAxisAlignment.start,
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
                                     mainAxisAlignment: MainAxisAlignment.start,
                                     children: [
-                                      SvgPicture.asset(AppImages.location2,
-                                        color: AppColors.secondaryLightActive,),
+                                      SvgPicture.asset(
+                                        AppImages.location2,
+                                        color: AppColors.secondaryLightActive,
+                                      ),
                                       SizedBox(width: 12.w),
                                       Flexible(
                                         child: Text(
-                                          contactUS?.address ?? AppStrings.defaultAddress.tr, // Use contactUS.address
-                                          style: AppTextStyles.textButton.copyWith(
-                                            fontSize: 15.5.sp,
-                                          ),
+                                          contactUS?.address ??
+                                              AppStrings.defaultAddress.tr,
+                                          // Use contactUS.address
+                                          style: AppTextStyles.textButton
+                                              .copyWith(fontSize: 15.5.sp),
                                           maxLines: 2,
                                           overflow: TextOverflow.ellipsis,
                                         ),
@@ -265,16 +283,18 @@ class _PrivacySettingsScreenState extends State<PrivacySettingsScreen> {
                                   ),
                                   Spacer(),
                                   Row(
-                                    crossAxisAlignment: CrossAxisAlignment.start,
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
                                     mainAxisAlignment: MainAxisAlignment.start,
                                     children: [
                                       SvgPicture.asset(AppImages.timer),
                                       SizedBox(width: 12.w),
                                       Text(
-                                        contactUS?.availableTime ?? AppStrings.defaultHours.tr, // Use contactUS.availableTime
-                                        style: AppTextStyles.textButton.copyWith(
-                                          fontSize: 15.5.sp,
-                                        ),
+                                        contactUS?.availableTime ??
+                                            AppStrings.defaultHours.tr,
+                                        // Use contactUS.availableTime
+                                        style: AppTextStyles.textButton
+                                            .copyWith(fontSize: 15.5.sp),
                                       ),
                                     ],
                                   ),
