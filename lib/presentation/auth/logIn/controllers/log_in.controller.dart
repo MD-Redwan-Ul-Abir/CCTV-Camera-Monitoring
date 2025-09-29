@@ -59,6 +59,8 @@ class LogInController extends GetxController with GetSingleTickerProviderStateMi
       profileImageUrl.value = "";
     }
   }
+
+
   Future<bool> login() async {
     isLoading.value = true;
     update();
