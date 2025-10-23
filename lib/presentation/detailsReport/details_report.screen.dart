@@ -3,6 +3,7 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/svg.dart';
 
 import 'package:get/get.dart';
+import 'package:skt_sikring/presentation/createReport/controllers/create_report.controller.dart';
 
 import '../../infrastructure/theme/app_colors.dart';
 import '../../infrastructure/theme/text_styles.dart';
@@ -22,6 +23,7 @@ class DetailsReportScreen extends StatefulWidget {
 class _DetailsReportScreenState extends State<DetailsReportScreen> {
   final DetailsReportController detailsReportController = Get.find<
       DetailsReportController>();
+  final CreateReportController createReportController = Get.find<CreateReportController>();
 
   @override
   void initState() {
@@ -164,7 +166,7 @@ class _DetailsReportScreenState extends State<DetailsReportScreen> {
                         ],
                       ),
                     ),
-
+SizedBox(width: 4.w,),
                     // Date Section
                     Expanded(
                       child: Column(
@@ -243,10 +245,10 @@ class _DetailsReportScreenState extends State<DetailsReportScreen> {
                         children: [
                           // Profile Avatar
                           ClipRRect(
-                            borderRadius: BorderRadius.circular(16.r),
+                            borderRadius: BorderRadius.circular(100.r),
                             child: Container(
-                              width: 26.r,
-                              height: 26.r,
+                              width: 34.r,
+                              height: 34.r,
 
                               color: AppColors.grayDarker,
                               child: Image.network(
@@ -287,7 +289,7 @@ class _DetailsReportScreenState extends State<DetailsReportScreen> {
                 SizedBox(
                   height: 36.h,
                 ),
-                if(detailsReportController.detailsReport.value?.data?.attributes?.person?.first.role==AppContents.role)
+                if(detailsReportController.detailsReport.value?.data.attributes.creatorId.role!=AppContents.role)
                   PrimaryButton(onPressed: (){}, text: "Create Response Report",width: double.infinity,),
                 SizedBox(height: 40.h),
               ],
