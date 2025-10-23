@@ -10,8 +10,8 @@ class MainNavigationScreenController extends GetxController {
   Future<void> onInit() async {
     super.onInit();
     socketController = Get.put(SocketController(), permanent: false);
-    socketController.initializeUserData();
-   await socketController.connectSocket();
+   await socketController.initializeUserData();
+
   }
 
   void changeIndex(int index) {

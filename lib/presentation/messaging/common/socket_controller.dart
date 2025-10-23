@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'package:get/get.dart';
 import 'package:socket_io_client/socket_io_client.dart' as IO;
 import 'package:skt_sikring/infrastructure/utils/api_content.dart';
@@ -27,6 +28,9 @@ class SocketController extends GetxController {
       try {
         token  = await SecureStorageHelper.getString('accessToken');
         userId  = await SecureStorageHelper.getString('id');
+        LoggerHelper.warn('socket is trying to connect');
+         connectSocket();
+        LoggerHelper.warn('socket is connected');
         print("token for socket connection ===================>$token" );
         print("User ID for socket connection ===================>$userId");
       } catch (e) {
@@ -55,19 +59,25 @@ class SocketController extends GetxController {
         return;
       }
 
-      // Configure socket
+      // Configure socket with proper timeout and connection options
       _socket = IO.io(ApiConstants.socketUrl, <String, dynamic>{
-        'transports': ['websocket'],
+        'transports': ['websocket'], // Prioritize websocket transport
         'autoConnect': false,
         'forceNew': true,
+        'reconnection': true,
+        'reconnectionAttempts': 5,
+        'reconnectionDelay': 2000,
+        'timeout': 20000, // 20 seconds timeout
         'extraHeaders': {'token': token},
+        'query': 'token=$token' // Also send token as query parameter
       });
 
       // Setup event listeners
       _setupSocketListeners();
 
       // Connect to the socket
-      _socket?.connect();
+      // Connect to the socket with timeout handling
+      _connectWithTimeout();
 
     } catch (e) {
       LoggerHelper.error('Error connecting to socket: $e');
@@ -76,6 +86,44 @@ class SocketController extends GetxController {
       isConnecting.value = false;
     }
 
+  }
+
+  // Connect with timeout handling
+  void _connectWithTimeout() {
+    final timeoutDuration = Duration(seconds: 20); // 20 seconds timeout
+    Timer? timeoutTimer;
+
+    bool hasCompleted = false;
+
+    void completeConnection() {
+      if (!hasCompleted) {
+        hasCompleted = true;
+        timeoutTimer?.cancel();
+      }
+    }
+
+    // Set up timeout
+    timeoutTimer = Timer(timeoutDuration, () {
+      if (!hasCompleted) {
+        LoggerHelper.error('Socket connection timeout after ${timeoutDuration.inSeconds} seconds');
+        disconnectSocket();
+        isSocketConnected.value = false;
+        socketStatus.value = 'error';
+        isConnecting.value = false;
+      }
+    });
+
+    // Connect to socket
+    _socket?.connect();
+
+    // After connecting, clear the timeout
+    _socket?.onConnect((_) {
+      completeConnection();
+    });
+
+    _socket?.onConnectError((error) {
+      completeConnection();
+    });
   }
 
   void _setupSocketListeners() {
@@ -96,6 +144,13 @@ class SocketController extends GetxController {
 
     _socket?.onConnectError((error) {
       LoggerHelper.error('Socket connection error: $error');
+      isSocketConnected.value = false;
+      socketStatus.value = 'error';
+      isConnecting.value = false;
+    });
+
+    _socket?.onError((error) {
+      LoggerHelper.error('Socket error: $error');
       isSocketConnected.value = false;
       socketStatus.value = 'error';
       isConnecting.value = false;

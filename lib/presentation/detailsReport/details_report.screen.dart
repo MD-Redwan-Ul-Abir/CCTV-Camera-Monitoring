@@ -6,6 +6,7 @@ import 'package:get/get.dart';
 
 import '../../infrastructure/theme/app_colors.dart';
 import '../../infrastructure/theme/text_styles.dart';
+import '../../infrastructure/utils/app_contents.dart';
 import '../../infrastructure/utils/app_images.dart';
 import '../shared/widgets/buttons/primary_buttons.dart';
 import '../shared/widgets/customCarocelSlider/customCaroselSlider.dart';
@@ -78,11 +79,7 @@ class _DetailsReportScreenState extends State<DetailsReportScreen> {
               children: [
                 // Auto Carousel Slider
                 AutoCarouselSlider(
-                  images: detailsReportController.detailsReport.value?.data
-                      ?.attributes?.attachments
-                      ?.map((attachment) => attachment.attachment ?? '')
-                      .where((url) => url.isNotEmpty)
-                      .toList() ?? [],
+                  images: detailsReportController.detailsReport.value?.data?.attributes?.attachments?.map((attachment) => attachment.attachment ?? '').where((url) => url.isNotEmpty).toList() ?? [],
                   height: 220.h,
                   autoPlayInterval: Duration(seconds: 5),
                   activeIndicatorColor: AppColors.primaryDark,
@@ -111,23 +108,23 @@ class _DetailsReportScreenState extends State<DetailsReportScreen> {
                         ),
                       ),
                     ),
-                    SizedBox(width: 30.w), // Add some spacing
-                    Container(
-                      decoration: BoxDecoration(
-                        color: AppColors.primaryLightActive,
-                        borderRadius: BorderRadius.circular(100.r),
-                      ),
-                      child: Padding(
-                        padding: const EdgeInsets.symmetric(
-                          horizontal: 10.0,
-                          vertical: 8,
-                        ),
-                        child: Text(
-                          detailsReportController.detailsReport.value!.data!.attributes!.status??"",
-                          style: AppTextStyles.caption1,
-                        ),
-                      ),
-                    ),
+                    // SizedBox(width: 30.w), // Add some spacing
+                    // Container(
+                    //   decoration: BoxDecoration(
+                    //     color: AppColors.primaryLightActive,
+                    //     borderRadius: BorderRadius.circular(100.r),
+                    //   ),
+                    //   child: Padding(
+                    //     padding: const EdgeInsets.symmetric(
+                    //       horizontal: 10.0,
+                    //       vertical: 8,
+                    //     ),
+                    //     child: Text(
+                    //       detailsReportController.detailsReport.value!.data!.attributes!.status??"",
+                    //       style: AppTextStyles.caption1,
+                    //     ),
+                    //   ),
+                    // ),
                   ],
                 ),
 
@@ -265,8 +262,7 @@ class _DetailsReportScreenState extends State<DetailsReportScreen> {
                             children: [
                               Text(
                                 detailsReportController.detailsReport.value!
-                                    .data!.attributes!.person!.first.personId!
-                                    .name ?? "",
+                                    .data.attributes.creatorId.name ?? "",
 
                                 style: AppTextStyles.caption1.copyWith(
                                   color: Color(0xFFFFFFFF),
@@ -275,7 +271,7 @@ class _DetailsReportScreenState extends State<DetailsReportScreen> {
                               SizedBox(height: 4.h),
                               Text(
                                 detailsReportController.detailsReport.value!
-                                    .data!.attributes!.person!.first.role??"",
+                                    .data.attributes.creatorId.role ??"",
                                 style: AppTextStyles.button.copyWith(
                                   color: Color(0xFFFFFFFF),
                                   //fontSize: 12.sp,
@@ -285,11 +281,14 @@ class _DetailsReportScreenState extends State<DetailsReportScreen> {
                           ),
                         ],
                       ),
-
                     ],
                   ),
                 ),
-
+                SizedBox(
+                  height: 36.h,
+                ),
+                if(detailsReportController.detailsReport.value?.data?.attributes?.person?.first.role==AppContents.role)
+                  PrimaryButton(onPressed: (){}, text: "Create Response Report",width: double.infinity,),
                 SizedBox(height: 40.h),
               ],
             ),

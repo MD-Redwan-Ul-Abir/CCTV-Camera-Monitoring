@@ -2,25 +2,6 @@ class ApiConstants {
   ApiConstants._();
   ///----------------sucure storage constent--------------------
 
-  // static const String signInToken = 'sign-in-token';
-  // static const String signUpToken = 'sign-up-token';
-  // static const String forgetPassToken = 'forget-pass-token';
-  // static const String userId = 'user-id';
-  // static const String userName = 'user-name';
-  // static const String userEmail = 'user-email';
-  // static const String userImage = 'user-image';
-
-  static const token = 'token';
-  static const company = 'company';
-  static const tempId = 'tempId';
-  //static const userId = 'userId';
-  static const resetPasswordToken = 'resetPasswordToken';
-  static String APP_NAME = "Golf Game";
-  static String bearerToken = "bearerToken";
-  //static String userID="userID";
-
-  // share preference Key
-  static String THEME = "theme";
 
   static const String LANGUAGE_CODE = 'language_code';
   static const String COUNTRY_CODE = 'country_code';
@@ -40,13 +21,15 @@ class ApiConstants {
   // static String dummyImageUrl = "https://sheakh6733.sobhoy.com";
   // static String socketUrl = "https://sheakh6733.sobhoy.com";
 
+  ///------------------------Latest Network Endpoint-----------------------
+
   //-----------------------https://linux_vai.syedbipul.me/api/v1/auth/login
   static String baseUrl = "https://newsheakh6733.sobhoy.com/api/v1";
   static String imageBaseUrl = "https://newsheakh6733.sobhoy.com" ;
   static String dummyImageUrl = "https://newsheakh6733.sobhoy.com";
-  static String socketUrl = "https://newsheakh3000.sobhoy.com";
+  static String socketUrl = "https://newsheakh6733.sobhoy.com";
 
-  ///-------------------------------------Auth------------------------------------
+  ///-----------------------------------------Auth----------------------------------------------
 
   static String logInUrl = 'auth/login';
   static String verifyEmail = 'auth/verify-email';
@@ -54,7 +37,7 @@ class ApiConstants {
   static String forgetPassUrl = 'auth/forgot-password';
   static String resetPassUrl = 'auth/reset-password';
 
-  ///------------------------------------Customer---------------------------------
+  ///---------------------------------------Customer--------------------------------------------
 
   static String getUserInfo = '/user/get-profile-info';
   static String getAllSiteByPersonID({String? personID,String? role, int? limit}) =>  '/user-site/paginate?personId=$personID&role=$role&limit=$limit';
@@ -66,8 +49,8 @@ class ApiConstants {
   ///-----------------------------------Report & Camera-----------------------------------------
 
 
-  static String createReport = 'report/create';
-  static String getAllTodaysReport({String? createdAt,String? role,String? personID, int? limit}) =>  '/customer-report/paginate/customer?createdAt=$createdAt&personId=$personID&role=$role&limit=$limit';
+  static String createReport = 'report/create/v2';
+  static String getAllTodaysReport({String? createdAt,String? role,String? personID, int? limit}) =>  '/customer-report/paginate/customer?createdAt=$createdAt&personId=$personID&role=$role&limit=$limit&sortBy=-createdAt';
   static String getAReportByReportID({String? reportID,}) =>  '/report/$reportID';
   static String getReportsBySelection({String? reportType,String? personID,int? limit,int? page}) =>  '/customer-report/paginate?reportType=$reportType&personId=$personID&page=$page&limit=$limit';
   static String getCameraBySiteIdandPersonId({String? siteId,String? personId}) =>  '/camera-person/live-view/?siteId=$siteId&personId=$personId';

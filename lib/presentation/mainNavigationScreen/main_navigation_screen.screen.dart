@@ -25,6 +25,11 @@ class MainNavigationScreenScreen extends StatefulWidget {
 class _MainNavigationScreenScreenState extends State<MainNavigationScreenScreen> {
   final MainNavigationScreenController mainNavigationScreenController = Get.find<MainNavigationScreenController>();
 
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+  }
 
   @override
   Widget build(BuildContext context) {

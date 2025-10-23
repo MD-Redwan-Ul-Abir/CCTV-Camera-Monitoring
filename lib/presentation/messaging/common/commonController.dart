@@ -19,12 +19,12 @@ class CommonController extends GetxController {
     token.value = '' ;
   }
 
-  // @override
-  // void onInit() {
-  //   super.onInit();
-  //   // Initialize socket controller if not already initialized
-  //   if (!Get.isRegistered<SocketController>()) {
-  //     Get.put(SocketController(), permanent: true);
-  //   }
-  // }
+  @override
+  void onInit() {
+    super.onInit();
+    // Initialize socket controller if not already initialized
+    if (!Get.isRegistered<SocketController>()) {
+      Get.put(SocketController(), permanent: true);
+    }
+  }
 }
