@@ -20,7 +20,7 @@ class DetailsReportController extends GetxController {
 
   void updateProfileImage() {
     try {
-      final imageUrl = detailsReport.value?.data?.attributes!.creatorId.profileImage.imageUrl;
+      final imageUrl = detailsReport.value?.data?.attributes?.creatorId?.profileImage?.imageUrl;
       profileImageUrl.value = ProfileImageHelper.formatImageUrl(imageUrl);
       print(profileImageUrl.value);
     } catch (e) {

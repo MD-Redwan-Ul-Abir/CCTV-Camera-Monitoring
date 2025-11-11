@@ -145,7 +145,7 @@ class CreatorId {
   String name;
   String email;
   String phoneNumber;
-  ProfileImage profileImage;
+  ProfileImage? profileImage;
   String role;
   String userId;
 
@@ -153,7 +153,7 @@ class CreatorId {
     required this.name,
     required this.email,
     required this.phoneNumber,
-    required this.profileImage,
+    this.profileImage,
     required this.role,
     required this.userId,
   });
@@ -166,7 +166,7 @@ class CreatorId {
     name: json["name"],
     email: json["email"],
     phoneNumber: json["phoneNumber"],
-    profileImage: ProfileImage.fromJson(json["profileImage"]),
+    profileImage: json["profileImage"] != null ? ProfileImage.fromJson(json["profileImage"]) : null,
     role: json["role"],
     userId: json["_userId"],
   );
@@ -175,7 +175,7 @@ class CreatorId {
     "name": name,
     "email": email,
     "phoneNumber": phoneNumber,
-    "profileImage": profileImage.toJson(),
+    "profileImage": profileImage?.toJson(),
     "role": role,
     "_userId": userId,
   };

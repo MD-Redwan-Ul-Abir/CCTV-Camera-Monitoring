@@ -27,9 +27,9 @@ class ApiConstants {
   static String baseUrl = "https://newsheakh6733.sobhoy.com/api/v1";
   static String imageBaseUrl = "https://newsheakh6733.sobhoy.com" ;
   static String dummyImageUrl = "https://newsheakh6733.sobhoy.com";
-  static String socketUrl = "https://newsheakh6733.sobhoy.com";
+  static String socketUrl = "https://newsheakh3000.sobhoy.com";
 
-  ///-----------------------------------------Auth----------------------------------------------
+  ///-----------------------------------------Auth-------------w---------------------------------
 
   static String logInUrl = 'auth/login';
   static String verifyEmail = 'auth/verify-email';
@@ -49,7 +49,9 @@ class ApiConstants {
   ///-----------------------------------Report & Camera-----------------------------------------
 
 
-  static String createReport = 'report/create/v2';
+  static String createReportAsCustomer = 'report/create/v2';
+  static String createReportAsUser = 'report/create/for-employee';
+  static String getCustomersAndAdminWithSiteID({String? siteID,}) =>  'report/customers/$siteID';
   static String getAllTodaysReport({String? createdAt,String? role,String? personID, int? limit}) =>  '/customer-report/paginate/customer?createdAt=$createdAt&personId=$personID&role=$role&limit=$limit&sortBy=-createdAt';
   static String getAReportByReportID({String? reportID,}) =>  '/report/$reportID';
   static String getReportsBySelection({String? reportType,String? personID,int? limit,int? page}) =>  '/customer-report/paginate?reportType=$reportType&personId=$personID&page=$page&limit=$limit';

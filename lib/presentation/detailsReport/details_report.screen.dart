@@ -5,6 +5,7 @@ import 'package:flutter_svg/svg.dart';
 import 'package:get/get.dart';
 import 'package:skt_sikring/presentation/createReport/controllers/create_report.controller.dart';
 
+import '../../app/routes/app_routes.dart';
 import '../../infrastructure/theme/app_colors.dart';
 import '../../infrastructure/theme/text_styles.dart';
 import '../../infrastructure/utils/app_contents.dart';
@@ -101,7 +102,7 @@ class _DetailsReportScreenState extends State<DetailsReportScreen> {
                   children: [
                     Expanded(
                       child: Text(
-                        detailsReportController.detailsReport.value!.data!.attributes!.siteId!.name??"",
+                        detailsReportController.detailsReport.value?.data?.attributes?.siteId?.name ?? "",
                         maxLines: 2,
                         overflow: TextOverflow.ellipsis,
                         style: AppTextStyles.paragraph3.copyWith(
@@ -156,7 +157,7 @@ class _DetailsReportScreenState extends State<DetailsReportScreen> {
                           ),
                           SizedBox(height: 8.h),
                           Text(
-                            detailsReportController.detailsReport.value!.data!.attributes!.siteId!.address??"",
+                            detailsReportController.detailsReport.value?.data?.attributes?.siteId?.address ?? "",
 
 
                             style: AppTextStyles.button.copyWith(
@@ -186,7 +187,7 @@ SizedBox(width: 4.w,),
                           ),
                           SizedBox(height: 8.h),
                           Text(
-          detailsReportController.detailsReport.value!.data!.attributes!.createdAt.toString().substring(0,10),
+          detailsReportController.detailsReport.value?.data?.attributes?.createdAt?.toString().substring(0,10) ?? "",
 
                             style: AppTextStyles.button.copyWith(
                               color: AppColors.secondaryLightActive,
@@ -219,7 +220,7 @@ SizedBox(width: 4.w,),
                     borderRadius: BorderRadius.circular(4.r),
                   ),
                   child: Text(
-                    detailsReportController.detailsReport.value!.data!.attributes!.description??"",
+                    detailsReportController.detailsReport.value?.data?.attributes?.description??"",
                     style: AppTextStyles.caption1.copyWith(
                       color: AppColors.secondaryLightActive,
                       letterSpacing: 0.18,
@@ -251,10 +252,15 @@ SizedBox(width: 4.w,),
                               height: 34.r,
 
                               color: AppColors.grayDarker,
-                              child: Image.network(
-                                detailsReportController.profileImageUrl.value ?? "",
-                                fit: BoxFit.cover,
-                              ),
+                              child: detailsReportController.profileImageUrl.value != null && detailsReportController.profileImageUrl.value!.isNotEmpty
+                                  ? Image.network(
+                                      detailsReportController.profileImageUrl.value!,
+                                      fit: BoxFit.cover,
+                                    )
+                                  : Image.asset(
+                                      AppImages.noImage, // Fallback image
+                                      fit: BoxFit.cover,
+                                    ),
                             ),
                           ),
                           SizedBox(width: 12.w),
@@ -263,8 +269,7 @@ SizedBox(width: 4.w,),
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
                               Text(
-                                detailsReportController.detailsReport.value!
-                                    .data.attributes.creatorId.name ?? "",
+                                detailsReportController.detailsReport.value?.data?.attributes?.creatorId?.name ?? "",
 
                                 style: AppTextStyles.caption1.copyWith(
                                   color: Color(0xFFFFFFFF),
@@ -272,8 +277,7 @@ SizedBox(width: 4.w,),
                               ),
                               SizedBox(height: 4.h),
                               Text(
-                                detailsReportController.detailsReport.value!
-                                    .data.attributes.creatorId.role ??"",
+                                detailsReportController.detailsReport.value?.data?.attributes?.creatorId?.role ??"",
                                 style: AppTextStyles.button.copyWith(
                                   color: Color(0xFFFFFFFF),
                                   //fontSize: 12.sp,
@@ -289,8 +293,10 @@ SizedBox(width: 4.w,),
                 SizedBox(
                   height: 36.h,
                 ),
-                if(detailsReportController.detailsReport.value?.data.attributes.creatorId.role!=AppContents.role)
-                  PrimaryButton(onPressed: (){}, text: "Create Response Report",width: double.infinity,),
+                if(detailsReportController.detailsReport.value?.data.attributes.creatorId.role!=AppContents.userRole)
+                  PrimaryButton(onPressed: (){
+                    Get.toNamed(Routes.CREATE_REPORT);
+                  }, text: "Create Response Report",width: double.infinity,),
                 SizedBox(height: 40.h),
               ],
             ),
