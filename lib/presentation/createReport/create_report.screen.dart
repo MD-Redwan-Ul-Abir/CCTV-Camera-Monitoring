@@ -10,6 +10,7 @@ import '../languageChanging/appString.dart';
 
 import '../../infrastructure/theme/app_colors.dart';
 import '../../infrastructure/theme/text_styles.dart';
+import '../../infrastructure/utils/app_contents.dart';
 import '../../infrastructure/utils/app_images.dart';
 import '../shared/widgets/customDropDown.dart';
 import '../shared/widgets/imagePicker/custom_image_picker.dart';
@@ -158,6 +159,35 @@ class _CreateReportScreenState extends State<CreateReportScreen> {
                           return null;
                         },
                       ),
+                ),
+
+
+                // Customer Name Dropdown with validation (only shown for user role)
+                Obx(() => 
+                  (reportController.role.value == AppContents.userRole && 
+                   reportController.selectedSite.value != null && 
+                   reportController.selectedSite.value!.isNotEmpty)
+                  ? Padding(
+                    padding:   EdgeInsets.only(top: 16.h),
+                    child: CustomDropDown(
+                        hintText: reportController.customerList.isEmpty
+                            ? 'No customers available'
+                            : 'Select customer',
+                        errorText: 'Please select a customer',
+                        selectedValue: reportController.selectedCustomer.value,
+                        items: reportController.customerList,
+                        onChanged: reportController.updateCustomer,
+                        validator: (value) {
+                          if (reportController.role.value == AppContents.userRole) {
+                            if (value == null || value.isEmpty) {
+                              return 'Please select a customer';
+                            }
+                          }
+                          return null;
+                        },
+                      ),
+                  )
+                  : const SizedBox.shrink() // Return empty widget if not user role or no site selected
                 ),
 
                 SizedBox(height: 16.h),

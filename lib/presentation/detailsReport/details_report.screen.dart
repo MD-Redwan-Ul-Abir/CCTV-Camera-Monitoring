@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/svg.dart';
-
 import 'package:get/get.dart';
 import 'package:skt_sikring/presentation/createReport/controllers/create_report.controller.dart';
 
@@ -14,6 +13,7 @@ import '../shared/widgets/buttons/primary_buttons.dart';
 import '../shared/widgets/customCarocelSlider/customCaroselSlider.dart';
 import 'controllers/details_report.controller.dart';
 
+// SCREEN UI - Updated to work with single object response
 class DetailsReportScreen extends StatefulWidget {
   const DetailsReportScreen({super.key});
 
@@ -22,8 +22,7 @@ class DetailsReportScreen extends StatefulWidget {
 }
 
 class _DetailsReportScreenState extends State<DetailsReportScreen> {
-  final DetailsReportController detailsReportController = Get.find<
-      DetailsReportController>();
+  final DetailsReportController detailsReportController = Get.find<DetailsReportController>();
   final CreateReportController createReportController = Get.find<CreateReportController>();
 
   @override
@@ -71,26 +70,49 @@ class _DetailsReportScreenState extends State<DetailsReportScreen> {
       body: Padding(
         padding: EdgeInsets.symmetric(horizontal: 24.w, vertical: 10.h),
         child: Obx(() {
-          if(detailsReportController.isLoading.value== true){
+          // Loading state
+          if (detailsReportController.isLoading.value) {
             return Center(
               child: CircularProgressIndicator(color: AppColors.primaryNormal),
             );
           }
+
+          // No data state
+          if (detailsReportController.reportDetails.value == null) {
+            return Center(
+              child: Text(
+                'No report details available',
+                style: AppTextStyles.paragraph3.copyWith(
+                  color: AppColors.secondaryLightActive,
+                ),
+              ),
+            );
+          }
+
+          // Data loaded successfully
+          final report = detailsReportController.reportDetails.value!;
+          final attributes = report.data.attributes;
+
           return SingleChildScrollView(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 // Auto Carousel Slider
                 AutoCarouselSlider(
-                  images: detailsReportController.detailsReport.value?.data?.attributes?.attachments?.map((attachment) => attachment.attachment ?? '').where((url) => url.isNotEmpty).toList() ?? [],
+                  images: attributes.attachments.isNotEmpty
+                      ? attributes.attachments
+                      .map((attachment) => attachment.attachment)
+                      .where((url) => url.isNotEmpty)
+                      .toList()
+                      : [],
                   height: 220.h,
                   autoPlayInterval: Duration(seconds: 5),
                   activeIndicatorColor: AppColors.primaryDark,
                   inactiveIndicatorColor: AppColors.grayDarker,
                   borderRadius: BorderRadius.circular(4.r),
-                  defaultAssetImage: AppImages.noImage, // Add this line
+                  defaultAssetImage: AppImages.noImage,
                   onPageChanged: (index) {
-                    //print('Page changed to $index');
+                    print('Page changed to $index');
                   },
                 ),
 
@@ -102,7 +124,7 @@ class _DetailsReportScreenState extends State<DetailsReportScreen> {
                   children: [
                     Expanded(
                       child: Text(
-                        detailsReportController.detailsReport.value?.data?.attributes?.siteId?.name ?? "",
+                        attributes.siteId.name,
                         maxLines: 2,
                         overflow: TextOverflow.ellipsis,
                         style: AppTextStyles.paragraph3.copyWith(
@@ -111,23 +133,6 @@ class _DetailsReportScreenState extends State<DetailsReportScreen> {
                         ),
                       ),
                     ),
-                    // SizedBox(width: 30.w), // Add some spacing
-                    // Container(
-                    //   decoration: BoxDecoration(
-                    //     color: AppColors.primaryLightActive,
-                    //     borderRadius: BorderRadius.circular(100.r),
-                    //   ),
-                    //   child: Padding(
-                    //     padding: const EdgeInsets.symmetric(
-                    //       horizontal: 10.0,
-                    //       vertical: 8,
-                    //     ),
-                    //     child: Text(
-                    //       detailsReportController.detailsReport.value!.data!.attributes!.status??"",
-                    //       style: AppTextStyles.caption1,
-                    //     ),
-                    //   ),
-                    // ),
                   ],
                 ),
 
@@ -157,9 +162,7 @@ class _DetailsReportScreenState extends State<DetailsReportScreen> {
                           ),
                           SizedBox(height: 8.h),
                           Text(
-                            detailsReportController.detailsReport.value?.data?.attributes?.siteId?.address ?? "",
-
-
+                            attributes.siteId.address,
                             style: AppTextStyles.button.copyWith(
                               color: AppColors.secondaryLightActive,
                             ),
@@ -167,7 +170,8 @@ class _DetailsReportScreenState extends State<DetailsReportScreen> {
                         ],
                       ),
                     ),
-SizedBox(width: 4.w,),
+                    SizedBox(width: 4.w),
+
                     // Date Section
                     Expanded(
                       child: Column(
@@ -187,8 +191,9 @@ SizedBox(width: 4.w,),
                           ),
                           SizedBox(height: 8.h),
                           Text(
-          detailsReportController.detailsReport.value?.data?.attributes?.createdAt?.toString().substring(0,10) ?? "",
-
+                            attributes.createdAt != null
+                                ? attributes.createdAt!.toString().substring(0, 10)
+                                : 'N/A',
                             style: AppTextStyles.button.copyWith(
                               color: AppColors.secondaryLightActive,
                             ),
@@ -220,7 +225,7 @@ SizedBox(width: 4.w,),
                     borderRadius: BorderRadius.circular(4.r),
                   ),
                   child: Text(
-                    detailsReportController.detailsReport.value?.data?.attributes?.description??"",
+                    attributes.description,
                     style: AppTextStyles.caption1.copyWith(
                       color: AppColors.secondaryLightActive,
                       letterSpacing: 0.18,
@@ -250,37 +255,41 @@ SizedBox(width: 4.w,),
                             child: Container(
                               width: 34.r,
                               height: 34.r,
-
                               color: AppColors.grayDarker,
-                              child: detailsReportController.profileImageUrl.value != null && detailsReportController.profileImageUrl.value!.isNotEmpty
+                              child: detailsReportController.profileImageUrl.value.isNotEmpty
                                   ? Image.network(
-                                      detailsReportController.profileImageUrl.value!,
-                                      fit: BoxFit.cover,
-                                    )
+                                detailsReportController.profileImageUrl.value,
+                                fit: BoxFit.cover,
+                                errorBuilder: (context, error, stackTrace) {
+                                  return Image.asset(
+                                    AppImages.noImage,
+                                    fit: BoxFit.cover,
+                                  );
+                                },
+                              )
                                   : Image.asset(
-                                      AppImages.noImage, // Fallback image
-                                      fit: BoxFit.cover,
-                                    ),
+                                AppImages.noImage,
+                                fit: BoxFit.cover,
+                              ),
                             ),
                           ),
                           SizedBox(width: 12.w),
+
                           // Name and Title
                           Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
                               Text(
-                                detailsReportController.detailsReport.value?.data?.attributes?.creatorId?.name ?? "",
-
+                                attributes.creatorId.name,
                                 style: AppTextStyles.caption1.copyWith(
                                   color: Color(0xFFFFFFFF),
                                 ),
                               ),
                               SizedBox(height: 4.h),
                               Text(
-                                detailsReportController.detailsReport.value?.data?.attributes?.creatorId?.role ??"",
+                                attributes.creatorId.role,
                                 style: AppTextStyles.button.copyWith(
                                   color: Color(0xFFFFFFFF),
-                                  //fontSize: 12.sp,
                                 ),
                               ),
                             ],
@@ -290,13 +299,19 @@ SizedBox(width: 4.w,),
                     ],
                   ),
                 ),
-                SizedBox(
-                  height: 36.h,
-                ),
-                if(detailsReportController.detailsReport.value?.data.attributes.creatorId.role!=AppContents.userRole)
-                  PrimaryButton(onPressed: (){
-                    Get.toNamed(Routes.CREATE_REPORT);
-                  }, text: "Create Response Report",width: double.infinity,),
+
+                SizedBox(height: 36.h),
+
+                // Conditional button based on role
+                if (attributes.creatorId.role != AppContents.userRole)
+                  PrimaryButton(
+                    onPressed: () {
+                      Get.toNamed(Routes.CREATE_REPORT);
+                    },
+                    text: "Create Response Report",
+                    width: double.infinity,
+                  ),
+
                 SizedBox(height: 40.h),
               ],
             ),

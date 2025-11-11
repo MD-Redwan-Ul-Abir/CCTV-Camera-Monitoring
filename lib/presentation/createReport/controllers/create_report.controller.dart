@@ -26,22 +26,24 @@ class CreateReportController extends GetxController {
 
   final TextEditingController titleController = TextEditingController();
   final TextEditingController descriptionController = TextEditingController();
-  
+
   var selectedReportTemplate = Rxn<String>();
   var selectedSeverity = Rxn<String>();
   var selectedSite = Rxn<String>();
+  var selectedCustomer = Rxn<String>();
 
   var reportTemplateList = <DropdownMenuItem<String>>[].obs;
   var severityList = <DropdownMenuItem<String>>[].obs;
   var siteList = <DropdownMenuItem<String>>[].obs;
-  String role ="";
+  var customerList = <DropdownMenuItem<String>>[].obs;
+  var role = "".obs;
 
   RxList<Customer> overviewDataList = <Customer>[].obs;
 
   @override
   Future<void> onInit() async {
     super.onInit();
-     role = await SecureStorageHelper.getString(AppContents.role);
+    role.value = await SecureStorageHelper.getString(AppContents.role);
     loadReportTemplate();
     loadSite();
     loadSeverity();
@@ -60,28 +62,114 @@ class CreateReportController extends GetxController {
         return;
       }
 
+      LoggerHelper.info('Fetching customers for site: ${selectedSite.value}');
+
       // Make API call to get customers by site ID
       final response = await _apiClient.getData(
         ApiConstants.getCustomersAndAdminWithSiteID(siteID: selectedSite.value),
         headers: {"Authorization": "Bearer $token"},
       );
 
+      LoggerHelper.info('Customer API Response Status: ${response.statusCode}');
+      LoggerHelper.info('Customer API Response Body: ${response.body}');
+
       if (response.statusCode == HttpStatus.ok ||
           response.statusCode == HttpStatus.created) {
 
-        // Parse the response
-        final Map<String, dynamic> responseData = jsonDecode(response.body);
-        CustomberBySiteIdModel responseModel = CustomberBySiteIdModel.fromJson(responseData);
+        // Parse the response with defensive error handling
+        try {
+          // response.body is already a Map, not a String
+          final responseData = response.body is String
+              ? jsonDecode(response.body)
+              : response.body;
 
-        // Clear existing data and populate with new customers
-        overviewDataList.clear();
+          LoggerHelper.info('Response data type: ${responseData.runtimeType}');
 
-        if (responseModel.data.attributes.hasCustomers &&
-            responseModel.data.attributes.customers.isNotEmpty) {
-          overviewDataList.addAll(responseModel.data.attributes.customers);
-          LoggerHelper.warn('Loaded ${overviewDataList.first.personId.userId} customers for site');
-        } else {
-          LoggerHelper.warn('No customers found for this site');
+          if (responseData is Map<String, dynamic>) {
+
+            // Check if response has the expected structure
+            if (responseData['data'] != null &&
+                responseData['data']['attributes'] != null &&
+                responseData['data']['attributes']['customers'] != null) {
+
+              final customersJson = responseData['data']['attributes']['customers'] as List;
+
+              LoggerHelper.info('Found ${customersJson.length} customers in response');
+
+              // Clear existing data
+              overviewDataList.clear();
+              customerList.clear();
+
+              if (customersJson.isNotEmpty) {
+                // Parse each customer manually to avoid model parsing issues
+                for (var customerJson in customersJson) {
+                  try {
+                    LoggerHelper.info('Processing customer: $customerJson');
+
+                    // Extract personId data safely
+                    var personIdData = customerJson['personId'];
+
+                    LoggerHelper.info('PersonId data: $personIdData');
+
+                    if (personIdData != null && personIdData is Map<String, dynamic>) {
+                      String customerId = personIdData['_userId'] ?? '';
+                      String customerName = personIdData['name'] ?? 'Unknown';
+
+                      LoggerHelper.info('Extracted - ID: $customerId, Name: $customerName');
+
+                      // Only add if we have valid data
+                      if (customerId.isNotEmpty && customerName.isNotEmpty) {
+                        customerList.add(
+                          DropdownMenuItem<String>(
+                            value: customerId,
+                            child: Text(customerName),
+                          ),
+                        );
+
+                        LoggerHelper.info('Added customer to dropdown: $customerName (ID: $customerId)');
+                      } else {
+                        LoggerHelper.warn('Skipping customer due to empty ID or name');
+                      }
+                    } else {
+                      LoggerHelper.warn('PersonId is null or not a Map');
+                    }
+                  } catch (customerError) {
+                    LoggerHelper.warn('Error parsing individual customer: ${customerError.toString()}');
+                    // Continue to next customer
+                    continue;
+                  }
+                }
+
+                LoggerHelper.info('Successfully loaded ${customerList.length} customers into dropdown');
+
+                // Force UI update
+                customerList.refresh();
+
+                // Try to parse the full model for overviewDataList (optional)
+                try {
+                  CustomberBySiteIdModel responseModel = CustomberBySiteIdModel.fromJson(responseData);
+                  if (responseModel.data.attributes.hasCustomers &&
+                      responseModel.data.attributes.customers.isNotEmpty) {
+                    overviewDataList.addAll(responseModel.data.attributes.customers);
+                    LoggerHelper.info('Also populated overviewDataList with ${overviewDataList.length} customers');
+                  }
+                } catch (modelError) {
+                  LoggerHelper.warn('Model parsing failed but dropdown populated: ${modelError.toString()}');
+                  // This is okay - we already have the dropdown populated
+                }
+
+              } else {
+                LoggerHelper.warn('No customers found for this site');
+              }
+            } else {
+              LoggerHelper.warn('Response missing expected data structure');
+            }
+          } else {
+            LoggerHelper.warn('Invalid response format - not a Map');
+          }
+        } catch (parseError) {
+          LoggerHelper.debug('Error parsing customer list response: ${parseError.toString()}');
+          customerList.clear();
         }
 
       } else {
@@ -125,6 +213,11 @@ class CreateReportController extends GetxController {
         'siteId': selectedSite.value ?? '',
       };
 
+      // For "user" role, add customerId to the report data
+      if (role.value == AppContents.userRole && selectedCustomer.value != null) {
+        createReportData['customerId'] = selectedCustomer.value ?? '';
+      }
+
       LoggerHelper.warn(createReportData);
 
       // Add video if exists
@@ -135,8 +228,8 @@ class CreateReportController extends GetxController {
 
       //  determine which API endpoint to use
 
-      String apiEndpoint = role == AppContents.userRole 
-          ? ApiConstants.createReportAsUser 
+      String apiEndpoint = role.value == AppContents.userRole
+          ? ApiConstants.createReportAsUser
           : ApiConstants.createReportAsCustomer;
 
       final response = await _apiClient.postData(
@@ -151,7 +244,7 @@ class CreateReportController extends GetxController {
 
         // Refresh home screen data after successful submission
         homeController.fetchedData.value = false;
-        
+
         // Clear form after successful submission
         titleController.clear();
         descriptionController.clear();
@@ -208,13 +301,26 @@ class CreateReportController extends GetxController {
     selectedSeverity.value = value;
   }
 
+  /// Updates the selected customer
+  void updateCustomer(String? value) {
+    selectedCustomer.value = value;
+    LoggerHelper.info('Selected customer ID: $value');
+  }
+
   /// Updates the selected site
   void updateSite(String? value) {
     selectedSite.value = value;
+    // Reset selected customer when site changes
+    selectedCustomer.value = null;
+    customerList.clear(); // Clear customer list immediately
+    // Load customer list when site is selected for "user" role
+    if (role.value == AppContents.userRole && value != null) {
+      getCustomerList();
+    }
   }
 
   /// MARK: - Dropdown Data Loading Methods
-  
+
   /// Loads report template options into the dropdown
   void loadReportTemplate() {
     List<String> reportTemplates = [
@@ -304,5 +410,6 @@ class CreateReportController extends GetxController {
     selectedReportTemplate.value = null;
     selectedSeverity.value = null;
     selectedSite.value = null;
+    selectedCustomer.value = null;
   }
 }

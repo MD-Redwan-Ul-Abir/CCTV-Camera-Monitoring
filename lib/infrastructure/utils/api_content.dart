@@ -51,7 +51,7 @@ class ApiConstants {
 
   static String createReportAsCustomer = 'report/create/v2';
   static String createReportAsUser = 'report/create/for-employee';
-  static String getCustomersAndAdminWithSiteID({String? siteID,}) =>  'report/customers/$siteID';
+  static String getCustomersAndAdminWithSiteID({String? siteID,}) =>  '/report/customers/$siteID';
   static String getAllTodaysReport({String? createdAt,String? role,String? personID, int? limit}) =>  '/customer-report/paginate/customer?createdAt=$createdAt&personId=$personID&role=$role&limit=$limit&sortBy=-createdAt';
   static String getAReportByReportID({String? reportID,}) =>  '/report/$reportID';
   static String getReportsBySelection({String? reportType,String? personID,int? limit,int? page}) =>  '/customer-report/paginate?reportType=$reportType&personId=$personID&page=$page&limit=$limit';
