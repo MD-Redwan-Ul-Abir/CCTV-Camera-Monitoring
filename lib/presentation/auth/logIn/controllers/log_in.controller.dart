@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
+import 'package:skt_sikring/infrastructure/services/firebase_service.dart';
 import 'package:skt_sikring/infrastructure/theme/app_colors.dart';
 import 'package:skt_sikring/infrastructure/utils/log_helper.dart';
 import 'package:skt_sikring/presentation/home/controllers/home.controller.dart';
@@ -63,13 +64,17 @@ class LogInController extends GetxController with GetSingleTickerProviderStateMi
 
   Future<bool> login() async {
     isLoading.value = true;
-    update();
+update();
 
     try {
+      String fcmToken = FirebaseService().fcmToken;
+
+      LoggerHelper.error(fcmToken);
+
       final Map<String, String> loginData = {
         'email': emailController.text.trim(),
         'password': passwordController.text,
-      };
+        "fcmToken": fcmToken};
 
       final response = await _apiClient.postData(ApiConstants.logInUrl, loginData);
 

@@ -1,11 +1,13 @@
 import 'dart:io';
 
+import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_phoenix/flutter_phoenix.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 
+import 'package:skt_sikring/infrastructure/services/firebase_service.dart';
 import 'package:skt_sikring/infrastructure/utils/api_client.dart';
 import 'package:skt_sikring/presentation/languageChanging/appConst.dart';
 import 'package:skt_sikring/presentation/languageChanging/di.dart' as di;
@@ -23,17 +25,17 @@ void main() async {
   HttpOverrides.global = MyHttpOverrides();
   WidgetsFlutterBinding.ensureInitialized();
 
-
   SystemChrome.setPreferredOrientations([
     DeviceOrientation.portraitUp,
-
   ]);
+
+  // Initialize Firebase
+  await FirebaseService().initialize();
 
   await Get.putAsync<GlobalNetworkService>(() async => GlobalNetworkService());
 
- // SocketController.instance.connectSocket();
+  // SocketController.instance.connectSocket();
   Map<String, Map<String, String>> languages = await di.init();
-
 
   var initialRoute = await Routes.initialRoute;
   runApp(

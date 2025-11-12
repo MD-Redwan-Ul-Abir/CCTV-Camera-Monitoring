@@ -2,9 +2,11 @@ import 'package:flutter/material.dart';
 import 'package:flutter_phoenix/flutter_phoenix.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/svg.dart';
+import 'package:audioplayers/audioplayers.dart';
 
 import 'package:get/get.dart';
 import 'package:skt_sikring/infrastructure/theme/text_styles.dart';
+import 'package:skt_sikring/infrastructure/utils/notificationAudio.dart';
 import 'package:skt_sikring/presentation/languageChanging/localizationController.dart';
 import 'package:skt_sikring/presentation/messaging/common/socket_controller.dart';
 import 'package:skt_sikring/presentation/messaging/message/controllers/message_screen.controller.dart';
@@ -34,6 +36,14 @@ class _ProfileScreenState extends State<ProfileScreen> {
   final MessageScreenController _messageScreenController =
       Get.find<MessageScreenController>();
   final SocketController _socketController = Get.find<SocketController>();
+
+  final player = AudioPlayer();
+
+  void _playSound(String audioPath) async {
+    // The AssetSource expects the path without the "assets/" prefix when it's already in the assets folder
+    // Since NotificationAudio.notificationAudio1 already includes "assets/", we need to adjust the path
+    await player.play(AssetSource(audioPath));
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -570,6 +580,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                         height: 48.h,
                         child: ElevatedButton(
                           onPressed: () {
+                            _playSound(NotificationAudio.notificationAudio1);
                            _socketController.userId='';
                            _socketController.token='';
                             _socketController.performLogoutCleanup();

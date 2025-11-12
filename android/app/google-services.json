@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "706250595249",
+    "project_id": "skt-camera",
+    "storage_bucket": "skt-camera.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:706250595249:android:ad96a5a6f6c35fe716fb90",
+        "android_client_info": {
+          "package_name": "com.sktsikring.skt_sikring"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCN-3Pc7umhEjRQR3BIZUpQD3yf86pWeds"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
