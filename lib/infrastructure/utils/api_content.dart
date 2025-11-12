@@ -41,7 +41,7 @@ class ApiConstants {
 
   static String getUserInfo = '/user/get-profile-info';
   static String getAllSiteByPersonID({String? personID,String? role, int? limit}) =>  '/user-site/paginate?personId=$personID&role=$role&limit=$limit';
-  static String getASiteBySiteID({String? siteID,String? role}) =>  '/user-site/paginate/for-customer/siteId?siteId=$siteID&role=$role';
+  static String getASiteBySiteID({String? siteID,String? role}) =>  '/user-site/paginate/for-customer/siteId/v2?siteId=$siteID&role=$role';
   static String getAllCameraWhichHaveUserAccess({String? siteID,String? personId}) =>  '/camera-person/live-view/?siteId=$siteID&personId=$personId';
   static String getCameraByCameraID({String? id,String? limit}) =>  '/camera/paginate?_id=$id&limit=$limit';
 

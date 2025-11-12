@@ -47,6 +47,9 @@ dependencies:
   socket_io_client: ^3.1.2
   flutter_phoenix:
   html: ^0.15.6
+  google_maps_flutter: ^2.14.0
+#  geolocator: ^14.0.2
+#  permission_handler: ^12.0.1
 
 
 

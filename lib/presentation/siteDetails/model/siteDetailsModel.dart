@@ -122,6 +122,9 @@ class Result {
 
 class SiteId {
   final String? name;
+  final String? address;
+  final String? lat;
+  final String? long;
   final String? type;
   final List<Attachment>? attachments;
   final DateTime? createdAt;
@@ -129,6 +132,9 @@ class SiteId {
 
   SiteId({
     this.name,
+    this.address,
+    this.lat,
+    this.long,
     this.type,
     this.attachments,
     this.createdAt,
@@ -141,6 +147,9 @@ class SiteId {
 
   factory SiteId.fromJson(Map<String, dynamic> json) => SiteId(
     name: json["name"],
+    address: json["address"],
+    lat: json["lat"],
+    long: json["long"],
     type: json["type"],
     attachments: json["attachments"] == null ? [] : List<Attachment>.from(json["attachments"]!.map((x) => Attachment.fromJson(x))),
     createdAt: json["createdAt"] == null ? null : DateTime.parse(json["createdAt"]),
@@ -149,6 +158,9 @@ class SiteId {
 
   Map<String, dynamic> toJson() => {
     "name": name,
+    "address": address,
+    "lat": lat,
+    "long": long,
     "type": type,
     "attachments": attachments == null ? [] : List<dynamic>.from(attachments!.map((x) => x.toJson())),
     "createdAt": createdAt?.toIso8601String(),

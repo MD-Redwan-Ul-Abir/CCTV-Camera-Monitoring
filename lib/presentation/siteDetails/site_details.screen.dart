@@ -11,6 +11,8 @@ import '../../infrastructure/theme/text_styles.dart';
 import '../../infrastructure/utils/app_images.dart';
 import '../shared/widgets/customCarocelSlider/customCaroselSlider.dart';
 import 'controllers/site_details.controller.dart';
+import 'googleMapScreen.dart';
+import 'package:google_maps_flutter/google_maps_flutter.dart';
 
 class SiteDetailsScreen extends StatefulWidget {
   const SiteDetailsScreen({super.key});
@@ -192,15 +194,41 @@ class _SiteDetailsScreenState extends State<SiteDetailsScreen> {
                     ),
                   ),
                 ),
-
-                SizedBox(height: 50.h),
+SizedBox(height: 16.h,),
+                Obx(() {
+                  if (siteDetailsController.siteDetails.value != null &&
+                      siteDetailsController.siteDetails.value?.data?.attributes?.results?.first.siteId?.lat != null &&
+                      siteDetailsController.siteDetails.value?.data?.attributes?.results?.first.siteId?.long != null) {
+                    final lat = double.tryParse(
+                        siteDetailsController.siteDetails.value!.data!.attributes!.results!.first.siteId!.lat!);
+                    final lng = double.tryParse(
+                        siteDetailsController.siteDetails.value!.data!.attributes!.results!.first.siteId!.long!);
+                    
+                    if (lat != null && lng != null) {
+                      return Container(
+                        height: 250.h,
+                        width: double.infinity,
+                        child: MapLocationView(
+                          latitude: lat,
+                          longitude: lng,
+                        ),
+                      );
+                    }
+                  }
+                  // Fallback to default location if coordinates are not available
+                  return Container(
+                    height: 250.h,
+                    width: double.infinity,
+                    child: MapLocationView(),
+                  );
+                }),
+                SizedBox(height: 40.h),
 
                 // Live View Site Button
                 PrimaryButton(
                   width: double.infinity,
                   onPressed: () {
                     final siteData = siteDetailsController.siteDetails.value?.data?.attributes?.results?.first;
-//     siteDetailsController.siteDetails.value?.data?.attributes?.results?.first.siteId?.name
                     Get.toNamed(Routes.LIVE_VIEW, arguments: {
                       'siteId': siteData?.siteId?.siteId,
                       'siteName': siteData?.siteId?.name, // assuming siteName property exists
