@@ -1,5 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:get/get.dart';
+import 'package:skt_sikring/infrastructure/services/soundPlay.dart';
 import 'package:skt_sikring/infrastructure/utils/log_helper.dart';
 import 'package:skt_sikring/presentation/messaging/common/commonController.dart';
 import '../../../../infrastructure/utils/secure_storage_helper.dart';
@@ -7,6 +8,7 @@ import '../../common/socket_controller.dart';
 import '../model/conversationListModel.dart';
 
 class MessageScreenController extends GetxController {
+  final SoundPlay playMessageSound = SoundPlay();
   final ScrollController scrollController = ScrollController();
   final CommonController commonController = Get.put(CommonController());
   late final SocketController socketController;
@@ -15,6 +17,7 @@ class MessageScreenController extends GetxController {
 
   RxList<AllConversationList> chatItemList = <AllConversationList>[].obs;
   final RxBool isLoading = true.obs;
+
 
   @override
   Future<void> onInit() async {
@@ -38,6 +41,8 @@ class MessageScreenController extends GetxController {
         LoggerHelper.warn(
           'Conversation list updated: $data \n\n\n${userID.value}',
         );
+        playMessageSound.playSound();
+
         getUserList();
       },
     );
@@ -110,20 +115,17 @@ class MessageScreenController extends GetxController {
   }
 
   // Method to leave message screen
-  void leaveMessageScreen({String? toScreen}) {
-    socketController.off('conversation-list-updated::$userID');
-    socketController.off('related-user-online-status::$userID');
-    socketController.leaveMessagingFlow('MessageScreen', toScreen: toScreen);
-  }
+  // void leaveMessageScreen({String? toScreen}) {
+  //   socketController.off('conversation-list-updated::$userID');
+  //   socketController.off('related-user-online-status::$userID');
+  //   socketController.leaveMessagingFlow('MessageScreen', toScreen: toScreen);
+  // }
 
   // Clear user-specific data (call on logout)
   void clearUserData() {
     chatItemList.clear();
     socketController.off('conversation-list-updated::$userID');
     socketController.off('related-user-online-status::$userID');
-
-
-
   }
   @override
   void onClose() {

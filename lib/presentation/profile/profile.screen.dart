@@ -39,11 +39,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
 
   final player = AudioPlayer();
 
-  void _playSound(String audioPath) async {
-    // The AssetSource expects the path without the "assets/" prefix when it's already in the assets folder
-    // Since NotificationAudio.notificationAudio1 already includes "assets/", we need to adjust the path
-    await player.play(AssetSource(audioPath));
-  }
+
 
   @override
   Widget build(BuildContext context) {
@@ -580,7 +576,6 @@ class _ProfileScreenState extends State<ProfileScreen> {
                         height: 48.h,
                         child: ElevatedButton(
                           onPressed: () {
-                            _playSound(NotificationAudio.notificationAudio1);
                            _socketController.userId='';
                            _socketController.token='';
                             _socketController.performLogoutCleanup();

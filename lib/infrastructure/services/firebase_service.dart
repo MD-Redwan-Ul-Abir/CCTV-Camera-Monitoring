@@ -1,20 +1,32 @@
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
+import 'package:audioplayers/audioplayers.dart';
 import 'package:get/get.dart';
+import 'package:get/get_core/src/get_main.dart';
+import 'package:skt_sikring/infrastructure/services/soundPlay.dart';
+import 'package:skt_sikring/infrastructure/theme/app_colors.dart';
 import 'package:skt_sikring/infrastructure/utils/log_helper.dart';
+
+import '../utils/notificationAudio.dart';
+import 'notificationHelperService.dart';
 
 class FirebaseService {
   static final FirebaseService _instance = FirebaseService._internal();
   factory FirebaseService() => _instance;
   late String fcmToken = '';
+
   FirebaseService._internal();
 
   late FirebaseMessaging messaging;
 
   Future<void> initialize() async {
     await Firebase.initializeApp();
+    await NotificationHelper.initialize();
+
     messaging = FirebaseMessaging.instance;
+
+    final SoundPlay play = SoundPlay();
 
     // Request permission for notifications
     await _requestNotificationPermission();
@@ -31,7 +43,15 @@ class FirebaseService {
 
     // Handle foreground messages
     FirebaseMessaging.onMessage.listen((RemoteMessage message) {
-      debugPrint('Foreground message received: ${message.notification?.title}');
+      play.playSound();
+      
+      // Show system notification
+      _showSystemNotification(message);
+      
+      // Show Get.snackbar in foreground
+      Get.snackbar("${message.notification!.title}", '${message.notification!.body}',backgroundColor: AppColors.greenDark,colorText: AppColors.primaryLightActive);
+      LoggerHelper.warn(message.notification!.body);
+      //debugPrint('Foreground message received: ${message.notification?.title}');
     });
 
     // Handle background messages
@@ -43,6 +63,19 @@ class FirebaseService {
       // Handle navigation based on notification data
       _handleNotificationTap(message);
     });
+  }
+
+  void _showSystemNotification(RemoteMessage message) {
+    final imageUrl = message.data['image'] ?? 
+                     message.data['image_url'] ?? 
+                     message.data['senderImage'] ?? 
+                     message.data['sender_image']; // Your backend sends image in senderImage
+    
+    NotificationHelper.showNotification(
+      title: message.notification?.title ?? 'No title',
+      body: message.notification?.body ?? '',
+      imageUrl: imageUrl,
+    );
   }
 
   Future<void> _requestNotificationPermission() async {
@@ -66,20 +99,37 @@ class FirebaseService {
   Future<void> _handleNotificationTap(RemoteMessage message) async {
     // Handle navigation when notification is tapped
     // You can extract data from the message and navigate accordingly
-    debugPrint('Message data: ${message.data}');
+    RemoteMessage? initialMessage = await FirebaseMessaging.instance.getInitialMessage();
+    if (initialMessage != null) {
+      _handleNotificationTap(initialMessage);
+    }
+
+
+   // Get.snackbar("New Message", '${message.data}',backgroundColor: AppColors.primaryNormal,colorText: AppColors.primaryLightActive);
+   // debugPrint('Message data: ${message.data}');
   }
 }
 
 @pragma('vm:entry-point')
 Future<void> _firebaseMessagingBackgroundHandler(RemoteMessage message) async {
-  // If you're going to use other Firebase services in the background, such as Firestore,
-  // make sure you call `initializeApp` before using other Firebase services.
   await Firebase.initializeApp();
+  await NotificationHelper.initialize();
 
-  debugPrint('Handling a background message: ${message.messageId}');
-  debugPrint('Message data: ${message.data}');
-  LoggerHelper.warn('Handling a background message: ${message.messageId}');
-  if (message.notification != null) {
-    debugPrint('Message notification: ${message.notification!.title}');
+  final notification = message.notification;
+  
+  // Extract image URL from multiple sources
+  // Your backend sends image in senderImage field in the data object
+  // and also potentially in the notification object's imageUrl field
+  final imageUrl = message.data['image'] ?? 
+                   message.data['image_url'] ?? 
+                   message.data['senderImage'] ?? 
+                   message.data['sender_image']; // Common variations
+
+  if (notification != null) {
+    await NotificationHelper.showNotification(
+      title: notification.title ?? 'No title',
+      body: notification.body ?? '',
+      imageUrl: imageUrl,
+    );
   }
 }

@@ -261,9 +261,9 @@ class _MessageScreenState extends State<MessageScreen> {
                               );
 
                               // Notify controller about navigation to conversation
-                              messageScreenController.leaveMessageScreen(
-                                toScreen: 'ConversationPage',
-                              );
+                              // messageScreenController.leaveMessageScreen(
+                              //   toScreen: 'ConversationPage',
+                              // );
 
                               // Navigate to conversation page
                               Get.toNamed(Routes.CONVERSATION_PAGE);
@@ -426,7 +426,7 @@ class _MessageScreenState extends State<MessageScreen> {
   @override
   void dispose() {
     // Handle disposal - this will be called when leaving the screen permanently
-    messageScreenController.leaveMessageScreen();
+    //messageScreenController.leaveMessageScreen();
     // messageScreenController.chatItemList.clear();
     // print(messageScreenController.chatItemList);
     super.dispose();
