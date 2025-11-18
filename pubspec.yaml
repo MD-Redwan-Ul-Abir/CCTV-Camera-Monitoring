@@ -62,8 +62,8 @@ dev_dependencies:
   flutter_test:
     sdk: flutter
 
-
   flutter_lints: ^5.0.0
+  flutter_native_splash: ^2.4.3
 
 flutter:
 
@@ -74,3 +74,15 @@ flutter:
     - assets/logo/
     - assets/language/
     - assets/audio/
+
+flutter_native_splash:
+  color: "#FFFFFF"
+  image: assets/logo/logo.png
+  color_dark: "#121212"
+  image_dark: assets/logo/logo.png
+  android_implementation: "splash_screen_view"
+  android_gravity: "center"
+  android_disable_fullscreen: false
+  ios_content_mode: "center"
+  web: true
+  web_image_mode: "center"

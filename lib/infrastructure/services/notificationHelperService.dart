@@ -7,6 +7,9 @@ class NotificationHelper {
   static final FlutterLocalNotificationsPlugin _notificationsPlugin =
   FlutterLocalNotificationsPlugin();
 
+  // Notification sound file name
+  static const String notificationSound = 'notificationaudio';
+
   static Future<void> initialize() async {
     const AndroidInitializationSettings initializationSettingsAndroid =
     AndroidInitializationSettings('@mipmap/ic_launcher');
@@ -16,6 +19,9 @@ class NotificationHelper {
       requestAlertPermission: true,
       requestBadgePermission: true,
       requestSoundPermission: true,
+      defaultPresentAlert: true,
+      defaultPresentBadge: true,
+      defaultPresentSound: true,
     );
 
     const InitializationSettings initializationSettings =
@@ -31,6 +37,28 @@ class NotificationHelper {
         // Navigate to the appropriate screen
       },
     );
+
+    // Create Android notification channel with custom sound
+    await _createNotificationChannel();
+  }
+
+  // Create notification channel for Android with custom sound
+  static Future<void> _createNotificationChannel() async {
+    final AndroidNotificationChannel channel = AndroidNotificationChannel(
+      'high_importance_channel',
+      'High Importance Notifications',
+      description: 'This channel is used for important notifications.',
+      importance: Importance.max,
+      playSound: true,
+      sound: const RawResourceAndroidNotificationSound(notificationSound),
+      enableVibration: true,
+      vibrationPattern: Int64List.fromList(const [100, 500, 100, 500]),
+    );
+
+    await _notificationsPlugin
+        .resolvePlatformSpecificImplementation<
+        AndroidFlutterLocalNotificationsPlugin>()
+        ?.createNotificationChannel(channel);
   }
 
   static Future<void> showNotification({
@@ -39,7 +67,7 @@ class NotificationHelper {
     String? imageUrl,
   }) async {
     AndroidNotificationDetails androidDetails;
-    
+
     if (imageUrl != null && imageUrl.isNotEmpty) {
       try {
         // Download the image to show in the notification
@@ -59,6 +87,7 @@ class NotificationHelper {
           importance: Importance.max,
           priority: Priority.high,
           playSound: true,
+          sound: const RawResourceAndroidNotificationSound(notificationSound),
           enableVibration: true,
           vibrationPattern: Int64List.fromList([100, 500, 100, 500]),
           styleInformation: bigPicture,
@@ -73,6 +102,7 @@ class NotificationHelper {
           importance: Importance.max,
           priority: Priority.high,
           playSound: true,
+          sound: const RawResourceAndroidNotificationSound(notificationSound),
           enableVibration: true,
           vibrationPattern: Int64List.fromList([100, 500, 100, 500]),
         );
@@ -85,13 +115,24 @@ class NotificationHelper {
         importance: Importance.max,
         priority: Priority.high,
         playSound: true,
+        sound: const RawResourceAndroidNotificationSound(notificationSound),
         enableVibration: true,
         vibrationPattern: Int64List.fromList([100, 500, 100, 500]),
       );
     }
 
-    final NotificationDetails notificationDetails =
-    NotificationDetails(android: androidDetails);
+    // iOS notification details with custom sound
+    const DarwinNotificationDetails iosDetails = DarwinNotificationDetails(
+      presentAlert: true,
+      presentBadge: true,
+      presentSound: true,
+      sound: '$notificationSound.mp3',
+    );
+
+    final NotificationDetails notificationDetails = NotificationDetails(
+      android: androidDetails,
+      iOS: iosDetails,
+    );
 
     await _notificationsPlugin.show(
       DateTime.now().microsecond ~/ 1000,

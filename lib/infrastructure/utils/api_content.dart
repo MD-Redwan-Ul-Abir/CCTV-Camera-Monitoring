@@ -24,10 +24,10 @@ class ApiConstants {
   ///------------------------Latest Network Endpoint-----------------------
 
   //-----------------------https://linux_vai.syedbipul.me/api/v1/auth/login
-  static String baseUrl = "https://newsheakh6733.sobhoy.com/api/v1";
-  static String imageBaseUrl = "https://newsheakh6733.sobhoy.com" ;
-  static String dummyImageUrl = "https://newsheakh6733.sobhoy.com";
-  static String socketUrl = "https://newsheakh3000.sobhoy.com";
+  static String baseUrl = "https://api.r4y.dk/api/v1";
+  static String imageBaseUrl = "https://api.r4y.dk";
+  static String dummyImageUrl = "https://api.r4y.dk";
+  static String socketUrl = "http://ws.r4y.dk";
 
   ///-----------------------------------------Auth-------------w---------------------------------
 

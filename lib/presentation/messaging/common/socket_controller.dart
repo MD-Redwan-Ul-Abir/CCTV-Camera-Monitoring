@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'package:get/get.dart';
 import 'package:socket_io_client/socket_io_client.dart' as IO;
+import 'package:skt_sikring/infrastructure/services/soundPlay.dart';
 import 'package:skt_sikring/infrastructure/utils/api_content.dart';
 import 'package:skt_sikring/infrastructure/utils/log_helper.dart';
 import 'package:skt_sikring/infrastructure/utils/secure_storage_helper.dart';
@@ -15,12 +16,17 @@ class SocketController extends GetxController {
   final RxString socketStatus = 'disconnected'.obs;
   final RxBool isConnecting = false.obs;
 
+  // Sound player for notifications
+  final SoundPlay _soundPlayer = SoundPlay();
 
-  String token = '' ;
-  String userId = '' ;
+  String token = '';
+  String userId = '';
 
   String _currentScreen = '';
   bool _isInMessagingFlow = false;
+
+  // Callbacks for message events
+  final List<Function(dynamic)> _messageCallbacks = [];
 
 
   Future<void> initializeUserData() async {
@@ -41,26 +47,30 @@ class SocketController extends GetxController {
 
   // Connect to socket
   Future<void> connectSocket() async {
-      if (isConnecting.value || isSocketConnected.value) return;
+    if (isConnecting.value || isSocketConnected.value) return;
 
     isConnecting.value = true;
     socketStatus.value = 'connecting';
 
     try {
       // Ensure we have token and userId
-      if (token .isEmpty || userId .isEmpty) {
+      if (token.isEmpty || userId.isEmpty) {
         await initializeUserData();
       }
 
-      if (token .isEmpty) {
+      if (token.isEmpty) {
         LoggerHelper.error('No token available for socket connection');
         isConnecting.value = false;
         socketStatus.value = 'error';
         return;
       }
 
+      // Trim the socket URL to remove any leading/trailing spaces
+      final String cleanSocketUrl = ApiConstants.socketUrl.trim();
+      LoggerHelper.info('Connecting to socket: $cleanSocketUrl');
+
       // Configure socket with proper timeout and connection options
-      _socket = IO.io(ApiConstants.socketUrl, <String, dynamic>{
+      _socket = IO.io(cleanSocketUrl, <String, dynamic>{
         'transports': ['websocket'], // Prioritize websocket transport
         'autoConnect': false,
         'forceNew': true,
@@ -75,17 +85,14 @@ class SocketController extends GetxController {
       // Setup event listeners
       _setupSocketListeners();
 
-      // Connect to the socket
       // Connect to the socket with timeout handling
       _connectWithTimeout();
-
     } catch (e) {
       LoggerHelper.error('Error connecting to socket: $e');
       isSocketConnected.value = false;
       socketStatus.value = 'error';
       isConnecting.value = false;
     }
-
   }
 
   // Connect with timeout handling
@@ -127,12 +134,14 @@ class SocketController extends GetxController {
   }
 
   void _setupSocketListeners() {
-
     _socket?.onConnect((_) {
       LoggerHelper.info('==== Connected to server ====');
       isSocketConnected.value = true;
       socketStatus.value = 'connected';
       isConnecting.value = false;
+
+      // Setup global message event listeners after connection
+      _setupGlobalMessageListeners();
     });
 
     _socket?.onDisconnect((_) {
@@ -157,12 +166,65 @@ class SocketController extends GetxController {
     });
   }
 
+  // Setup global message event listeners
+  void _setupGlobalMessageListeners() {
+    if (userId.isEmpty) {
+      LoggerHelper.warn('Cannot setup message listeners: userId is empty');
+      return;
+    }
+
+    LoggerHelper.info('Setting up global message listeners for user: $userId');
+
+    // Listen for conversation list updates
+    _socket?.on('conversation-list-updated::$userId', (data) {
+      LoggerHelper.info('Conversation list updated: $data');
+
+      // Play notification sound
+      _soundPlayer.playSound();
+
+      // Notify all registered callbacks
+      for (var callback in _messageCallbacks) {
+        callback(data);
+      }
+    });
+
+    // Listen for user online status updates
+    _socket?.on('related-user-online-status::$userId', (data) {
+      LoggerHelper.info('User online status updated: $data');
+
+      // Notify all registered callbacks
+      for (var callback in _messageCallbacks) {
+        callback(data);
+      }
+    });
+
+    LoggerHelper.info('Global message listeners setup completed');
+  }
+
+  // Register a callback for message events
+  void registerMessageCallback(Function(dynamic) callback) {
+    if (!_messageCallbacks.contains(callback)) {
+      _messageCallbacks.add(callback);
+      LoggerHelper.info('Message callback registered');
+    }
+  }
+
+  // Unregister a callback for message events
+  void unregisterMessageCallback(Function(dynamic) callback) {
+    _messageCallbacks.remove(callback);
+    LoggerHelper.info('Message callback unregistered');
+  }
+
   // Disconnect socket
   void disconnectSocket() {
     if (_socket != null) {
+      // Clear global message listeners before disconnecting
+      if (userId.isNotEmpty) {
+        _socket?.off('conversation-list-updated::$userId');
+        _socket?.off('related-user-online-status::$userId');
+      }
 
       _socket?.disconnect();
-
       _socket?.clearListeners();
       _socket?.dispose();
       _socket = null;
@@ -175,10 +237,11 @@ class SocketController extends GetxController {
   // Clear all user-specific data (call on logout)
   void clearUserData() {
     disconnectSocket();
-    token  = '';
-    userId  = '';
+    token = '';
+    userId = '';
     _currentScreen = '';
     _isInMessagingFlow = false;
+    _messageCallbacks.clear();
   }
 
   // Reset controller state completely
@@ -194,22 +257,27 @@ class SocketController extends GetxController {
     LoggerHelper.info('Performing complete socket logout cleanup');
 
     if (_socket != null) {
+      // Clear global message listeners before disconnecting
+      if (userId.isNotEmpty) {
+        _socket?.off('conversation-list-updated::$userId');
+        _socket?.off('related-user-online-status::$userId');
+      }
 
       _socket?.clearListeners();
       _socket?.disconnect();
       _socket?.dispose();
       _socket = null;
     }
-    
 
-    token  = '';
-    userId  = '';
+    token = '';
+    userId = '';
     isSocketConnected.value = false;
     socketStatus.value = 'disconnected';
     isConnecting.value = false;
     _currentScreen = '';
     _isInMessagingFlow = false;
-    
+    _messageCallbacks.clear();
+
     LoggerHelper.info('Socket logout cleanup completed');
   }
 

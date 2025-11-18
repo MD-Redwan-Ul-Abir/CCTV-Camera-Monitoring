@@ -1,6 +1,5 @@
 import 'package:flutter/cupertino.dart';
 import 'package:get/get.dart';
-import 'package:skt_sikring/infrastructure/services/soundPlay.dart';
 import 'package:skt_sikring/infrastructure/utils/log_helper.dart';
 import 'package:skt_sikring/presentation/messaging/common/commonController.dart';
 import '../../../../infrastructure/utils/secure_storage_helper.dart';
@@ -8,7 +7,6 @@ import '../../common/socket_controller.dart';
 import '../model/conversationListModel.dart';
 
 class MessageScreenController extends GetxController {
-  final SoundPlay playMessageSound = SoundPlay();
   final ScrollController scrollController = ScrollController();
   final CommonController commonController = Get.put(CommonController());
   late final SocketController socketController;
@@ -18,46 +16,27 @@ class MessageScreenController extends GetxController {
   RxList<AllConversationList> chatItemList = <AllConversationList>[].obs;
   final RxBool isLoading = true.obs;
 
-
   @override
   Future<void> onInit() async {
     super.onInit();
-
 
     socketController = Get.find<SocketController>();
     socketController.enterMessagingFlow('MessageScreen');
     token.value = await SecureStorageHelper.getString('accessToken');
     userID.value = await SecureStorageHelper.getString('id');
     isLoading.value = true;
-    setupSocketListeners();
+
+    // Register callback for global socket events
+    socketController.registerMessageCallback(_handleMessageEvent);
+
     getUserList();
   }
 
-  void setupSocketListeners() {
-    socketController.on(
-      'conversation-list-updated::${userID.value}',
-          (data) {
-        // print('=========================${socketController.userId.value}==============================');
-        LoggerHelper.warn(
-          'Conversation list updated: $data \n\n\n${userID.value}',
-        );
-        playMessageSound.playSound();
-
-        getUserList();
-      },
-    );
-
-    // Listen for user online status updates
-    socketController.on(
-      'related-user-online-status::${userID.value}',
-          (data) {
-        // print('=========================${socketController.userId.value}==============================');
-        LoggerHelper.info(
-          'User online status updated: $data \n\n\n${userID.value}',
-        );
-        getUserList();
-      },
-    );
+  // Handle message events from global socket listener
+  void _handleMessageEvent(dynamic data) {
+    LoggerHelper.info('MessageScreen received event: $data');
+    // Refresh user list when message event occurs
+    getUserList();
   }
 
   Future<void> getUserList() async {
@@ -110,27 +89,21 @@ class MessageScreenController extends GetxController {
     isLoading.value = false;
 
     // Once connected, fetch user list
-    setupSocketListeners();
     getUserList();
   }
-
-  // Method to leave message screen
-  // void leaveMessageScreen({String? toScreen}) {
-  //   socketController.off('conversation-list-updated::$userID');
-  //   socketController.off('related-user-online-status::$userID');
-  //   socketController.leaveMessagingFlow('MessageScreen', toScreen: toScreen);
-  // }
 
   // Clear user-specific data (call on logout)
   void clearUserData() {
     chatItemList.clear();
-    socketController.off('conversation-list-updated::$userID');
-    socketController.off('related-user-online-status::$userID');
+    socketController.unregisterMessageCallback(_handleMessageEvent);
   }
+
   @override
   void onClose() {
-    scrollController.dispose();
+    // Unregister the message callback
+    socketController.unregisterMessageCallback(_handleMessageEvent);
 
+    scrollController.dispose();
     commonController.clearCommonValues();
     chatItemList.clear();
 

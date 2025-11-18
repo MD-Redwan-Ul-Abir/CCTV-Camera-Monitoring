@@ -21,7 +21,15 @@ class FirebaseService {
   late FirebaseMessaging messaging;
 
   Future<void> initialize() async {
-    await Firebase.initializeApp();
+    try {
+      await Firebase.initializeApp();
+    } on Exception catch (e) {
+      debugPrint('Firebase initialization failed: $e');
+      // If Firebase fails to initialize, we can still continue with other services
+      // This might happen if configuration files are missing
+      return;
+    }
+
     await NotificationHelper.initialize();
 
     messaging = FirebaseMessaging.instance;
@@ -34,8 +42,12 @@ class FirebaseService {
     // Get the token (handle potential errors)
     try {
       final token = await messaging.getToken();
-       fcmToken = token!;
-      debugPrint('Firebase token: $fcmToken');
+      if (token != null) {
+        fcmToken = token;
+        debugPrint('Firebase token: $fcmToken');
+      } else {
+        debugPrint('Firebase token is null');
+      }
     } catch (e) {
       debugPrint('Failed to get Firebase token: $e');
       // Continue initialization even if token retrieval fails
@@ -44,10 +56,10 @@ class FirebaseService {
     // Handle foreground messages
     FirebaseMessaging.onMessage.listen((RemoteMessage message) {
       play.playSound();
-      
+
       // Show system notification
       _showSystemNotification(message);
-      
+
       // Show Get.snackbar in foreground
       Get.snackbar("${message.notification!.title}", '${message.notification!.body}',backgroundColor: AppColors.greenDark,colorText: AppColors.primaryLightActive);
       LoggerHelper.warn(message.notification!.body);
@@ -112,17 +124,23 @@ class FirebaseService {
 
 @pragma('vm:entry-point')
 Future<void> _firebaseMessagingBackgroundHandler(RemoteMessage message) async {
-  await Firebase.initializeApp();
+  try {
+    await Firebase.initializeApp();
+  } on Exception catch (e) {
+    debugPrint('Firebase initialization failed in background: $e');
+    return; // Exit if Firebase couldn't initialize
+  }
+
   await NotificationHelper.initialize();
 
   final notification = message.notification;
-  
+
   // Extract image URL from multiple sources
   // Your backend sends image in senderImage field in the data object
   // and also potentially in the notification object's imageUrl field
-  final imageUrl = message.data['image'] ?? 
-                   message.data['image_url'] ?? 
-                   message.data['senderImage'] ?? 
+  final imageUrl = message.data['image'] ??
+                   message.data['image_url'] ??
+                   message.data['senderImage'] ??
                    message.data['sender_image']; // Common variations
 
   if (notification != null) {
